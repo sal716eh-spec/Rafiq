@@ -291,6 +291,26 @@ let dailyStatus = { test_done_date:null, practise_done_date:null, test_score_cor
 function todayISO(){ return new Date().toISOString().slice(0,10); }
 function isDoneToday(dateStr){ return dateStr === todayISO(); }
 
+// --- Study-day counter (drives the 5->30 ramp). Counts distinct days studied. ---
+const SDAY_COUNT_KEY = 'bay_study_days';
+const SDAY_LAST_KEY  = 'bay_study_last';
+function studyDayNumber(){
+  let n = parseInt(localStorage.getItem(SDAY_COUNT_KEY),10);
+  if(!(n>0)) n = 0;
+  const last = localStorage.getItem(SDAY_LAST_KEY);
+  const today = todayISO();
+  if(last !== today){
+    // first time studying today -> it's a new study day
+    n = n + 1;
+    try{
+      localStorage.setItem(SDAY_COUNT_KEY, String(n));
+      localStorage.setItem(SDAY_LAST_KEY, today);
+    }catch(_){}
+    if(cloudOn && typeof cloudSaveStudyDays==='function') cloudSaveStudyDays(n, today);
+  }
+  return n;
+}
+
 // ---- Cloud startup: load this user's progress, migrate local on first login ----
 const MIGRATED_KEY = 'bay_migrated_v1';
 async function initCloud(){
@@ -331,6 +351,16 @@ async function initCloud(){
   try {
     const d = await cloudLoadDaily();
     if(d) dailyStatus = Object.assign(dailyStatus, d);
+    // reconcile study-day counter with the cloud (take the higher count)
+    if(d && typeof d.study_days === 'number'){
+      const localN = parseInt(localStorage.getItem(SDAY_COUNT_KEY),10) || 0;
+      if(d.study_days > localN){
+        try{
+          localStorage.setItem(SDAY_COUNT_KEY, String(d.study_days));
+          if(d.study_last) localStorage.setItem(SDAY_LAST_KEY, d.study_last);
+        }catch(_){}
+      }
+    }
   } catch(_){}
 
   // refresh the UI now that real data is in
@@ -339,14 +369,26 @@ async function initCloud(){
   const p=document.getElementById('paceSel'); if(p) p.value=String(newPerDay());
 }
 
+// --- Daily quota that ramps over the days you actually study ---
+// Day 1: 5, Day 2: 10, ... Day 6+: 30. Counts only days you show up.
+const NEW_MAX = 3;          // most new words to introduce in a day (once ramped)
+function dailyCap(){
+  const d = studyDayNumber();          // 1,2,3,... across study days
+  return Math.min(30, 5 * Math.max(1, d));
+}
+
 function buildQueue(){
   const t = today();
-  // due reviews first, shuffled
+  const cap = dailyCap();
+  // 1) due reviews first, shuffled — these get priority for the day's slots
   const due = VOCAB.filter(w => progress[w.id].box>0 && progress[w.id].due <= t);
   due.sort(()=>Math.random()-0.5);
-  // then a capped batch of new words, taken in book order so you work through the units
-  const fresh = VOCAB.filter(w => progress[w.id].box===0).slice(0, newPerDay());
-  queue = due.concat(fresh);
+  const reviews = due.slice(0, cap);                 // never more than the cap
+  // 2) new words fill whatever space is left, up to NEW_MAX, in book order
+  const room = Math.max(0, cap - reviews.length);
+  const newAllowed = Math.min(NEW_MAX, room);
+  const fresh = VOCAB.filter(w => progress[w.id].box===0).slice(0, newAllowed);
+  queue = reviews.concat(fresh);
 }
 function counts(){
   const t=today(); let due=0,fresh=0,learning=0,known=0;

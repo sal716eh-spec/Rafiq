@@ -121,10 +121,18 @@ async function cloudLoadDaily(){
   if (!sb) return null;
   const uid = await currentUserId(); if (!uid) return null;
   const { data, error } = await sb.from('settings')
-    .select('test_done_date, practise_done_date, test_score_correct, test_score_total')
+    .select('test_done_date, practise_done_date, test_score_correct, test_score_total, study_days, study_last')
     .eq('user_id', uid).maybeSingle();
   if (error) { console.warn('daily load failed', error.message); return null; }
   return data || {};
+}
+async function cloudSaveStudyDays(count, dateISO){
+  if (!sb) return;
+  const uid = await currentUserId(); if (!uid) return;
+  const { error } = await sb.from('settings').upsert(
+    { user_id: uid, study_days: count, study_last: dateISO, updated_at: new Date().toISOString() },
+    { onConflict: 'user_id' });
+  if (error) console.warn('study days save failed', error.message);
 }
 async function cloudMarkTestDone(dateISO, correct, total){
   if (!sb) return;

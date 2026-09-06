@@ -16,7 +16,15 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 .screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
-.word{font-family:var(--ar);direction:rtl;font-size:clamp(40px,9vw,62px);font-weight:600;line-height:1.6;padding:6px 0}
+.wordmark{display:flex;align-items:center;justify-content:center;gap:14px}
+.word{font-family:var(--ar);direction:rtl;font-size:clamp(38px,8.5vw,58px);font-weight:600;line-height:1.6;padding:6px 0}
+/* the ر monogram, same mark as the nav on every other page */
+.mark{position:relative;flex:0 0 auto;width:clamp(46px,10vw,64px);height:clamp(46px,10vw,64px);
+  border-radius:clamp(12px,2.6vw,16px);background:var(--ink);display:inline-block}
+.mark::before{content:'ر';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--ar);font-size:clamp(28px,6vw,40px);line-height:1;color:var(--paper);padding-bottom:5px}
+.mark::after{content:'';position:absolute;top:clamp(8px,1.8vw,11px);right:clamp(8px,1.8vw,11px);
+  width:clamp(7px,1.5vw,9px);height:clamp(7px,1.5vw,9px);border-radius:50%;background:var(--rubric)}
 .word span{color:var(--rubric)}
 .sub{font-family:var(--ar);direction:rtl;font-size:clamp(16px,3.4vw,21px);line-height:1.75;color:var(--verdigris);margin-top:12px}
 .card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:32px 36px;margin-top:38px;width:min(380px,100%);text-align:left}
@@ -39,7 +47,10 @@
 </head>
 <body>
 <main class="screen">
-  <div class="word">رَفِيق</div>
+  <div class="wordmark">
+    <span class="mark" aria-hidden="true"></span>
+    <span class="word">رَفِيق</span>
+  </div>
   <div class="sub">رَفِيقُكَ فِي تَعَلُّمِ الْعَرَبِيَّةِ</div>
   <form class="card" id="authForm">
     <div class="label" id="formTitle">Sign in to continue</div>

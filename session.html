@@ -105,6 +105,7 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=1"></script>
+<script src="progress.js?v=1"></script>
 <script>requireLogin();</script>
 <script src="vocab-data.js?v=900"></script>
 <script src="toolkit-data.js?v=900"></script>
@@ -115,30 +116,13 @@ DATA.forEach(u=>Object.assign(u,EXTRA[u.n]||{}));
 const glue=(a,s)=>a+(s.startsWith('،')?'':' ')+s, joinAr=a=>a.reduce(glue);
 const say=(t,el)=>RQ.speak(t,el);
 
-/* ── the two progress stores, untouched in shape ── */
-const DAY=86400000, dayNow=()=>Math.floor(Date.now()/DAY), iso=()=>new Date().toISOString().slice(0,10);
-const VK='bay_vocab_progress_v1', DK='bay_drills_progress_v1';
-const read=k=>{try{return JSON.parse(localStorage.getItem(k))||null}catch(e){return null}};
-const write=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}};
-const VGAP={1:1,2:2,3:4,4:8,5:16}, DGAP=[0,1,3,7,21,60];
-
-let vProg=read(VK)||{}, dProg=read(DK)||{items:{},day:iso(),today:0};
-if(!dProg.items)dProg.items={};
-if(dProg.day!==iso()){dProg.day=iso();dProg.today=0}
-
-function gradeWord(id,ok){
-  const r=vProg[id]||{box:0,due:null};
-  r.box = ok? Math.min(5,Math.max(1,r.box)+(r.box?1:0)) : 1;
-  r.due = dayNow()+VGAP[r.box];
-  vProg[id]=r; write(VK,vProg);
-}
-function gradeDrill(id,q){
-  const r=dProg.items[id]||{box:0,due:iso()};
-  r.box = q==='again'?0 : q==='easy'?Math.min(r.box+2,5) : Math.min(r.box+1,5);
-  const d=new Date(); d.setDate(d.getDate()+DGAP[r.box]);
-  r.due=d.toISOString().slice(0,10); r.seen=(r.seen||0)+1;
-  dProg.items[id]=r; dProg.today=(dProg.today||0)+1; write(DK,dProg);
-}
+/* ── progress: one Supabase-backed store for all four sections ── */
+const ID={
+  word:      w => 'v:'+w.id,
+  drill:     x => 'd:'+x.id,
+  verb:      it => 'f:'+it.v.ar+'|'+it.t,      // per verb + tense, not per pronoun
+  connector: it => 'c:'+(it.d.o[it.d.a])       // the connector itself, not the question
+};
 
 /* ── build a mixed queue across all four sections ── */
 function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
@@ -152,30 +136,40 @@ function drillPool(){
   return out;
 }
 function build(n){
-  const today=dayNow(), todayIso=iso();
-  // words that are due, then unseen ones in book order
-  const wDue=VOCAB.filter(w=>{const r=vProg[w.id];return r&&r.box>0&&r.due<=today});
-  const wNew=VOCAB.filter(w=>{const r=vProg[w.id];return !r||!r.box});
-  const words=shuffle(wDue).slice(0,Math.ceil(n*0.35))
-    .concat(wNew.slice(0,Math.max(0,Math.ceil(n*0.35)-wDue.length)))
-    .map(w=>({kind:'words',mode:'word',id:'v'+w.id,w}));
+  const share = k => Math.max(1, Math.round(n*k));
 
-  const dp=drillPool();
-  const dDue=dp.filter(x=>{const r=dProg.items[x.id];return r&&r.due<=todayIso});
-  const dNew=dp.filter(x=>!dProg.items[x.id]);
-  const sentences=shuffle(dDue).slice(0,Math.ceil(n*0.35))
-    .concat(shuffle(dNew).slice(0,Math.max(0,Math.ceil(n*0.35)-dDue.length)));
+  // words: those due first, then unseen ones in book order
+  const wDue = VOCAB.filter(w=>Progress.isDue(ID.word(w)));
+  const wNew = VOCAB.filter(w=>Progress.isNew(ID.word(w)));
+  const words = shuffle(wDue).slice(0, share(0.35))
+    .concat(wNew.slice(0, Math.max(0, share(0.35)-wDue.length)))
+    .map(w=>({kind:'words', mode:'word', w}));
 
-  const verbs=shuffle(VERBS).slice(0,Math.max(1,Math.round(n*0.15))).map(v=>{
+  const dp   = drillPool();
+  const dDue = dp.filter(x=>Progress.isDue(ID.drill(x)));
+  const dNew = dp.filter(x=>Progress.isNew(ID.drill(x)));
+  const sentences = shuffle(dDue).slice(0, share(0.35))
+    .concat(shuffle(dNew).slice(0, Math.max(0, share(0.35)-dDue.length)));
+
+  /* Verb patterns are scheduled per verb+tense; the pronoun is picked fresh
+     each time so you meet the pattern, not a memorised single form. */
+  const vPat=[];
+  VERBS.forEach(v=>['past','pr','fut'].forEach(t=>vPat.push({v,t})));
+  const vDue = vPat.filter(x=>Progress.isDue('f:'+x.v.ar+'|'+x.t));
+  const vNew = vPat.filter(x=>Progress.isNew('f:'+x.v.ar+'|'+x.t));
+  const verbs = shuffle(vDue).concat(shuffle(vNew)).slice(0, share(0.15)).map(x=>{
     const p=Math.floor(Math.random()*PRONOUNS.length);
-    const t=['past','pr','fut'][Math.floor(Math.random()*3)];
-    const ans=t==='past'?v.past[p]:t==='pr'?v.pr[p]:'سَ'+v.pr[p];
-    return {kind:'verbs',mode:'verb',v,p,t,ans};
+    const ans = x.t==='past' ? x.v.past[p] : x.t==='pr' ? x.v.pr[p] : 'سَ'+x.v.pr[p];
+    return {kind:'verbs', mode:'verb', v:x.v, p, t:x.t, ans};
   });
-  const links=shuffle(CONNECT_EX).slice(0,Math.max(1,Math.round(n*0.15)))
-    .map(t=>({kind:'links',mode:'link',d:t}));
 
-  return shuffle(words.concat(sentences,verbs,links)).slice(0,n);
+  // connectors: scheduled by the connector itself, so the same trap resurfaces
+  const cDue = CONNECT_EX.filter(t=>Progress.isDue('c:'+t.o[t.a]));
+  const cNew = CONNECT_EX.filter(t=>Progress.isNew('c:'+t.o[t.a]));
+  const links = shuffle(cDue).concat(shuffle(cNew)).slice(0, share(0.15))
+    .map(t=>({kind:'links', mode:'link', d:t}));
+
+  return shuffle(words.concat(sentences, verbs, links)).slice(0,n);
 }
 
 /* ── shared bits ── */
@@ -206,7 +200,7 @@ function answerRow(target){
 
 /* ── session ── */
 const LEN=(()=>{const v=parseInt(new URLSearchParams(location.search).get('n'),10);return [8,12,20].includes(v)?v:12})();
-let Q=build(LEN), pos=0, tally={again:0,good:0,easy:0};
+let Q=[], pos=0, tally={again:0,good:0,easy:0};
 const panel=document.getElementById('panel');
 document.getElementById('quit').onclick=()=>{pos=Q.length;render()};
 
@@ -252,7 +246,7 @@ function vWord(it){
   const rev=document.createElement('div');rev.className='reveal';rev.style.display='none';
   rev.innerHTML=`<div class="en">${it.w.en}</div><div class="tr">${it.w.tr}</div>`;
   btn.onclick=()=>{rev.style.display='block';btn.style.display='none';say(it.w.ar,ar);
-    c.appendChild(rateRow(q=>gradeWord(it.w.id,q!=='again')))};
+    c.appendChild(rateRow(q=>Progress.grade(ID.word(it.w),q)))};
   c.appendChild(btn);c.appendChild(rev);panel.appendChild(c);
 }
 function vVerb(it){
@@ -268,7 +262,7 @@ function vVerb(it){
   const g=document.createElement('div');g.className='good';g.style.textAlign='center';g.textContent=it.ans;
   box.appendChild(tappable(g,it.ans));
   btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(it.ans,g);
-    c.appendChild(rateRow(()=>{}))};
+    c.appendChild(rateRow(q=>Progress.grade(ID.verb(it),q)))};
   c.appendChild(btn);c.appendChild(box);panel.appendChild(c);
 }
 function vLink(it){
@@ -284,7 +278,7 @@ function vLink(it){
       const ok=j===t.a;b.classList.add(ok?'right':'wrong');
       if(!ok)ob.children[t.a].classList.add('right');
       draw(t.o[t.a]);why.style.display='block';say(t.q.replace('___',t.o[t.a]),q);
-      c.appendChild(rateRow(()=>{}))};
+      c.appendChild(rateRow(qq=>Progress.grade(ID.connector(it),qq)))};
     ob.appendChild(b)});
   c.appendChild(ob);c.appendChild(why);panel.appendChild(c);
 }
@@ -303,7 +297,7 @@ function vDrill(it){
         const ok=j===d.a;b.classList.add(ok?'right':'wrong');
         if(!ok)ob.children[d.a].classList.add('right');
         draw(d.o[d.a]);why.style.display='block';say(d.q.replace('___',d.o[d.a]),q);
-        c.appendChild(rateRow(q2=>gradeDrill(it.id,q2)))};
+        c.appendChild(rateRow(q2=>Progress.grade(ID.drill(it),q2)))};
       ob.appendChild(b)});
     c.appendChild(ob);c.appendChild(why);
   } else if(it.mode==='fix'){
@@ -315,7 +309,7 @@ function vDrill(it){
     const g=document.createElement('div');g.className='good';g.textContent=d.good;box.appendChild(tappable(g,d.good));
     const w=document.createElement('div');w.className='why';w.textContent=d.w;box.appendChild(w);
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.good,g);
-      c.appendChild(rateRow(q=>gradeDrill(it.id,q)))};
+      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q)))};
     c.appendChild(btn);c.appendChild(box);
   } else if(it.mode==='transform'){
     c.appendChild(taskBar(d.task[1],d.task[0]));
@@ -325,7 +319,7 @@ function vDrill(it){
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=d.ans;box.appendChild(tappable(g,d.ans));
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.ans,g);
-      c.appendChild(rateRow(q=>gradeDrill(it.id,q)))};
+      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q)))};
     c.appendChild(btn);c.appendChild(box);
   } else if(it.mode==='build'){
     c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
@@ -336,7 +330,7 @@ function vDrill(it){
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=target;box.appendChild(tappable(g,target));
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(target,g);
-      c.appendChild(rateRow(q=>gradeDrill(it.id,q)))};
+      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q)))};
     c.appendChild(btn);c.appendChild(box);
   } else {                                   // produce
     c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
@@ -346,10 +340,10 @@ function vDrill(it){
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=d.ar;box.appendChild(tappable(g,d.ar));
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.ar,g);
-      c.appendChild(rateRow(q=>gradeDrill(it.id,q)))};
+      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q)))};
     c.appendChild(btn);c.appendChild(box);
   }
   panel.appendChild(c);
 }
-render();
+Progress.init().then(()=>{ Q=build(LEN); render(); });
 </script>

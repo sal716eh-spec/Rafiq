@@ -171,7 +171,26 @@ paintGreeting();
   <a class="" href="connectors.html"><span class="ti">رَوابِط</span>Links</a>
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="auth.js?v=1"></script>
-<script>requireLogin();</script>
+<script src="auth.js?v=3"></script>
+<script>
+requireLogin();
+// send brand-new users to onboarding once (skips silently if already done or offline)
+(async ()=>{
+  try{
+    // local flag: if they've onboarded on this device, never redirect (avoids loops)
+    if(localStorage.getItem('bay_onboarded')==='1') return;
+    if(typeof cloudLoadProfile==='function'){
+      const prof = await cloudLoadProfile();
+      if(prof && prof.onboarded){
+        try{ localStorage.setItem('bay_onboarded','1'); }catch(_){}
+        return;
+      }
+      if(prof === null){
+        window.location.href = 'onboarding.html';
+      }
+    }
+  }catch(_){}
+})();
+</script>
 </body>
 </html>

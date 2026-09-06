@@ -371,7 +371,12 @@ async function initCloud(){
 
 // --- Daily quota that ramps over the days you actually study ---
 // Day 1: 5, Day 2: 10, ... Day 6+: 30. Counts only days you show up.
-const NEW_MAX = 3;          // most new words to introduce in a day (once ramped)
+// The number of NEW words per day comes from the user's pace (set at onboarding,
+// changeable in settings); we clamp it to a sensible 1-8 range.
+function newMax(){
+  const n = newPerDay();
+  return Math.max(1, Math.min(8, n));
+}
 function dailyCap(){
   const d = studyDayNumber();          // 1,2,3,... across study days
   return Math.min(30, 5 * Math.max(1, d));
@@ -384,9 +389,9 @@ function buildQueue(){
   const due = VOCAB.filter(w => progress[w.id].box>0 && progress[w.id].due <= t);
   due.sort(()=>Math.random()-0.5);
   const reviews = due.slice(0, cap);                 // never more than the cap
-  // 2) new words fill whatever space is left, up to NEW_MAX, in book order
+  // 2) new words fill whatever space is left, up to the pace, in book order
   const room = Math.max(0, cap - reviews.length);
-  const newAllowed = Math.min(NEW_MAX, room);
+  const newAllowed = Math.min(newMax(), room);
   const fresh = VOCAB.filter(w => progress[w.id].box===0).slice(0, newAllowed);
   queue = reviews.concat(fresh);
 }

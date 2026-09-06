@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Welcome — Rafiq</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=900">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js?v=3"></script>
+<style>
+.screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:34px 38px;width:min(520px,100%)}
+.card .label{margin-bottom:8px}
+.card h1{font-size:24px;font-weight:700;margin-bottom:6px}
+.card .intro{color:var(--ink-soft);font-size:14px;margin-bottom:24px}
+.q{margin-bottom:22px}
+.q h2{font-size:14px;font-weight:600;margin-bottom:10px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt{border:1px solid var(--rule);border-radius:6px;background:var(--paper);padding:12px 14px;font-family:var(--la);font-size:14px;color:var(--ink);cursor:pointer;text-align:left;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--verdigris)}
+.opt.sel{border-color:var(--verdigris);background:rgba(46,114,99,.10);font-weight:600}
+.actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.skip{background:none;border:none;color:var(--ink-soft);font-family:var(--la);font-size:13px;cursor:pointer;text-decoration:underline}
+.msg{font-size:12px;color:var(--ink-soft);margin-top:12px;min-height:16px}
+</style>
+</head>
+<body>
+<main class="screen">
+  <div class="card">
+    <div class="label">Welcome to Rafiq</div>
+    <h1>Let's set you up</h1>
+    <p class="intro">A few quick questions so we can tailor your learning. You can change these later, or skip for now.</p>
+
+    <div class="q" data-key="level">
+      <h2>How would you describe your Arabic?</h2>
+      <div class="opts">
+        <button class="opt" data-val="beginner">Complete beginner</button>
+        <button class="opt" data-val="book">Following the book (Bayna Yadayk)</button>
+        <button class="opt" data-val="intermediate">Intermediate</button>
+        <button class="opt" data-val="revising">Revising / brushing up</button>
+      </div>
+    </div>
+
+    <div class="q" data-key="study_method">
+      <h2>How are you studying?</h2>
+      <div class="opts">
+        <button class="opt" data-val="self">On my own</button>
+        <button class="opt" data-val="class">In a class</button>
+        <button class="opt" data-val="tutor">With a tutor</button>
+        <button class="opt" data-val="mix">A mix</button>
+      </div>
+    </div>
+
+    <div class="q" data-key="duration">
+      <h2>How long have you been learning?</h2>
+      <div class="opts">
+        <button class="opt" data-val="new">Just starting</button>
+        <button class="opt" data-val="under6m">Under 6 months</button>
+        <button class="opt" data-val="6to12m">6–12 months</button>
+        <button class="opt" data-val="over1y">Over a year</button>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button class="skip" id="skipBtn">Skip for now</button>
+      <button class="btn" id="doneBtn">Save &amp; continue</button>
+    </div>
+    <div class="msg" id="msg"></div>
+  </div>
+</main>
+
+<script>
+// must be logged in to be here
+requireLogin();
+
+const answers = { level:null, study_method:null, duration:null };
+
+// option selection (one per question)
+document.querySelectorAll('.q').forEach(q=>{
+  const key = q.dataset.key;
+  q.querySelectorAll('.opt').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      q.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
+      btn.classList.add('sel');
+      answers[key] = btn.dataset.val;
+    });
+  });
+});
+
+// level -> starting new-words-per-day (gentle range; user can change later)
+const LEVEL_PACE = { beginner:2, book:3, intermediate:4, revising:5 };
+
+async function finish(saveAnswers){
+  const msg=document.getElementById('msg');
+  document.getElementById('doneBtn').disabled=true;
+  try{ localStorage.setItem('bay_onboarded','1'); }catch(_){}   // guard against redirect loop
+  try{
+    if(saveAnswers){
+      if(typeof cloudSaveProfile==='function') await cloudSaveProfile(answers);
+      // translate level into a starting pace, if they picked one
+      const pace = LEVEL_PACE[answers.level];
+      if(pace){
+        try{ localStorage.setItem('bay_vocab_newperday', String(pace)); }catch(_){}
+        if(typeof cloudSaveNewPerDay==='function') await cloudSaveNewPerDay(pace);
+      }
+    } else {
+      if(typeof cloudSaveProfile==='function') await cloudSaveProfile({level:null,study_method:null,duration:null});
+    }
+  }catch(_){}
+  window.location.href='dashboard.html';
+}
+
+document.getElementById('doneBtn').addEventListener('click', ()=>finish(true));
+document.getElementById('skipBtn').addEventListener('click', ()=>finish(false));
+</script>
+</body>
+</html>

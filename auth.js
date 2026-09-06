@@ -134,6 +134,26 @@ async function cloudSaveStudyDays(count, dateISO){
     { onConflict: 'user_id' });
   if (error) console.warn('study days save failed', error.message);
 }
+
+// --- Profile (onboarding details: level, study method, duration) ---
+async function cloudLoadProfile(){
+  if (!sb) return null;
+  const uid = await currentUserId(); if (!uid) return null;
+  const { data, error } = await sb.from('profiles')
+    .select('level, study_method, duration, onboarded')
+    .eq('user_id', uid).maybeSingle();
+  if (error) { console.warn('profile load failed', error.message); return null; }
+  return data;   // null if no row yet (i.e. not onboarded)
+}
+async function cloudSaveProfile(p){
+  if (!sb) return;
+  const uid = await currentUserId(); if (!uid) return;
+  const { error } = await sb.from('profiles').upsert(
+    { user_id: uid, level: p.level, study_method: p.study_method, duration: p.duration,
+      onboarded: true, updated_at: new Date().toISOString() },
+    { onConflict: 'user_id' });
+  if (error) console.warn('profile save failed', error.message);
+}
 async function cloudMarkTestDone(dateISO, correct, total){
   if (!sb) return;
   const uid = await currentUserId(); if (!uid) return;

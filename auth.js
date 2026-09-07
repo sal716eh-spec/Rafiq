@@ -38,7 +38,7 @@ async function logout(){
   try { if (sb) await sb.auth.signOut(); } catch(_) {}
   try { localStorage.removeItem('bay_name'); } catch(_) {}
   try { localStorage.removeItem(LAST_ACTIVE_KEY); } catch(_) {}
-  window.location.href = 'index.html';
+  window.location.href = 'login.html';
 }
 
 // Sign out of EVERY device (Supabase global sign-out) — for the "left it on a
@@ -47,7 +47,7 @@ async function logoutEverywhere(){
   try { if (sb) await sb.auth.signOut({ scope: 'global' }); } catch(_) {}
   try { localStorage.removeItem('bay_name'); } catch(_) {}
   try { localStorage.removeItem(LAST_ACTIVE_KEY); } catch(_) {}
-  window.location.href = 'index.html';
+  window.location.href = 'login.html';
 }
 
 /* Guard a page: if nobody is logged in, bounce to the login page.
@@ -57,7 +57,7 @@ async function requireLogin(){
   try {
     const { data } = await sb.auth.getSession();
     if (!data || !data.session) {
-      window.location.href = 'index.html';
+      window.location.href = 'login.html';
       return null;
     }
     // logged in — but has it been idle too long? (shared-computer safety)

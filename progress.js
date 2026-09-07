@@ -87,6 +87,22 @@
     return {due, learning, known, started};
   }
 
+  /* Exposure only — used by the self-study drills. Records that you have worked
+     an item so the unit can show coverage, without putting it into any schedule.
+     A row that has only ever been touched keeps box 0, so nothing reschedules. */
+  function touch(id){
+    const r = mem[id] || {box:0, due:null, seen:0};
+    r.seen = (r.seen||0)+1;
+    mem[id]=r;
+    writeLS(MIRROR, mem);
+    dirty.add(id);
+    schedule();
+    return r;
+  }
+  const seenCount = prefix =>
+    Object.keys(mem).filter(id => (!prefix || id.startsWith(prefix)) && mem[id].seen>0).length;
+  const hasSeen = id => !!(mem[id] && mem[id].seen>0);
+
   function grade(id, quality){
     const g = gaps(id);
     const r = mem[id] || {box:0, due:null, seen:0};
@@ -178,6 +194,6 @@
   window.addEventListener('pagehide', ()=>{ flush(); });
   document.addEventListener('visibilitychange', ()=>{ if(document.hidden) flush(); });
 
-  window.Progress = { init, get, isDue, isNew, dueIds, stats, grade, flush,
-                      todayISO, ns, GAPS };
+  window.Progress = { init, get, isDue, isNew, dueIds, stats, grade, touch, hasSeen, seenCount,
+                      flush, todayISO, ns, GAPS };
 })();

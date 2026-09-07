@@ -42,7 +42,7 @@ main.wrap{max-width:680px}
     <a href="vocab.html">Words</a>
     <a href="drills.html">Sentences</a><a href="verbs.html">Verbs</a><a href="connectors.html">Connectors</a>
     <a href="settings.html">Settings</a>
-    <a href="login.html" class="logout-link" onclick="logout();return false;">Log out</a>
+    <a href="index.html" class="logout-link" onclick="logout();return false;">Log out</a>
   </div>
 </nav>
 
@@ -115,6 +115,53 @@ main.wrap{max-width:680px}
     </div>
   </div>
 
+  <!-- ABOUT YOU (from onboarding — all optional, editable any time) -->
+  <div class="group">
+    <div class="glabel">About you</div>
+    <div class="row">
+      <div class="rl"><div class="rt">What brings you to Arabic?</div></div>
+      <span>
+        <select id="reasonSel">
+          <option value="">—</option>
+          <option value="religion">Religion &amp; the Qur'an</option>
+          <option value="heritage">Family &amp; heritage</option>
+          <option value="travel">Travel</option>
+          <option value="work">Work or study</option>
+          <option value="interest">Just interested</option>
+          <option value="other">Other</option>
+        </select>
+        <span class="saved" id="reasonSaved">Saved</span>
+      </span>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">Age range</div></div>
+      <span>
+        <select id="ageSel">
+          <option value="">—</option>
+          <option value="under18">Under 18</option>
+          <option value="18-24">18–24</option>
+          <option value="25-34">25–34</option>
+          <option value="35-44">35–44</option>
+          <option value="45-54">45–54</option>
+          <option value="55plus">55+</option>
+        </select>
+        <span class="saved" id="ageSaved">Saved</span>
+      </span>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">First language</div></div>
+      <span><input id="firstLangInput" type="text" placeholder="e.g. English"><span class="saved" id="firstLangSaved">Saved</span></span>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">Other languages</div><div class="rs">Optional</div></div>
+      <span><input id="secondLangInput" type="text" placeholder="Optional"><span class="saved" id="secondLangSaved">Saved</span></span>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">Ethnicity</div><div class="rs">Optional — never required.</div></div>
+      <span><input id="ethnicityInput" type="text" placeholder="Optional"><span class="saved" id="ethnicitySaved">Saved</span></span>
+    </div>
+  </div>
+
   <!-- DATA -->
   <div class="group">
     <div class="glabel">Data</div>
@@ -171,7 +218,14 @@ const VOICE_KEY='bay_voice_uri', RATE_KEY='bay_voice_rate';
   try{
     if(typeof cloudLoadProfile==='function'){
       const prof=await cloudLoadProfile();
-      if(prof && prof.level) document.getElementById('levelSel').value=prof.level;
+      if(prof){
+        if(prof.level) document.getElementById('levelSel').value=prof.level;
+        if(prof.reason) document.getElementById('reasonSel').value=prof.reason;
+        if(prof.age_range) document.getElementById('ageSel').value=prof.age_range;
+        if(prof.first_language) document.getElementById('firstLangInput').value=prof.first_language;
+        if(prof.second_language) document.getElementById('secondLangInput').value=prof.second_language;
+        if(prof.ethnicity) document.getElementById('ethnicityInput').value=prof.ethnicity;
+      }
     }
   }catch(_){}
   loadVoices();
@@ -187,6 +241,25 @@ document.getElementById('paceSel').addEventListener('change', async (e)=>{
 });
 
 // ---- level (also re-sets pace) ----
+
+// ---- about you (each field saves itself; undefined keys are left alone) ----
+function wireProfileField(inputId, savedId, key, evt){
+  const el=document.getElementById(inputId);
+  if(!el) return;
+  el.addEventListener(evt, async ()=>{
+    const v=(el.value||'').trim();
+    try{
+      if(typeof cloudSaveProfile==='function') await cloudSaveProfile({ [key]: v || null });
+    }catch(_){}
+    flash(savedId);
+  });
+}
+wireProfileField('reasonSel','reasonSaved','reason','change');
+wireProfileField('ageSel','ageSaved','age_range','change');
+wireProfileField('firstLangInput','firstLangSaved','first_language','change');
+wireProfileField('secondLangInput','secondLangSaved','second_language','change');
+wireProfileField('ethnicityInput','ethnicitySaved','ethnicity','change');
+
 document.getElementById('levelSel').addEventListener('change', async (e)=>{
   const lvl=e.target.value, pace=LEVEL_PACE[lvl];
   try{

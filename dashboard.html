@@ -35,6 +35,8 @@
 .acctbar{max-width:1000px;margin:34px auto 0;padding:16px 30px 0;border-top:1px solid var(--rule);
   display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 @media (max-width:860px){ .acctbar{padding:14px 16px 0;margin-top:26px} .acctbar .btn{min-height:44px} }
+@media (min-width:861px){ .acctbar{display:none} }   /* desktop already has Log out in the top nav */
+
 .pickhead{font-size:16px;font-weight:700;margin:26px 0 4px}
 .picksub{font-size:13.5px;color:var(--ink-soft);margin:0 0 16px}
 .qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
@@ -73,7 +75,7 @@
     <a href="vocab.html">Words</a>
     <a href="drills.html">Sentences</a><a href="verbs.html">Verbs</a><a href="connectors.html">Connectors</a>
     <a href="settings.html">Settings</a>
-    <a href="login.html" class="logout-link" onclick="logout();return false;">Log out</a>
+    <a href="index.html" class="logout-link" onclick="logout();return false;">Log out</a>
   </div>
 </nav>
 <main class="wrap">

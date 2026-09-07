@@ -38,7 +38,7 @@ async function logout(){
   try { if (sb) await sb.auth.signOut(); } catch(_) {}
   try { localStorage.removeItem('bay_name'); } catch(_) {}
   try { localStorage.removeItem(LAST_ACTIVE_KEY); } catch(_) {}
-  window.location.href = 'login.html';
+  window.location.href = 'index.html';
 }
 
 // Sign out of EVERY device (Supabase global sign-out) — for the "left it on a
@@ -47,7 +47,7 @@ async function logoutEverywhere(){
   try { if (sb) await sb.auth.signOut({ scope: 'global' }); } catch(_) {}
   try { localStorage.removeItem('bay_name'); } catch(_) {}
   try { localStorage.removeItem(LAST_ACTIVE_KEY); } catch(_) {}
-  window.location.href = 'login.html';
+  window.location.href = 'index.html';
 }
 
 /* Guard a page: if nobody is logged in, bounce to the login page.
@@ -57,7 +57,7 @@ async function requireLogin(){
   try {
     const { data } = await sb.auth.getSession();
     if (!data || !data.session) {
-      window.location.href = 'login.html';
+      window.location.href = 'index.html';
       return null;
     }
     // logged in — but has it been idle too long? (shared-computer safety)
@@ -181,7 +181,7 @@ async function cloudLoadProfile(){
   if (!sb) return null;
   const uid = await currentUserId(); if (!uid) return null;
   const { data, error } = await sb.from('profiles')
-    .select('level, study_method, duration, onboarded')
+    .select('level, study_method, duration, onboarded, age_range, first_language, second_language, reason, ethnicity')
     .eq('user_id', uid).maybeSingle();
   if (error) { console.warn('profile load failed', error.message); return null; }
   return data;   // null if no row yet (i.e. not onboarded)
@@ -189,10 +189,13 @@ async function cloudLoadProfile(){
 async function cloudSaveProfile(p){
   if (!sb) return;
   const uid = await currentUserId(); if (!uid) return;
-  const { error } = await sb.from('profiles').upsert(
-    { user_id: uid, level: p.level, study_method: p.study_method, duration: p.duration,
-      onboarded: true, updated_at: new Date().toISOString() },
-    { onConflict: 'user_id' });
+  // Every field here is optional — undefined just leaves the column untouched
+  // on this upsert rather than overwriting it with null, so partial saves
+  // (onboarding "Skip", or editing one field in Settings) can't wipe others.
+  const row = { user_id: uid, onboarded: true, updated_at: new Date().toISOString() };
+  ['level','study_method','duration','age_range','first_language','second_language','reason','ethnicity']
+    .forEach(k => { if (p[k] !== undefined) row[k] = p[k]; });
+  const { error } = await sb.from('profiles').upsert(row, { onConflict: 'user_id' });
   if (error) console.warn('profile save failed', error.message);
 }
 async function cloudMarkTestDone(dateISO, correct, total){

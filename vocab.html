@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="site.css?v=900">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=2"></script>
+<script src="progress.js?v=1"></script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -119,7 +120,7 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
     <a class="active" href="vocab.html">Words</a>
     <a href="drills.html">Sentences</a><a href="verbs.html">Verbs</a><a href="connectors.html">Connectors</a>
     <a href="settings.html">Settings</a>
-    <a href="login.html" class="logout-link" onclick="logout();return false;">Log out</a>
+    <a href="index.html" class="logout-link" onclick="logout();return false;">Log out</a>
   </div>
 </nav>
 <main class="wrap">
@@ -276,6 +277,26 @@ function statusOf(rec){
 }
 
 let progress = ensure(loadProgressLocal());
+
+/* Words answered inside today's session land in the shared store. Fold anything
+   newer back in here, so the two directions stay in step. */
+async function mergeFromShared(){
+  if(typeof Progress==='undefined') return;
+  try{ await Progress.init(); }catch(_){ return; }
+  let changed=false;
+  VOCAB.forEach(w=>{
+    const r=Progress.get('v:'+w.id);
+    if(!r || !r.box) return;
+    const dueDay = r.due ? Math.floor(new Date(r.due+'T00:00:00Z').getTime()/86400000) : null;
+    const mine=progress[w.id];
+    if(!mine || !mine.box || (dueDay!=null && mine.due!=null && dueDay>mine.due)){
+      progress[w.id]={box:r.box, due:dueDay};
+      changed=true;
+    }
+  });
+  if(changed){ saveProgress(progress); startTest(); renderList(); }
+}
+mergeFromShared();
 let queue = [];
 let current = null;
 
@@ -503,6 +524,9 @@ function scoreWord(id, gotIt){
   saveProgress(progress);
   // push this one word to the cloud immediately (save-each-answer)
   if(cloudOn && typeof cloudSaveWord==='function') cloudSaveWord(id, rec);
+  /* Also record it in the shared store, so today's session knows which words
+     you are struggling with and can bring them back. Same schedule either way. */
+  if(typeof Progress!=='undefined') Progress.grade('v:'+id, gotIt?'good':'again');
 }
 function grade(gotIt){
   scoreWord(current.id, gotIt);

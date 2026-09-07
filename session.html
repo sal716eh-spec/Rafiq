@@ -117,12 +117,9 @@ const glue=(a,s)=>a+(s.startsWith('،')?'':' ')+s, joinAr=a=>a.reduce(glue);
 const say=(t,el)=>RQ.speak(t,el);
 
 /* ── progress: one Supabase-backed store for all four sections ── */
-const ID={
-  word:      w => 'v:'+w.id,
-  drill:     x => 'd:'+x.id,
-  verb:      it => 'f:'+it.v.ar+'|'+it.t,      // per verb + tense, not per pronoun
-  connector: it => 'c:'+(it.d.o[it.d.a])       // the connector itself, not the question
-};
+const ID={ word: w=>'v:'+w.id, drill: x=>'d:'+x.id };
+// Verbs and joining words are self-service practice, not scheduled review —
+// so they are not tracked in the shared store at all.
 
 /* ── build a mixed queue across all four sections ── */
 function shuffle(a){const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b}
@@ -155,18 +152,14 @@ function build(n){
      each time so you meet the pattern, not a memorised single form. */
   const vPat=[];
   VERBS.forEach(v=>['past','pr','fut'].forEach(t=>vPat.push({v,t})));
-  const vDue = vPat.filter(x=>Progress.isDue('f:'+x.v.ar+'|'+x.t));
-  const vNew = vPat.filter(x=>Progress.isNew('f:'+x.v.ar+'|'+x.t));
-  const verbs = shuffle(vDue).concat(shuffle(vNew)).slice(0, share(0.15)).map(x=>{
+  const verbs = shuffle(vPat).slice(0, share(0.15)).map(x=>{
     const p=Math.floor(Math.random()*PRONOUNS.length);
     const ans = x.t==='past' ? x.v.past[p] : x.t==='pr' ? x.v.pr[p] : 'سَ'+x.v.pr[p];
     return {kind:'verbs', mode:'verb', v:x.v, p, t:x.t, ans};
   });
 
   // connectors: scheduled by the connector itself, so the same trap resurfaces
-  const cDue = CONNECT_EX.filter(t=>Progress.isDue('c:'+t.o[t.a]));
-  const cNew = CONNECT_EX.filter(t=>Progress.isNew('c:'+t.o[t.a]));
-  const links = shuffle(cDue).concat(shuffle(cNew)).slice(0, share(0.15))
+  const links = shuffle(CONNECT_EX).slice(0, share(0.15))
     .map(t=>({kind:'links', mode:'link', d:t}));
 
   return shuffle(words.concat(sentences, verbs, links)).slice(0,n);
@@ -204,6 +197,14 @@ let Q=[], pos=0, tally={again:0,good:0,easy:0};
 const panel=document.getElementById('panel');
 document.getElementById('quit').onclick=()=>{pos=Q.length;render()};
 
+/* Verbs and joining words are practice, not scheduled review — so they get a
+   plain "next" rather than a rating that would go nowhere. */
+function nextRow(){
+  const d=document.createElement('div');d.className='rate';
+  const b=document.createElement('button');b.className='rb';b.textContent='Next →';
+  b.onclick=()=>{setTimeout(()=>{pos++;render();window.scrollTo(0,0)},120)};
+  d.appendChild(b);return d;
+}
 function rateRow(onPick){
   const d=document.createElement('div');d.className='rate';
   [['again','Again'],['good','Good'],['easy','Easy']].forEach(([q,l])=>{
@@ -262,7 +263,7 @@ function vVerb(it){
   const g=document.createElement('div');g.className='good';g.style.textAlign='center';g.textContent=it.ans;
   box.appendChild(tappable(g,it.ans));
   btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(it.ans,g);
-    c.appendChild(rateRow(q=>Progress.grade(ID.verb(it),q)))};
+    c.appendChild(nextRow())};
   c.appendChild(btn);c.appendChild(box);panel.appendChild(c);
 }
 function vLink(it){
@@ -278,7 +279,7 @@ function vLink(it){
       const ok=j===t.a;b.classList.add(ok?'right':'wrong');
       if(!ok)ob.children[t.a].classList.add('right');
       draw(t.o[t.a]);why.style.display='block';say(t.q.replace('___',t.o[t.a]),q);
-      c.appendChild(rateRow(qq=>Progress.grade(ID.connector(it),qq)))};
+      c.appendChild(nextRow())};
     ob.appendChild(b)});
   c.appendChild(ob);c.appendChild(why);panel.appendChild(c);
 }

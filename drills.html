@@ -126,6 +126,8 @@ input[type=range]{accent-color:var(--verdigris);width:100px}
 .warn{display:none}
 .acctbar{max-width:1000px;margin:34px auto 0;padding:16px 30px 0;border-top:1px solid var(--rule);
   display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (min-width:861px){ .acctbar{display:none} }   /* desktop already has Log out in the top nav */
+
 .acctrow{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;
   padding-top:10px;border-top:1px solid var(--rule)}
 .acctrow .btn{min-height:40px}
@@ -593,7 +595,7 @@ footer{border-top:1px solid var(--rule);padding:16px 28px 30px;font-size:12px;co
     <a class="active" href="drills.html">Sentences</a><a href="verbs.html">Verbs</a>
     <a href="connectors.html">Connectors</a>
     <a href="settings.html">Settings</a>
-    <a href="login.html" class="logout-link" onclick="logout();return false;">Log out</a>
+    <a href="index.html" class="logout-link" onclick="logout();return false;">Log out</a>
   </div>
 </nav>
 <header class="pagehead">

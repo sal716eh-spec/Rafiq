@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Rafiq — your Arabic pal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=900">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" content="#F1ECE0">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+.screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+.wordmark{display:flex;align-items:center;justify-content:center;gap:14px}
+.word{font-family:var(--ar);direction:rtl;font-size:clamp(38px,8.5vw,58px);font-weight:600;line-height:1.6;padding:6px 0}
+/* the ر monogram, same mark as the nav on every other page */
+.mark{position:relative;flex:0 0 auto;width:clamp(46px,10vw,64px);height:clamp(46px,10vw,64px);
+  border-radius:clamp(12px,2.6vw,16px);background:var(--ink);display:inline-block}
+.mark::before{content:'ر';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--ar);font-size:clamp(28px,6vw,40px);line-height:1;color:var(--paper);padding-bottom:5px}
+.mark::after{content:'';position:absolute;top:clamp(8px,1.8vw,11px);right:clamp(8px,1.8vw,11px);
+  width:clamp(7px,1.5vw,9px);height:clamp(7px,1.5vw,9px);border-radius:50%;background:var(--rubric)}
+.word span{color:var(--rubric)}
+.sub{font-family:var(--ar);direction:rtl;font-size:clamp(16px,3.4vw,21px);line-height:1.75;color:var(--verdigris);margin-top:12px}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:32px 36px;margin-top:38px;width:min(380px,100%);text-align:left}
+.card .label{margin-bottom:20px;text-align:center}
+.field{margin-bottom:16px}
+.field label{font-size:11px;color:var(--ink-soft);display:block;margin-bottom:5px}
+.field input{width:100%;border:1px solid var(--rule);border-radius:3px;background:var(--paper);height:40px;padding:0 12px;font-family:var(--la);font-size:15px;color:var(--ink)}
+.card .btn{width:100%;margin-top:6px}
+.note{margin-top:16px;font-size:11px;color:var(--ink-soft);text-align:center;line-height:1.5}
+.msg{margin-top:14px;font-size:13px;text-align:center;line-height:1.5;display:none}
+.msg.show{display:block}
+.msg.err{color:var(--rubric)}
+.msg.ok{color:var(--verdigris)}
+.toggle{margin-top:18px;text-align:center;font-size:13px;color:var(--ink-soft)}
+.toggle a{color:var(--verdigris);cursor:pointer;text-decoration:underline}
+#nameField{display:none}
+.card.signup #nameField{display:block}
+.btn[disabled]{opacity:.6;cursor:default}
+</style>
+</head>
+<body>
+<main class="screen">
+  <div class="wordmark">
+    <span class="mark" aria-hidden="true"></span>
+    <span class="word">رَفِيق</span>
+  </div>
+  <div class="sub">رَفِيقُكَ فِي تَعَلُّمِ الْعَرَبِيَّةِ</div>
+  <form class="card" id="authForm">
+    <div class="label" id="formTitle">Sign in to continue</div>
+    <div class="field" id="nameField"><label for="nm">Your name</label><input id="nm" type="text" placeholder="What should we call you?" autocomplete="given-name"></div>
+    <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email" required></div>
+    <div class="field"><label for="pw">Password</label><input id="pw" type="password" placeholder="••••••••" autocomplete="current-password" required></div>
+    <button class="btn" type="submit" id="submitBtn">Sign in</button>
+    <div class="msg" id="msg"></div>
+    <div class="toggle" id="toggle">New here? <a id="toggleLink">Create an account</a></div>
+  </form>
+</main>
+
+<!-- Supabase client library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// --- your project's SAFE public values ---
+const SUPABASE_URL = 'https://gaajfahtrbdybjuunfhe.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_nFs-UJyKpTsCtHRn4WZJGg_c14-cM4e';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+let mode = 'signin'; // or 'signup'
+const form   = document.getElementById('authForm');
+const card   = form;
+const title  = document.getElementById('formTitle');
+const btn    = document.getElementById('submitBtn');
+const toggle = document.getElementById('toggle');
+const msgEl  = document.getElementById('msg');
+
+// If already logged in, skip straight to the dashboard
+(async () => {
+  const { data } = await sb.auth.getSession();
+  if (data && data.session) window.location.href = 'dashboard.html';
+})();
+
+function setMode(m){
+  mode = m;
+  if(m==='signup'){
+    card.classList.add('signup');
+    title.textContent = 'Create your account';
+    btn.textContent = 'Create account';
+    toggle.innerHTML = 'Already have an account? <a id="toggleLink">Sign in</a>';
+    document.getElementById('pw').setAttribute('autocomplete','new-password');
+  } else {
+    card.classList.remove('signup');
+    title.textContent = 'Sign in to continue';
+    btn.textContent = 'Sign in';
+    toggle.innerHTML = 'New here? <a id="toggleLink">Create an account</a>';
+    document.getElementById('pw').setAttribute('autocomplete','current-password');
+  }
+  showMsg('');
+}
+
+// event delegation: one listener on the container handles the link
+// no matter how many times we rewrite the inner HTML
+toggle.addEventListener('click', (e)=>{
+  if(e.target && e.target.id==='toggleLink'){
+    setMode(mode==='signin' ? 'signup' : 'signin');
+  }
+});
+
+function showMsg(text, kind){
+  msgEl.textContent = text || '';
+  msgEl.className = 'msg' + (text ? ' show '+(kind||'err') : '');
+}
+
+// friendlier wording for the common Supabase errors
+function friendly(err){
+  const m = (err && err.message || '').toLowerCase();
+  if(m.includes('invalid login')) return 'That email and password don\u2019t match. Try again, or create an account.';
+  if(m.includes('already registered')||m.includes('already been registered')) return 'That email already has an account. Try signing in instead.';
+  if(m.includes('password should be at least')) return 'Password is too short — use at least 6 characters.';
+  if(m.includes('unable to validate email')||m.includes('invalid email')) return 'That email doesn\u2019t look right — please check it.';
+  if(m.includes('email not confirmed')) return 'Please confirm your email first (check your inbox), then sign in.';
+  return err && err.message ? err.message : 'Something went wrong. Please try again.';
+}
+
+document.getElementById('toggleLink');
+
+form.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const email = document.getElementById('email').value.trim();
+  const pw    = document.getElementById('pw').value;
+  const name  = (document.getElementById('nm').value||'').trim();
+  if(!email || !pw){ showMsg('Please enter your email and password.'); return; }
+
+  btn.disabled = true;
+  showMsg('');
+
+  try {
+    if(mode==='signup'){
+      btn.textContent = 'Creating…';
+      const { data, error } = await sb.auth.signUp({
+        email, password: pw,
+        options: { data: { name: name || null } }
+      });
+      if(error){ showMsg(friendly(error)); btn.disabled=false; btn.textContent='Create account'; return; }
+      // If email confirmation is OFF, a session exists now → go straight in.
+      if(data.session){
+        try{ if(name) localStorage.setItem('bay_name', name); }catch(_){}
+        window.location.href = 'dashboard.html';
+      } else {
+        // confirmation is ON: tell them to check their email
+        showMsg('Account created — check your email to confirm, then sign in.', 'ok');
+        setTimeout(()=> setMode('signin'), 400);
+        btn.disabled=false; btn.textContent='Create account';
+      }
+    } else {
+      btn.textContent = 'Signing in…';
+      const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
+      if(error){ showMsg(friendly(error)); btn.disabled=false; btn.textContent='Sign in'; return; }
+      // keep the display name handy for the dashboard greeting
+      const nm = (data.user && data.user.user_metadata && data.user.user_metadata.name) || '';
+      try{ if(nm) localStorage.setItem('bay_name', nm); }catch(_){}
+      window.location.href = 'dashboard.html';
+    }
+  } catch(err){
+    showMsg(friendly(err)); btn.disabled=false;
+    btn.textContent = mode==='signup' ? 'Create account' : 'Sign in';
+  }
+});
+</script>
+</body>
+</html>

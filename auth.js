@@ -14,14 +14,35 @@ const sb = (window.supabase && window.supabase.createClient)
 
 /* Log the user out: end the Supabase session, clear the cached name,
    then send them to the login page. Works from any page. */
+/* ---------- Idle auto-logout (shared-computer safety) ----------
+   If the app hasn't been used for this long, the next time a page loads
+   the person is logged out. Protects a session left open on a shared PC.
+   Note: this can only act when a page is opened/reloaded — it can't log
+   someone out while the tab is closed. */
+const IDLE_LIMIT_MS = 24 * 60 * 60 * 1000;   // 24 hours
+const LAST_ACTIVE_KEY = 'bay_last_active';
+
+function markActive(){
+  try { localStorage.setItem(LAST_ACTIVE_KEY, String(Date.now())); } catch(_) {}
+}
+// has the idle limit been exceeded since last activity?
+function idleExpired(){
+  try {
+    const last = parseInt(localStorage.getItem(LAST_ACTIVE_KEY), 10);
+    if (!last) return false;                  // never recorded -> don't lock out
+    return (Date.now() - last) > IDLE_LIMIT_MS;
+  } catch(_) { return false; }
+}
+
 async function logout(){
   try { if (sb) await sb.auth.signOut(); } catch(_) {}
   try { localStorage.removeItem('bay_name'); } catch(_) {}
+  try { localStorage.removeItem(LAST_ACTIVE_KEY); } catch(_) {}
   window.location.href = 'index.html';
 }
 
 /* Guard a page: if nobody is logged in, bounce to the login page.
-   Call this near the top of a protected page. Returns the session (or null). */
+   Also enforces the idle timeout. Call near the top of a protected page. */
 async function requireLogin(){
   if (!sb) return null;                       // library failed to load; don't lock people out
   try {
@@ -30,11 +51,22 @@ async function requireLogin(){
       window.location.href = 'index.html';
       return null;
     }
+    // logged in — but has it been idle too long? (shared-computer safety)
+    if (idleExpired()) {
+      await logout();
+      return null;
+    }
+    markActive();                             // fresh activity: reset the idle clock
     return data.session;
   } catch(_) {
     return null;                              // on error, fail open rather than trap the user
   }
 }
+
+// keep the "last active" time fresh while the person is actually using the app
+['click','keydown','touchstart'].forEach(evt=>{
+  document.addEventListener(evt, ()=>{ if (sb) markActive(); }, { passive:true });
+});
 
 // let any "Log out" link work just by adding onclick="logout()" OR class="logout-link"
 document.addEventListener('click', function(e){

@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Settings — Rafiq</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=900">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js?v=5"></script>
+<style>
+main.wrap{max-width:680px}
+.head{padding:30px 0 6px}
+.head h1{font-size:26px;font-weight:700}
+.head p{color:var(--ink-soft);font-size:14px;margin-top:4px}
+.group{margin-top:26px}
+.group > .glabel{font-family:var(--ut);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px}
+.row{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:16px 18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.row .rl{min-width:0;flex:1}
+.row .rt{font-size:15px;font-weight:500}
+.row .rs{font-size:12px;color:var(--ink-soft);margin-top:3px}
+.row select{border:1px solid var(--rule);border-radius:5px;background:var(--paper);height:38px;padding:0 10px;font-family:var(--la);font-size:14px;color:var(--ink);max-width:220px}
+.row input[type=text]{border:1px solid var(--rule);border-radius:5px;background:var(--paper);height:38px;padding:0 10px;font-family:var(--la);font-size:14px;color:var(--ink);width:180px}
+.row input[type=range]{width:180px}
+.row.soon{opacity:.55}
+.row.soon .tag{font-family:var(--ut);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:2px;padding:3px 7px;white-space:nowrap}
+.btn.small{height:38px;padding:0 16px;font-size:13px}
+.btn.danger{border-color:var(--rubric);background:transparent;color:var(--rubric)}
+.btn.danger:hover{background:rgba(180,50,42,.08)}
+.saved{font-size:12px;color:var(--verdigris);margin-left:8px;opacity:0;transition:opacity .2s}
+.saved.show{opacity:1}
+.rateval{font-family:var(--ut);font-size:12px;color:var(--ink-soft);margin-left:8px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="dashboard.html"><span class="bmark"></span>رَفِيق</a>
+  <div class="navlinks">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="vocab.html">Words</a>
+    <a href="drills.html">Sentences</a><a href="verbs.html">Verbs</a><a href="connectors.html">Connectors</a>
+    <a href="settings.html">Settings</a>
+    <a href="index.html" class="logout-link" onclick="logout();return false;">Log out</a>
+  </div>
+</nav>
+
+<main class="wrap">
+  <div class="head">
+    <h1>Settings</h1>
+    <p>Manage your learning pace, audio, and account.</p>
+  </div>
+
+  <!-- LEARNING -->
+  <div class="group">
+    <div class="glabel">Learning</div>
+    <div class="row">
+      <div class="rl"><div class="rt">Your level</div><div class="rs">Changing this adjusts your daily new-word pace.</div></div>
+      <select id="levelSel">
+        <option value="beginner">Complete beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="revising">Revising / brushing up</option>
+      </select>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">New words a day</div><div class="rs">How many new words to introduce daily. Reviews always come first.</div></div>
+      <span>
+        <select id="paceSel">
+          <option value="2">2</option><option value="3">3</option><option value="4">4</option>
+          <option value="5">5</option><option value="6">6</option><option value="8">8</option>
+        </select>
+        <span class="saved" id="paceSaved">Saved</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- AUDIO -->
+  <div class="group">
+    <div class="glabel">Audio</div>
+    <div class="row">
+      <div class="rl"><div class="rt">Arabic voice</div><div class="rs">Which voice reads the Arabic aloud (depends on your device).</div></div>
+      <span>
+        <select id="voiceSel"><option value="">Default</option></select>
+        <span class="saved" id="voiceSaved">Saved</span>
+      </span>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">Playback speed</div><div class="rs">How fast the Arabic is spoken.</div></div>
+      <span>
+        <input id="rateRange" type="range" min="0.5" max="1.1" step="0.05">
+        <span class="rateval" id="rateVal">0.80×</span>
+        <span class="saved" id="rateSaved">Saved</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- ACCOUNT -->
+  <div class="group">
+    <div class="glabel">Account</div>
+    <div class="row">
+      <div class="rl"><div class="rt">Display name</div><div class="rs">What we call you in the app.</div></div>
+      <span><input id="nameInput" type="text" placeholder="Your name"><span class="saved" id="nameSaved">Saved</span></span>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">Email</div><div class="rs" id="emailShow">—</div></div>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">Log out</div><div class="rs">Sign out on this device.</div></div>
+      <button class="btn small" onclick="logout()">Log out</button>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">Sign out everywhere</div><div class="rs">Ends your session on all devices — useful if you left it open on a shared computer.</div></div>
+      <button class="btn small" onclick="logoutEverywhere()">Sign out all</button>
+    </div>
+  </div>
+
+  <!-- DATA -->
+  <div class="group">
+    <div class="glabel">Data</div>
+    <div class="row">
+      <div class="rl"><div class="rt">Reset progress</div><div class="rs">Clears every word's box and due date. Cannot be undone.</div></div>
+      <button class="btn small danger" onclick="resetProgress()">Reset</button>
+    </div>
+    <div class="row soon">
+      <div class="rl"><div class="rt">Delete my account</div><div class="rs">Permanently remove your account and all your data.</div></div>
+      <span class="tag">Coming soon</span>
+    </div>
+  </div>
+
+  <!-- MORE (honest placeholders) -->
+  <div class="group">
+    <div class="glabel">More</div>
+    <div class="row soon">
+      <div class="rl"><div class="rt">Dark mode</div><div class="rs">A darker theme for night study.</div></div>
+      <span class="tag">Coming soon</span>
+    </div>
+    <div class="row soon">
+      <div class="rl"><div class="rt">Daily reminders</div><div class="rs">A nudge to keep your streak going.</div></div>
+      <span class="tag">Coming soon</span>
+    </div>
+  </div>
+</main>
+
+<script>
+requireLogin();
+const LEVEL_PACE = { beginner:2, intermediate:4, revising:5 };
+function flash(id){ const e=document.getElementById(id); if(!e) return; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),1200); }
+
+const VOICE_KEY='bay_voice_uri', RATE_KEY='bay_voice_rate';
+
+// ---- load current values ----
+(async ()=>{
+  try{
+    if(sb){
+      const { data } = await sb.auth.getUser();
+      if(data && data.user){
+        document.getElementById('emailShow').textContent = data.user.email || '—';
+        const nm = (data.user.user_metadata && data.user.user_metadata.name) || '';
+        if(nm) document.getElementById('nameInput').value = nm;
+        else { try{ const l=localStorage.getItem('bay_name'); if(l) document.getElementById('nameInput').value=l; }catch(_){} }
+      }
+    }
+  }catch(_){}
+  try{
+    let pace=null;
+    if(typeof cloudLoadNewPerDay==='function') pace=await cloudLoadNewPerDay();
+    if(!pace){ const v=parseInt(localStorage.getItem('bay_vocab_newperday'),10); if(v>0) pace=v; }
+    if(pace) document.getElementById('paceSel').value=String(pace);
+  }catch(_){}
+  try{
+    if(typeof cloudLoadProfile==='function'){
+      const prof=await cloudLoadProfile();
+      if(prof && prof.level) document.getElementById('levelSel').value=prof.level;
+    }
+  }catch(_){}
+  loadVoices();
+  loadRate();
+})();
+
+// ---- pace ----
+document.getElementById('paceSel').addEventListener('change', async (e)=>{
+  const n=parseInt(e.target.value,10);
+  try{ localStorage.setItem('bay_vocab_newperday',String(n)); }catch(_){}
+  if(typeof cloudSaveNewPerDay==='function') await cloudSaveNewPerDay(n);
+  flash('paceSaved');
+});
+
+// ---- level (also re-sets pace) ----
+document.getElementById('levelSel').addEventListener('change', async (e)=>{
+  const lvl=e.target.value, pace=LEVEL_PACE[lvl];
+  try{
+    if(typeof cloudLoadProfile==='function' && typeof cloudSaveProfile==='function'){
+      const prof=(await cloudLoadProfile())||{};
+      await cloudSaveProfile({ level:lvl, study_method:prof.study_method||null, duration:prof.duration||null });
+    }
+  }catch(_){}
+  if(pace){
+    document.getElementById('paceSel').value=String(pace);
+    try{ localStorage.setItem('bay_vocab_newperday',String(pace)); }catch(_){}
+    if(typeof cloudSaveNewPerDay==='function') await cloudSaveNewPerDay(pace);
+    flash('paceSaved');
+  }
+});
+
+// ---- name ----
+let nameTimer=null;
+document.getElementById('nameInput').addEventListener('input',(e)=>{
+  const name=e.target.value.trim();
+  clearTimeout(nameTimer);
+  nameTimer=setTimeout(async ()=>{
+    try{ localStorage.setItem('bay_name',name); }catch(_){}
+    try{ if(sb) await sb.auth.updateUser({ data:{ name } }); }catch(_){}
+    flash('nameSaved');
+  },600);
+});
+
+// ---- voice (uses the same speechSynthesis voices + localStorage key as the drills page) ----
+function loadVoices(){
+  if(!('speechSynthesis' in window)) return;
+  const sel=document.getElementById('voiceSel');
+  const fill=()=>{
+    const voices=speechSynthesis.getVoices().filter(v=>/ar/i.test(v.lang));
+    const saved=localStorage.getItem(VOICE_KEY)||'';
+    sel.innerHTML='<option value=\"\">Default</option>'+
+      voices.map(v=>'<option value=\"'+(v.voiceURI||v.name)+'\">'+v.name+'</option>').join('');
+    if(saved) sel.value=saved;
+  };
+  fill();
+  speechSynthesis.onvoiceschanged=fill;
+  sel.addEventListener('change',()=>{
+    try{ localStorage.setItem(VOICE_KEY, sel.value); }catch(_){}
+    flash('voiceSaved');
+  });
+}
+
+// ---- rate (same key/range as drills) ----
+function loadRate(){
+  const r=document.getElementById('rateRange'), val=document.getElementById('rateVal');
+  let cur=0.8; try{ const s=parseFloat(localStorage.getItem(RATE_KEY)); if(s>=0.5&&s<=1.1) cur=s; }catch(_){}
+  r.value=String(cur); val.textContent=cur.toFixed(2)+'×';
+  r.addEventListener('input',()=>{
+    const v=parseFloat(r.value); val.textContent=v.toFixed(2)+'×';
+    try{ localStorage.setItem(RATE_KEY,String(v)); }catch(_){}
+    flash('rateSaved');
+  });
+}
+
+// ---- reset progress ----
+async function resetProgress(){
+  if(!confirm('Reset progress for all words? This clears every box and due date and cannot be undone.')) return;
+  try{
+    if(typeof VOCAB!=='undefined' && typeof cloudSaveMany==='function'){
+      const empty={}; VOCAB.forEach(w=> empty[w.id]={box:0,due:null});
+      await cloudSaveMany(empty);
+    }
+  }catch(_){}
+  try{ localStorage.removeItem('bay_vocab_progress_v1'); }catch(_){}
+  alert('Progress reset. Head to the Words page to start fresh.');
+}
+</script>
+<script src="vocab-data.js?v=900"></script>
+</body>
+</html>

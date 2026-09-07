@@ -41,6 +41,15 @@ async function logout(){
   window.location.href = 'index.html';
 }
 
+// Sign out of EVERY device (Supabase global sign-out) — for the "left it on a
+// shared computer" case. Ends all sessions for this account, everywhere.
+async function logoutEverywhere(){
+  try { if (sb) await sb.auth.signOut({ scope: 'global' }); } catch(_) {}
+  try { localStorage.removeItem('bay_name'); } catch(_) {}
+  try { localStorage.removeItem(LAST_ACTIVE_KEY); } catch(_) {}
+  window.location.href = 'index.html';
+}
+
 /* Guard a page: if nobody is logged in, bounce to the login page.
    Also enforces the idle timeout. Call near the top of a protected page. */
 async function requireLogin(){

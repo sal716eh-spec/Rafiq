@@ -592,6 +592,7 @@ footer{border-top:1px solid var(--rule);padding:16px 28px 30px;font-size:12px;co
     <a href="dashboard.html">Home</a><a href="vocab.html">Words</a>
     <a class="active" href="drills.html">Sentences</a><a href="verbs.html">Verbs</a>
     <a href="connectors.html">Connectors</a>
+    <a href="settings.html">Settings</a>
     <a href="index.html" class="logout-link" onclick="logout();return false;">Log out</a>
   </div>
 </nav>
@@ -1554,6 +1555,8 @@ function showPicker(){
   pickerEl.classList.add('on');
   shellEl.classList.add('hidden');
   backUnitsEl.classList.remove('on');
+  // forget the remembered unit so a reload from here shows the picker
+  try{ localStorage.removeItem('bay_last_unit'); localStorage.removeItem('bay_last_convo'); }catch(_){}
   try{ window.scrollTo(0,0); }catch(_){}
 }
 function openUnit(i){
@@ -1566,6 +1569,8 @@ function openUnit(i){
   backUnitsEl.classList.add('on');
   drawConvos();
   render();
+  // remember where we are so a reload reopens here
+  try{ localStorage.setItem('bay_last_unit', String(i)); localStorage.setItem('bay_last_convo', String(convoIdx)); }catch(_){}
   try{ focusDrill(); }catch(_){}
 }
 
@@ -1607,6 +1612,13 @@ function applyConvo(){
     u.produce  = u.dialogue.map(d=>({ar:d[1],en:d[2]}));
     u.dictation= u.dialogue.map(d=>d[1]);
   }
+  // remember position (only while in a unit, not the picker)
+  try{
+    if(!pickerEl.classList.contains('on')){
+      localStorage.setItem('bay_last_unit', String(unit));
+      localStorage.setItem('bay_last_convo', String(convoIdx));
+    }
+  }catch(_){}
 }
 
 function drawConvos(){
@@ -1652,9 +1664,26 @@ loadProg().then(()=>{
     applyConvo();
     startSession();
   } else {
-    applyConvo();      // point u.dialogue at the selected conversation first
-    render();          // pre-build the unit view underneath
-    showPicker();      // ...but show the picker first
+    // reopen the last unit+conversation if we have one, else show the picker
+    let restored = false;
+    try{
+      const lu = localStorage.getItem('bay_last_unit');
+      const lc = localStorage.getItem('bay_last_convo');
+      if(lu !== null){
+        const ui = parseInt(lu,10);
+        if(ui>=0 && ui<DATA.length){
+          const ci = parseInt(lc,10);
+          openUnit(ui);
+          if(ci>=0){ convoIdx = ci; applyConvo(); drawConvos(); if(typeof drawSheetConvos==='function') drawSheetConvos(); render(); }
+          restored = true;
+        }
+      }
+    }catch(_){}
+    if(!restored){
+      applyConvo();      // point u.dialogue at the selected conversation first
+      render();          // pre-build the unit view underneath
+      showPicker();      // ...but show the picker first
+    }
   }
 });
 

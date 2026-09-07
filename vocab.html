@@ -118,6 +118,7 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
     <a href="dashboard.html">Home</a>
     <a class="active" href="vocab.html">Words</a>
     <a href="drills.html">Sentences</a><a href="verbs.html">Verbs</a><a href="connectors.html">Connectors</a>
+    <a href="settings.html">Settings</a>
     <a href="index.html" class="logout-link" onclick="logout();return false;">Log out</a>
   </div>
 </nav>
@@ -165,14 +166,6 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
         <a class="primary" href="drills.html">Practise speaking →</a>
         <a href="#" onclick="showTab('list');return false;">Browse the word list</a>
       </div>
-    </div>
-    <div class="pace">
-      New words a day:
-      <select id="paceSel" onchange="setNewPerDay(this.value)">
-        <option value="5">5</option><option value="8">8</option><option value="12">12</option>
-        <option value="20">20</option><option value="30">30</option>
-      </select>
-      — reviews always come first
     </div>
     <div class="reset">
       <button class="btn danger" onclick="resetProgress()">Reset all progress</button>

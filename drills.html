@@ -595,7 +595,7 @@ footer{border-top:1px solid var(--rule);padding:16px 28px 30px;font-size:12px;co
     <a class="active" href="drills.html">Sentences</a><a href="verbs.html">Verbs</a>
     <a href="connectors.html">Connectors</a>
     <a href="settings.html">Settings</a>
-    <a href="index.html" class="logout-link" onclick="logout();return false;">Log out</a>
+    <a href="login.html" class="logout-link" onclick="logout();return false;">Log out</a>
   </div>
 </nav>
 <header class="pagehead">
@@ -733,7 +733,7 @@ function rate(id,q){
   r.seen=(r.seen||0)+1;
   PROG.items[id]=r;
   PROG.today=(PROG.today||0)+1;
-  saveProg();drawStats();drawRail();
+  drawRail();
 }
 
 /* ── item index ─────────────────────────────────────────── */
@@ -754,16 +754,17 @@ function dueList(){
 }
 function unitProgress(u){
   const ids=INDEX.filter(it=>it.unit===u);
-  const known=ids.filter(it=>{const r=rec(it.id);return r&&r.box>=3}).length;
-  return{known,total:ids.length};
+  const covered=ids.filter(it=>
+    typeof Progress!=='undefined' ? Progress.hasSeen('d:'+it.id) : false).length;
+  return{known:covered, total:ids.length};
 }
 function drawStats(){
   const due=INDEX.filter(isDue).length;
   let learn=0,known=0;
   INDEX.forEach(it=>{const r=rec(it.id);if(!r)return;r.box>=3?known++:learn++});
   const el=document.getElementById('progrow');
-  if(el) el.innerHTML=`<div class="due"><b>${due}</b>due now</div><div><b>${learn}</b>learning</div>`+
-                      `<div><b>${known}</b>known</div><div><b>${PROG.today||0}</b>done today</div>`;
+  if(el) el.innerHTML=`<div><b>${INDEX.filter(it=>Progress.hasSeen('d:'+it.id)).length}</b>covered</div>`+
+                      `<div><b>${INDEX.length}</b>items</div>`;
 }
 
 /* ── text handling ──────────────────────────────────────── */
@@ -1024,17 +1025,14 @@ function taskBar(en,ar,hint){
               (hint?`<span class="t-hint">${hint}</span>`:'');
   return d;
 }
+/* Self-study: working an item records that you have covered it, nothing more.
+   Scheduling belongs to today's session and the daily word test. */
 function rateRow(id,onDone){
-  const d=document.createElement('div');d.className='rate';
-  d.innerHTML='<span class="label">Schedule</span>';
-  [['again','Again'],['good','Good'],['easy','Easy']].forEach(([q,lbl])=>{
-    const b=document.createElement('button');b.className='rb '+q;b.type='button';b.textContent=lbl;
-    b.onclick=()=>{rate(id,q);if(onDone)onDone(q)};
-    d.appendChild(b);
-  });
-  const r=rec(id);
-  if(r){const s=document.createElement('span');s.className='label';s.style.marginLeft='6px';
-    s.textContent='box '+r.box+' · due '+r.due;d.appendChild(s)}
+  if(typeof Progress!=='undefined') Progress.touch(id);
+  if(onDone) onDone('seen');
+  const d=document.createElement('div');
+  d.className='rate';
+  d.innerHTML='<span class="label">✓ covered</span>';
   return d;
 }
 function tappable(el,text){
@@ -1292,10 +1290,7 @@ function modeCount(m,u){
                         (m==='grammar'?(u.grammar||[]).length:0)));
   return (u[FIELD[m]]||[]).length;
 }
-function modeDue(m,u){
-  if(!FIELD[m]) return 0;
-  return INDEX.filter(it=>it.unit===u&&it.mode===m&&isDue(it)).length;
-}
+function modeDue(){ return 0; }   // this page shows coverage, not a schedule
 function drawRibbon(){
   const u=DATA[unit];
   rgroupsEl.innerHTML='';
@@ -1304,8 +1299,7 @@ function drawRibbon(){
     b.className='rgroup';b.type='button';b.setAttribute('role','tab');
     b.setAttribute('aria-selected',g.k===group);
     const due=g.modes.reduce((a,m)=>a+modeDue(m[0],u),0);
-    b.innerHTML=`<span class="ge">${g.en}</span><span class="ga">${g.ar}</span>`+
-                (due?`<span class="gdot" title="${due} due"></span>`:'');
+    b.innerHTML=`<span class="ge">${g.en}</span><span class="ga">${g.ar}</span>`;
     b.onclick=()=>{group=g.k;if(!g.modes.some(m=>m[0]===mode))mode=g.modes[0][0];render();focusDrill()};
     rgroupsEl.appendChild(b);
   });
@@ -1316,9 +1310,9 @@ function drawRibbon(){
     const b=document.createElement('button');
     b.className='rmode';b.type='button';b.setAttribute('role','tab');
     b.dataset.k=m[0];b.setAttribute('aria-selected',m[0]===mode);
-    const n=modeCount(m[0],u), d=modeDue(m[0],u);
+    const n=modeCount(m[0],u);
     b.innerHTML=`<span class="me">${m[2]}</span><span class="ma">${m[1]}</span>`+
-                (n?`<span class="cnt${d?' due':''}">${d?d+' due':n}</span>`:'');
+                (n?`<span class="cnt">${n}</span>`:'');
     b.onclick=()=>{mode=m[0];render();focusDrill()};
     rmodesEl.appendChild(b);
   });
@@ -1658,8 +1652,7 @@ backUnitsEl.addEventListener('click', showPicker);
   el.textContent = name? ('Signed in as '+name) : 'Account';
 })();
 
-loadProg().then(()=>{
-  drawStats();
+(typeof Progress!=='undefined'?Progress.init():Promise.resolve()).then(()=>{
   if(new URLSearchParams(location.search).get('start')==='1'){
     // a direct "start session" link skips the picker
     shellEl.classList.remove('hidden'); pickerEl.classList.remove('on');
@@ -1693,4 +1686,5 @@ loadProg().then(()=>{
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=1"></script>
+<script src="progress.js?v=1"></script>
 <script>requireLogin();</script>

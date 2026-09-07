@@ -3,174 +3,166 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Rafiq — your Arabic pal</title>
+
+<title>Rafiq — your Arabic study companion</title>
+<meta name="description" content="Free vocabulary practice, spoken conversations and drills for Arabic learners — whatever book or course you're studying. Audio, spaced repetition, and conversations that get you speaking, not just recognising.">
+
+<!-- link previews (WhatsApp, Discord, Facebook, X) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Rafiq — your Arabic study companion">
+<meta property="og:description" content="622 vocabulary words with audio, spaced repetition, and 36 spoken conversations. Free for any Arabic learner.">
+<meta property="og:image" content="icon-512.png">
+<meta property="og:locale" content="en_GB">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Rafiq — your Arabic study companion">
+<meta name="twitter:description" content="622 vocabulary words with audio, spaced repetition, and 36 spoken conversations. Free for any Arabic learner.">
+<meta name="twitter:image" content="icon-512.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css?v=900">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" content="#F1ECE0">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
+
 <style>
-.screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
-.wordmark{display:flex;align-items:center;justify-content:center;gap:14px}
-.word{font-family:var(--ar);direction:rtl;font-size:clamp(38px,8.5vw,58px);font-weight:600;line-height:1.6;padding:6px 0}
-/* the ر monogram, same mark as the nav on every other page */
-.mark{position:relative;flex:0 0 auto;width:clamp(46px,10vw,64px);height:clamp(46px,10vw,64px);
-  border-radius:clamp(12px,2.6vw,16px);background:var(--ink);display:inline-block}
-.mark::before{content:'ر';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  font-family:var(--ar);font-size:clamp(28px,6vw,40px);line-height:1;color:var(--paper);padding-bottom:5px}
-.mark::after{content:'';position:absolute;top:clamp(8px,1.8vw,11px);right:clamp(8px,1.8vw,11px);
-  width:clamp(7px,1.5vw,9px);height:clamp(7px,1.5vw,9px);border-radius:50%;background:var(--rubric)}
-.word span{color:var(--rubric)}
-.sub{font-family:var(--ar);direction:rtl;font-size:clamp(16px,3.4vw,21px);line-height:1.75;color:var(--verdigris);margin-top:12px}
-.card{background:var(--card);border:1px solid var(--rule);border-radius:6px;padding:32px 36px;margin-top:38px;width:min(380px,100%);text-align:left}
-.card .label{margin-bottom:20px;text-align:center}
-.field{margin-bottom:16px}
-.field label{font-size:11px;color:var(--ink-soft);display:block;margin-bottom:5px}
-.field input{width:100%;border:1px solid var(--rule);border-radius:3px;background:var(--paper);height:40px;padding:0 12px;font-family:var(--la);font-size:15px;color:var(--ink)}
-.card .btn{width:100%;margin-top:6px}
-.note{margin-top:16px;font-size:11px;color:var(--ink-soft);text-align:center;line-height:1.5}
-.msg{margin-top:14px;font-size:13px;text-align:center;line-height:1.5;display:none}
-.msg.show{display:block}
-.msg.err{color:var(--rubric)}
-.msg.ok{color:var(--verdigris)}
-.toggle{margin-top:18px;text-align:center;font-size:13px;color:var(--ink-soft)}
-.toggle a{color:var(--verdigris);cursor:pointer;text-decoration:underline}
-#nameField{display:none}
-.card.signup #nameField{display:block}
-.btn[disabled]{opacity:.6;cursor:default}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:16px 26px;border-bottom:1px solid var(--rule)}
+.topbar .brand{font-family:var(--ar);font-size:22px;font-weight:700;direction:rtl;text-decoration:none;color:var(--ink);display:inline-flex;align-items:center;gap:10px}
+.hero{max-width:900px;margin:0 auto;padding:56px 26px 34px;text-align:center}
+.hero .ar{font-family:var(--ar);direction:rtl;font-size:clamp(30px,6.4vw,48px);font-weight:600;line-height:1.6;color:var(--ink)}
+.hero .ar span{color:var(--rubric)}
+.hero h1{font-size:clamp(23px,4.2vw,33px);font-weight:700;margin-top:20px;line-height:1.3}
+.hero p.lede{color:var(--ink-soft);font-size:clamp(15px,2.2vw,17px);margin-top:14px;max-width:60ch;margin-inline:auto;line-height:1.65}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:28px}
+.cta .btn{height:46px;padding:0 26px;font-size:15px;display:inline-flex;align-items:center}
+.cta .btn.ghost{background:transparent;color:var(--verdigris);border:1px solid var(--verdigris)}
+.stats{display:flex;justify-content:center;flex-wrap:wrap;margin:38px auto 0;max-width:760px;border:1px solid var(--rule);border-radius:8px;overflow:hidden;background:var(--card)}
+.stat{flex:1 1 160px;padding:18px 14px;text-align:center;border-right:1px solid var(--rule)}
+.stat:last-child{border-right:none}
+.stat b{display:block;font-size:24px;font-weight:700;color:var(--verdigris)}
+.stat span{font-size:12px;color:var(--ink-soft);margin-top:3px;display:block}
+.section{max-width:900px;margin:0 auto;padding:44px 26px}
+.section h2{font-size:22px;font-weight:700;margin-bottom:6px}
+.section > p{color:var(--ink-soft);font-size:15px;max-width:62ch;line-height:1.65}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:16px;margin-top:24px}
+.lcard{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:22px}
+.lcard .ci{font-family:var(--ar);direction:rtl;font-size:26px;color:var(--rubric);line-height:1}
+.lcard h3{font-size:16px;font-weight:600;margin-top:10px}
+.lcard p{font-size:13.5px;color:var(--ink-soft);margin-top:6px;line-height:1.6}
+.note{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--gold);border-radius:6px;padding:18px 20px;margin-top:26px}
+.note p{font-size:13.5px;color:var(--ink-soft);line-height:1.65}
+footer.land{border-top:1px solid var(--rule);padding:26px;text-align:center;color:var(--ink-soft);font-size:12.5px;line-height:1.7}
 </style>
 </head>
 <body>
-<main class="screen">
-  <div class="wordmark">
-    <span class="mark" aria-hidden="true"></span>
-    <span class="word">رَفِيق</span>
+
+<div class="topbar">
+  <a class="brand" href="index.html"><span class="bmark"></span>رَفِيق</a>
+  <a class="btn" href="login.html" style="height:38px;padding:0 18px;font-size:14px;display:inline-flex;align-items:center">Sign in</a>
+</div>
+
+<header class="hero">
+  <div class="ar">رَفِيقُكَ فِي تَعَلُّمِ <span>الْعَرَبِيَّةِ</span></div>
+  <h1>Your companion for learning Arabic</h1>
+  <p class="lede">
+    Rafiq helps you learn and remember Arabic vocabulary and sentences — with spoken audio,
+    spaced repetition that brings words back just before you forget them, and conversations
+    to practise saying full sentences aloud. Works alongside any book or course.
+  </p>
+  <div class="cta">
+    <a class="btn" href="login.html">Create a free account</a>
+    <a class="btn ghost" href="login.html">Sign in</a>
   </div>
-  <div class="sub">رَفِيقُكَ فِي تَعَلُّمِ الْعَرَبِيَّةِ</div>
-  <form class="card" id="authForm">
-    <div class="label" id="formTitle">Sign in to continue</div>
-    <div class="field" id="nameField"><label for="nm">Your name</label><input id="nm" type="text" placeholder="What should we call you?" autocomplete="given-name"></div>
-    <div class="field"><label for="email">Email</label><input id="email" type="email" placeholder="you@example.com" autocomplete="email" required></div>
-    <div class="field"><label for="pw">Password</label><input id="pw" type="password" placeholder="••••••••" autocomplete="current-password" required></div>
-    <button class="btn" type="submit" id="submitBtn">Sign in</button>
-    <div class="msg" id="msg"></div>
-    <div class="toggle" id="toggle">New here? <a id="toggleLink">Create an account</a></div>
-  </form>
-</main>
+</header>
 
-<!-- Supabase client library -->
+<div class="stats">
+  <div class="stat"><b>622</b><span>vocabulary words</span></div>
+  <div class="stat"><b>1,018</b><span>spoken audio clips</span></div>
+  <div class="stat"><b>36</b><span>conversations</span></div>
+  <div class="stat"><b>Free</b><span>no ads, no cost</span></div>
+</div>
+
+<section class="section">
+  <h2>What's inside</h2>
+  <p>Four sections you can use together or on their own.</p>
+  <div class="cards">
+    <div class="lcard">
+      <div class="ci">مُفْرَدات</div>
+      <h3>Vocabulary</h3>
+      <p>All 622 words across 16 units, every one with audio. A daily practice session and a
+         multiple-choice test, both scheduled by spaced repetition so words return just as
+         they start to fade.</p>
+    </div>
+    <div class="lcard">
+      <div class="ci">جُمَل</div>
+      <h3>Sentences</h3>
+      <p>36 conversations across 12 units. Listen, repeat aloud, then rebuild each line from
+         memory — closing the gap between knowing words and actually saying them.</p>
+    </div>
+    <div class="lcard">
+      <div class="ci">أَفْعال</div>
+      <h3>Verbs</h3>
+      <p>Verb patterns and conjugation practice, drilled the same way — little and often,
+         rather than memorised in one sitting.</p>
+    </div>
+    <div class="lcard">
+      <div class="ci">رَوابِط</div>
+      <h3>Connectors</h3>
+      <p>The joining words that turn a list of facts into a paragraph, with examples showing
+         each one in use.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <h2>How it works</h2>
+  <p>
+    Every word and sentence you answer is scheduled to come back at a widening interval — a day,
+    then a few days, then a week, then longer. Get something wrong and it returns sooner. This is
+    spaced repetition, and it is the most reliable way we know of moving vocabulary into long-term
+    memory. Your daily load is capped so you are never faced with a wall of reviews, and the number
+    of new words a day adjusts to the level you choose when you sign up.
+  </p>
+  <div class="note">
+    <p>
+      <b>Rafiq is a companion, not a replacement.</b> It doesn't teach Arabic from scratch or
+      follow any one curriculum — it gives you a faster way to drill the vocabulary and sentences
+      you're already learning, whoever you're learning them from. Vowel marks and model answers
+      are a study aid — worth checking against your teacher, especially case endings.
+    </p>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Getting started</h2>
+  <p>
+    Create a free account and you will be asked three quick questions about your level so the pace
+    suits you. Your progress saves to your account, so you can study on your phone and pick up on
+    your laptop. There is no cost and no advertising.
+  </p>
+  <div class="cta" style="justify-content:flex-start">
+    <a class="btn" href="login.html">Create a free account</a>
+  </div>
+</section>
+
+<footer class="land">
+  Rafiq — رَفِيق · a study companion for learners of Arabic.<br>
+  Built by students, for students.
+</footer>
+
+<!-- already signed in? go straight to the dashboard -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js?v=5"></script>
 <script>
-// --- your project's SAFE public values ---
-const SUPABASE_URL = 'https://gaajfahtrbdybjuunfhe.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_nFs-UJyKpTsCtHRn4WZJGg_c14-cM4e';
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-let mode = 'signin'; // or 'signup'
-const form   = document.getElementById('authForm');
-const card   = form;
-const title  = document.getElementById('formTitle');
-const btn    = document.getElementById('submitBtn');
-const toggle = document.getElementById('toggle');
-const msgEl  = document.getElementById('msg');
-
-// If already logged in, skip straight to the dashboard
-(async () => {
-  const { data } = await sb.auth.getSession();
-  if (data && data.session) window.location.href = 'dashboard.html';
-})();
-
-function setMode(m){
-  mode = m;
-  if(m==='signup'){
-    card.classList.add('signup');
-    title.textContent = 'Create your account';
-    btn.textContent = 'Create account';
-    toggle.innerHTML = 'Already have an account? <a id="toggleLink">Sign in</a>';
-    document.getElementById('pw').setAttribute('autocomplete','new-password');
-  } else {
-    card.classList.remove('signup');
-    title.textContent = 'Sign in to continue';
-    btn.textContent = 'Sign in';
-    toggle.innerHTML = 'New here? <a id="toggleLink">Create an account</a>';
-    document.getElementById('pw').setAttribute('autocomplete','current-password');
-  }
-  showMsg('');
-}
-
-// event delegation: one listener on the container handles the link
-// no matter how many times we rewrite the inner HTML
-toggle.addEventListener('click', (e)=>{
-  if(e.target && e.target.id==='toggleLink'){
-    setMode(mode==='signin' ? 'signup' : 'signin');
-  }
-});
-
-function showMsg(text, kind){
-  msgEl.textContent = text || '';
-  msgEl.className = 'msg' + (text ? ' show '+(kind||'err') : '');
-}
-
-// friendlier wording for the common Supabase errors
-function friendly(err){
-  const m = (err && err.message || '').toLowerCase();
-  if(m.includes('invalid login')) return 'That email and password don\u2019t match. Try again, or create an account.';
-  if(m.includes('already registered')||m.includes('already been registered')) return 'That email already has an account. Try signing in instead.';
-  if(m.includes('password should be at least')) return 'Password is too short — use at least 6 characters.';
-  if(m.includes('unable to validate email')||m.includes('invalid email')) return 'That email doesn\u2019t look right — please check it.';
-  if(m.includes('email not confirmed')) return 'Please confirm your email first (check your inbox), then sign in.';
-  return err && err.message ? err.message : 'Something went wrong. Please try again.';
-}
-
-document.getElementById('toggleLink');
-
-form.addEventListener('submit', async (e)=>{
-  e.preventDefault();
-  const email = document.getElementById('email').value.trim();
-  const pw    = document.getElementById('pw').value;
-  const name  = (document.getElementById('nm').value||'').trim();
-  if(!email || !pw){ showMsg('Please enter your email and password.'); return; }
-
-  btn.disabled = true;
-  showMsg('');
-
-  try {
-    if(mode==='signup'){
-      btn.textContent = 'Creating…';
-      const { data, error } = await sb.auth.signUp({
-        email, password: pw,
-        options: { data: { name: name || null } }
-      });
-      if(error){ showMsg(friendly(error)); btn.disabled=false; btn.textContent='Create account'; return; }
-      // If email confirmation is OFF, a session exists now → go straight in.
-      if(data.session){
-        try{ if(name) localStorage.setItem('bay_name', name); }catch(_){}
-        window.location.href = 'dashboard.html';
-      } else {
-        // confirmation is ON: tell them to check their email
-        showMsg('Account created — check your email to confirm, then sign in.', 'ok');
-        setTimeout(()=> setMode('signin'), 400);
-        btn.disabled=false; btn.textContent='Create account';
-      }
-    } else {
-      btn.textContent = 'Signing in…';
-      const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
-      if(error){ showMsg(friendly(error)); btn.disabled=false; btn.textContent='Sign in'; return; }
-      // keep the display name handy for the dashboard greeting
-      const nm = (data.user && data.user.user_metadata && data.user.user_metadata.name) || '';
-      try{ if(nm) localStorage.setItem('bay_name', nm); }catch(_){}
-      window.location.href = 'dashboard.html';
+(async ()=>{
+  try{
+    if(typeof sb!=='undefined' && sb){
+      const { data } = await sb.auth.getSession();
+      if(data && data.session) window.location.href='dashboard.html';
     }
-  } catch(err){
-    showMsg(friendly(err)); btn.disabled=false;
-    btn.textContent = mode==='signup' ? 'Create account' : 'Sign in';
-  }
-});
+  }catch(_){}
+})();
 </script>
 </body>
 </html>

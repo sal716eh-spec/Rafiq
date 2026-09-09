@@ -308,13 +308,23 @@ function isDoneToday(dateStr){ return dateStr === todayISO(); }
 // --- Study-day counter (drives the 5->30 ramp). Counts distinct days studied. ---
 const SDAY_COUNT_KEY = 'bay_study_days';
 const SDAY_LAST_KEY  = 'bay_study_last';
+// Read-only: returns the current study-day count WITHOUT changing anything.
+// (Used by dailyCap on every queue build, so it must have no side effects.)
 function studyDayNumber(){
   let n = parseInt(localStorage.getItem(SDAY_COUNT_KEY),10);
-  if(!(n>0)) n = 0;
+  if(!(n>0)) n = 1;               // day 1 minimum, never 0
+  return n;
+}
+
+// Called ONCE when a study session actually starts. If today is a new day,
+// increment the study-day counter (and sync it). This is the only place the
+// counter changes — so reloads never move it.
+function touchStudyDay(){
   const last = localStorage.getItem(SDAY_LAST_KEY);
   const today = todayISO();
   if(last !== today){
-    // first time studying today -> it's a new study day
+    let n = parseInt(localStorage.getItem(SDAY_COUNT_KEY),10);
+    if(!(n>0)) n = 0;
     n = n + 1;
     try{
       localStorage.setItem(SDAY_COUNT_KEY, String(n));
@@ -322,7 +332,6 @@ function studyDayNumber(){
     }catch(_){}
     if(cloudOn && typeof cloudSaveStudyDays==='function') cloudSaveStudyDays(n, today);
   }
-  return n;
 }
 
 // ---- Cloud startup: load this user's progress, migrate local on first login ----
@@ -376,6 +385,9 @@ async function initCloud(){
       }
     }
   } catch(_){}
+
+  // now that cloud state is loaded, count today as a study day (once)
+  touchStudyDay();
 
   // refresh the UI now that real data is in
   startTest();
@@ -758,6 +770,9 @@ startTest();
 renderList();
 // then load from the cloud (async) — refreshes the UI when real data arrives
 initCloud();
+// fallback: if we're not logged in / cloud never loads, still count the study day
+// (initCloud handles the logged-in case; this covers offline/local-only use)
+setTimeout(()=>{ if(!cloudOn) { touchStudyDay(); } }, 2500);
 </script>
 
 <div class="acctbar">

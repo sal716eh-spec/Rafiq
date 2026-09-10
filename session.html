@@ -43,6 +43,8 @@
 .opt.right{background:var(--verdigris);border-color:var(--verdigris);color:#fff}
 .opt.wrong{background:var(--rubric);border-color:var(--rubric);color:#fff}
 .why{font-size:12.5px;color:var(--ink-soft);margin-top:12px;border-left:2px solid var(--gold);padding-left:11px}
+.tr{font-size:13px;color:var(--ink);margin-top:8px;padding-top:8px;border-top:1px dashed var(--rule)}
+
 .good{font-family:var(--ar);font-size:24px;direction:rtl;text-align:right;line-height:1.9;color:var(--verdigris);cursor:pointer}
 .vprompt{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 10px;justify-content:center}
 .vp-pron,.vp-verb{font-family:var(--ar);font-size:26px;direction:rtl;line-height:1.75}
@@ -50,7 +52,29 @@
   border-radius:4px;padding:3px 10px;line-height:1.7}
 .ansrow{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-height:1.7;direction:rtl;text-align:right;
-  background:var(--bg);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;color:var(--ink)}
+  background:var(--bg);border:1px solid var(--rule);border-radius:4px;padding:10px 34px 10px 12px;color:var(--ink)}
+.ansrow{position:relative}
+.ansrow::after{content:'⌨';position:absolute;left:20px;top:50%;transform:translateY(-50%);
+  font-size:15px;color:var(--ink-soft);pointer-events:none}
+/* Arabic virtual keyboard (arkb.js) */
+.arkb{position:absolute;z-index:200;background:var(--card);border:1px solid var(--rule);border-radius:10px;
+  box-shadow:0 10px 28px -10px rgba(23,38,43,.4);padding:10px;display:none;max-width:360px}
+.arkb.on{display:block}
+.arkb-row{display:flex;gap:4px;margin-bottom:4px;justify-content:center}
+.arkb-key{font-family:var(--ar);font-size:17px;line-height:1;min-width:30px;min-height:38px;
+  border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);cursor:pointer;padding:0 2px}
+.arkb-key:active{background:var(--verdigris);color:#fff;border-color:var(--verdigris)}
+.arkb-harakat{display:flex;gap:4px;margin:6px 0;flex-wrap:wrap;justify-content:center;
+  border-top:1px dashed var(--rule);padding-top:8px}
+.arkb-hk{font-size:15px;color:var(--rubric);min-width:34px}
+.arkb-bottom{display:flex;gap:6px;margin-top:4px}
+.arkb-wide{flex:1;font-family:var(--la);font-size:12.5px;min-height:38px}
+@media (max-width:860px){
+  .arkb{position:fixed;left:0;right:0;bottom:0;top:auto;z-index:200;max-width:none;
+    border-radius:14px 14px 0 0;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  .arkb-key{min-width:8.6vw;min-height:42px;font-size:18px}
+}
+
 .diff{font-family:var(--ar);font-size:21px;direction:rtl;text-align:right;line-height:1.95;margin-top:12px}
 .diff .ok{color:var(--verdigris)} .diff .no{color:var(--rubric);text-decoration:line-through}
 .score{font-family:var(--ut);font-size:11px;color:var(--ink-soft);margin-top:8px}
@@ -65,6 +89,19 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 .tally div{font-family:var(--ut);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
 .tally b{display:block;font-size:22px;color:var(--ink);letter-spacing:0;margin-bottom:2px}
 .nextrow{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.focus-head{font-family:var(--ut);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-soft);margin:22px 0 10px;text-align:center}
+.focus-ok{font-size:14px;color:var(--verdigris);text-align:center;margin:18px 0 22px}
+.focus-list{display:flex;flex-direction:column;gap:8px;max-width:420px;margin:0 auto 22px}
+.focus-row{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--rule);
+  border-radius:8px;background:var(--card);text-decoration:none;color:var(--ink)}
+.focus-row:hover{border-color:var(--verdigris)}
+.focus-ar{font-family:var(--ar);font-size:19px;direction:rtl;line-height:1.6;color:var(--rubric);flex:0 0 auto}
+.focus-txt{flex:1;display:flex;flex-direction:column;text-align:left;min-width:0}
+.focus-txt b{font-size:14px}
+.focus-txt span{font-size:12px;color:var(--ink-soft)}
+.focus-go{font-size:12.5px;color:var(--verdigris);white-space:nowrap;flex:0 0 auto}
+@media (max-width:860px){ .focus-row{padding:11px 12px} }
 .nextrow a,.nextrow button{padding:12px 20px;border:1px solid var(--rule);border-radius:5px;background:var(--card);
   color:var(--ink);text-decoration:none;font-family:var(--la);font-size:14px;cursor:pointer}
 .nextrow .primary{background:var(--verdigris);border-color:var(--verdigris);color:#fff}
@@ -107,6 +144,8 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=1"></script>
 <script src="progress.js?v=1"></script>
+<script src="arkb.js?v=1" defer></script>
+<script src="translations.js?v=1"></script>
 <script>requireLogin();</script>
 <script src="vocab-data.js?v=900"></script>
 <script src="toolkit-data.js?v=900"></script>
@@ -195,6 +234,7 @@ function answerRow(target){
 /* ── session ── */
 const LEN=(()=>{const v=parseInt(new URLSearchParams(location.search).get('n'),10);return [8,12,20].includes(v)?v:12})();
 let Q=[], pos=0, tally={again:0,good:0,easy:0};
+let kindWrong={words:0,sentences:0,verbs:0,links:0};
 const panel=document.getElementById('panel');
 document.getElementById('quit').onclick=()=>{pos=Q.length;render()};
 
@@ -206,11 +246,11 @@ function nextRow(){
   b.onclick=()=>{setTimeout(()=>{pos++;render();window.scrollTo(0,0)},120)};
   d.appendChild(b);return d;
 }
-function rateRow(onPick){
+function rateRow(onPick,kind){
   const d=document.createElement('div');d.className='rate';
   [['again','Again'],['good','Good'],['easy','Easy']].forEach(([q,l])=>{
     const b=document.createElement('button');b.className='rb';b.textContent=l;
-    b.onclick=()=>{tally[q]++;onPick(q);setTimeout(()=>{pos++;render();window.scrollTo(0,0)},220)};
+    b.onclick=()=>{tally[q]++;if(q==='again'&&kind)kindWrong[kind]++;onPick(q);setTimeout(()=>{pos++;render();window.scrollTo(0,0)},220)};
     d.appendChild(b)});
   return d}
 
@@ -227,6 +267,28 @@ function render(){
   panel.appendChild(from);
   ({word:vWord,verb:vVerb,link:vLink}[it.mode]||vDrill)(it);
 }
+/* Where to send someone for each section, and what to call it on screen. */
+const FOCUS_PAGE={
+  words:    {href:'vocab.html',       label:'Words',    ar:'مُفْرَدات'},
+  sentences:{href:'drills.html',      label:'Sentences',ar:'جُمَل'},
+  verbs:    {href:'verbs.html',       label:'Verbs',    ar:'أَفْعال'},
+  links:    {href:'connectors.html',  label:'Joining words',ar:'رَوابِط'}
+};
+function focusHTML(){
+  const entries=Object.entries(kindWrong).filter(([k,n])=>n>0).sort((a,b)=>b[1]-a[1]);
+  if(!entries.length){
+    return '<div class="focus-ok">Nothing tripped you up today — every section held up.</div>';
+  }
+  const rows=entries.slice(0,3).map(([k,n])=>{
+    const p=FOCUS_PAGE[k];
+    return `<a class="focus-row" href="${p.href}">
+      <span class="focus-ar">${p.ar}</span>
+      <span class="focus-txt"><b>${p.label}</b><span>${n} item${n===1?'':'s'} you found tricky</span></span>
+      <span class="focus-go">Review →</span>
+    </a>`;
+  }).join('');
+  return `<div class="focus-head">Worth another look</div><div class="focus-list">${rows}</div>`;
+}
 function finish(){
   document.getElementById('count').textContent=Q.length+' / '+Q.length;
   document.getElementById('bar').style.width='100%';
@@ -234,6 +296,7 @@ function finish(){
   panel.innerHTML=`<div class="done"><div class="big">أَحْسَنْت</div><h2>Session complete</h2>
     <p>${n} item${n===1?'':'s'} practised across the four sections.</p>
     <div class="tally"><div><b>${tally.easy}</b>easy</div><div><b>${tally.good}</b>good</div><div><b>${tally.again}</b>again</div></div>
+    ${focusHTML()}
     <div class="nextrow"><a class="primary" href="session.html?n=${LEN}">Another session</a>
     <a href="dashboard.html">Back to home</a>
     <button class="logout-link" type="button">Sign out</button></div></div>`;
@@ -248,7 +311,7 @@ function vWord(it){
   const rev=document.createElement('div');rev.className='reveal';rev.style.display='none';
   rev.innerHTML=`<div class="en">${it.w.en}</div><div class="tr">${it.w.tr}</div>`;
   btn.onclick=()=>{rev.style.display='block';btn.style.display='none';say(it.w.ar,ar);
-    c.appendChild(rateRow(q=>Progress.grade(ID.word(it.w),q)))};
+    c.appendChild(rateRow(q=>Progress.grade(ID.word(it.w),q),it.kind))};
   c.appendChild(btn);c.appendChild(rev);panel.appendChild(c);
 }
 function vVerb(it){
@@ -275,14 +338,18 @@ function vLink(it){
   draw(null);c.appendChild(q);
   const ob=document.createElement('div');ob.className='opts';
   const why=document.createElement('div');why.className='why';why.style.display='none';why.textContent=t.w;
+  const tr=document.createElement('div');tr.className='tr';tr.style.display='none';
+  if(window.RAFIQ_TR) tr.textContent=RAFIQ_TR.trOf(t.q.replace('___',t.o[t.a]))||'';
   t.o.forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;
     b.onclick=()=>{if(c.dataset.done)return;c.dataset.done='1';
       const ok=j===t.a;b.classList.add(ok?'right':'wrong');
       if(!ok)ob.children[t.a].classList.add('right');
-      draw(t.o[t.a]);why.style.display='block';say(t.q.replace('___',t.o[t.a]),q);
+      if(!ok)kindWrong.links++;
+      draw(t.o[t.a]);why.style.display='block';if(tr.textContent)tr.style.display='block';
+      say(t.q.replace('___',t.o[t.a]),q);
       c.appendChild(nextRow())};
     ob.appendChild(b)});
-  c.appendChild(ob);c.appendChild(why);panel.appendChild(c);
+  c.appendChild(ob);c.appendChild(why);c.appendChild(tr);panel.appendChild(c);
 }
 function vDrill(it){
   const c=document.createElement('div');c.className='card';
@@ -294,14 +361,17 @@ function vDrill(it){
     draw(null);c.appendChild(q);
     const ob=document.createElement('div');ob.className='opts';
     const why=document.createElement('div');why.className='why';why.style.display='none';why.textContent=d.w;
+    const tr=document.createElement('div');tr.className='tr';tr.style.display='none';
+    if(window.RAFIQ_TR) tr.textContent=RAFIQ_TR.trOf(d.q.replace('___',d.o[d.a]))||'';
     d.o.forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;
       b.onclick=()=>{if(c.dataset.done)return;c.dataset.done='1';
         const ok=j===d.a;b.classList.add(ok?'right':'wrong');
         if(!ok)ob.children[d.a].classList.add('right');
-        draw(d.o[d.a]);why.style.display='block';say(d.q.replace('___',d.o[d.a]),q);
-        c.appendChild(rateRow(q2=>Progress.grade(ID.drill(it),q2)))};
+        draw(d.o[d.a]);why.style.display='block';if(tr.textContent)tr.style.display='block';
+        say(d.q.replace('___',d.o[d.a]),q);
+        c.appendChild(rateRow(q2=>Progress.grade(ID.drill(it),q2),it.kind))};
       ob.appendChild(b)});
-    c.appendChild(ob);c.appendChild(why);
+    c.appendChild(ob);c.appendChild(why);c.appendChild(tr);
   } else if(it.mode==='fix'){
     c.appendChild(taskBar('Find the mistake and correct it','صَحِّحِ الْخَطَأَ'));
     const bad=document.createElement('div');bad.className='qar';bad.style.color='var(--rubric)';bad.textContent=d.bad;
@@ -310,8 +380,9 @@ function vDrill(it){
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=d.good;box.appendChild(tappable(g,d.good));
     const w=document.createElement('div');w.className='why';w.textContent=d.w;box.appendChild(w);
+    if(window.RAFIQ_TR){const tr=RAFIQ_TR.trOf(d.good);if(tr){const trEl=document.createElement('div');trEl.className='tr';trEl.textContent=tr;box.appendChild(trEl);}}
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.good,g);
-      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q)))};
+      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q),it.kind))};
     c.appendChild(btn);c.appendChild(box);
   } else if(it.mode==='transform'){
     c.appendChild(taskBar(d.task[1],d.task[0]));
@@ -320,8 +391,9 @@ function vDrill(it){
     const btn=document.createElement('button');btn.className='btn';btn.textContent='Check';btn.style.cssText='width:100%;margin-top:14px';
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=d.ans;box.appendChild(tappable(g,d.ans));
+    if(window.RAFIQ_TR){const trT=RAFIQ_TR.trOf(d.ans);if(trT){const trEl=document.createElement('div');trEl.className='tr';trEl.textContent=trT;box.appendChild(trEl);}}
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.ans,g);
-      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q)))};
+      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q),it.kind))};
     c.appendChild(btn);c.appendChild(box);
   } else if(it.mode==='build'){
     c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
@@ -332,7 +404,7 @@ function vDrill(it){
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=target;box.appendChild(tappable(g,target));
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(target,g);
-      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q)))};
+      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q),it.kind))};
     c.appendChild(btn);c.appendChild(box);
   } else {                                   // produce
     c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
@@ -342,7 +414,7 @@ function vDrill(it){
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=d.ar;box.appendChild(tappable(g,d.ar));
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.ar,g);
-      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q)))};
+      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q),it.kind))};
     c.appendChild(btn);c.appendChild(box);
   }
   panel.appendChild(c);

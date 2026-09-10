@@ -70,6 +70,7 @@
 .opt.right{background:var(--verdigris);border-color:var(--verdigris);color:#fff}
 .opt.wrong{background:var(--rubric);border-color:var(--rubric);color:#fff}
 .why{font-size:12.5px;color:var(--ink-soft);margin-top:12px;border-left:2px solid var(--gold);padding-left:11px}
+.tr{font-size:13px;color:var(--ink);margin-top:8px;padding-top:8px;border-top:1px dashed var(--rule)}
 .ansrow{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
 input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-height:1.7;direction:rtl;text-align:right;
   background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;color:var(--ink)}
@@ -148,6 +149,7 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 </nav>
 
 <script src="toolkit-data.js?v=900"></script>
+<script src="translations.js?v=1"></script>
 <script>
 (async function whoAmI(){
   const el=document.getElementById('whoami'); if(!el) return;
@@ -281,14 +283,16 @@ function vEx(){
     draw(null);c.appendChild(q);
     const ob=document.createElement('div');ob.className='opts';
     const why=document.createElement('div');why.className='why';why.style.display='none';why.textContent=t.w;
+    const tr=document.createElement('div');tr.className='tr';tr.style.display='none';
+    if(window.RAFIQ_TR) tr.textContent=RAFIQ_TR.trOf(t.q.replace('___',t.o[t.a]))||'';
     t.o.forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.type='button';b.textContent=o;
       b.onclick=()=>{if(c.dataset.done)return;c.dataset.done='1';
         const ok=j===t.a;b.classList.add(ok?'right':'wrong');
         if(!ok)ob.children[t.a].classList.add('right');
-        draw(t.o[t.a]);why.style.display='block';
+        draw(t.o[t.a]);why.style.display='block';if(tr.textContent)tr.style.display='block';
         say(t.q.replace('___',t.o[t.a]),q)};
       ob.appendChild(b)});
-    c.appendChild(ob);c.appendChild(why);panel.appendChild(c)});
+    c.appendChild(ob);c.appendChild(why);c.appendChild(tr);panel.appendChild(c)});
 }
 if('speechSynthesis' in window) speechSynthesis.onvoiceschanged=()=>{};
 render();

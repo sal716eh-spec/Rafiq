@@ -207,7 +207,7 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
   <section id="panelList" class="panel">
     <div class="filters">
       <div class="search"><input id="searchBox" type="text" placeholder="Search Arabic, English or transliteration…" oninput="renderList()"></div>
-      <select id="unitFilter" onchange="renderList()"><option value="">All 16 units</option></select>
+      <select id="unitFilter" onchange="renderList()"><option value="">All units</option></select>
     </div>
     <div class="summary" id="listSummary"></div>
     <table>
@@ -757,9 +757,15 @@ function renderList(){
 // populate the unit filter and the pace control
 (function initControls(){
   const sel=document.getElementById('unitFilter');
-  [...new Set(VOCAB.map(w=>w.unit))].sort((a,b)=>a-b).forEach(u=>{
+  // numeric units first (1..16) in order, then Tamhidi ("T") last
+  const units=[...new Set(VOCAB.map(w=>w.unit))].sort((a,b)=>{
+    const na=parseInt(a,10), nb=parseInt(b,10);
+    if(isNaN(na)) return 1; if(isNaN(nb)) return -1; return na-nb;
+  });
+  units.forEach(u=>{
     const n=VOCAB.filter(w=>w.unit===u).length;
-    const o=document.createElement('option'); o.value=u; o.textContent='Unit '+u+' ('+n+')'; sel.appendChild(o);
+    const label = (u==='T') ? 'Tamhidi (preparatory) ('+n+')' : 'Unit '+u+' ('+n+')';
+    const o=document.createElement('option'); o.value=u; o.textContent=label; sel.appendChild(o);
   });
   const p=document.getElementById('paceSel'); if(p) p.value=String(newPerDay());
 })();

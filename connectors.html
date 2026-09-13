@@ -211,14 +211,14 @@ function answerRow(target){
 
 const TABS=[['ref','Reference','المَرْجِع'],['ex','Practise','التَّدْرِيب']];
 const qs=new URLSearchParams(location.search);
-let tab=TABS.some(t=>t[0]===qs.get('tab'))?qs.get('tab'):'ref';
+let tab=TABS.some(t=>t[0]===qs.get('tab'))?qs.get('tab'):(function(){try{const s=localStorage.getItem('bay_conn_tab');return TABS.some(t=>t[0]===s)?s:'ref';}catch(_){return 'ref';}})();
 const panel=document.getElementById('panel');
 
 function render(){
   const tabsEl=document.getElementById('tabs');tabsEl.innerHTML='';
   TABS.forEach(([k,en])=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','tab');
     b.setAttribute('aria-selected',k===tab);b.textContent=en;
-    b.onclick=()=>{tab=k;render()};tabsEl.appendChild(b)});
+    b.onclick=()=>{tab=k;try{localStorage.setItem('bay_conn_tab',k)}catch(_){}render()};tabsEl.appendChild(b)});
   panel.innerHTML='';
   (tab==='ref'?vRef:vEx)();
 }

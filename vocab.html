@@ -197,8 +197,7 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
       <h2>Test complete</h2>
       <p id="qScoreMsg">—</p>
       <div class="next">
-        <a class="primary" href="#" onclick="startQuiz();return false;">Test again</a>
-        <a href="#" onclick="showTab('test');return false;">Back to practise</a>
+        <a class="primary" href="#" onclick="showTab('test');return false;">Back to practise</a>
       </div>
     </div>
   </section>
@@ -424,16 +423,15 @@ function seededShuffle(arr, seed){
 
 function buildQueue(){
   const t = today();
-  const cap = dailyCap();
-  // 1) due reviews first — shuffled DETERMINISTICALLY for today, so the set and
-  //    order stay identical on every reload during the same day.
+  const reviewCap = dailyCap();   // the ramp governs REVIEWS only (5->30 over study days)
+  // 1) due reviews — up to the ramped cap, deterministically shuffled for today
+  //    so the set and order stay identical on every reload during the same day.
   const due = VOCAB.filter(w => progress[w.id].box>0 && progress[w.id].due <= t);
-  const shuffled = seededShuffle(due, t);            // seed = today's day-number
-  const reviews = shuffled.slice(0, cap);            // never more than the cap
-  // 2) new words fill whatever space is left, up to the pace, in book order
-  const room = Math.max(0, cap - reviews.length);
-  const newAllowed = Math.min(newMax(), room);
-  const fresh = VOCAB.filter(w => progress[w.id].box===0).slice(0, newAllowed);
+  const shuffled = seededShuffle(due, t);
+  const reviews = shuffled.slice(0, reviewCap);
+  // 2) new words are ADDED ON TOP — independent of the review cap. The pace
+  //    setting only controls how many NEW words, and never limits reviews.
+  const fresh = VOCAB.filter(w => progress[w.id].box===0).slice(0, newMax());
   queue = reviews.concat(fresh);
 }
 function counts(){
@@ -452,6 +450,7 @@ function showTab(which){
   document.getElementById('panelTest').classList.toggle('on', which==='test');
   document.getElementById('panelQuiz').classList.toggle('on', which==='quiz');
   document.getElementById('panelList').classList.toggle('on', which==='list');
+  try{ localStorage.setItem('bay_vocab_tab', which); }catch(_){}   // remember for reload
   if(which==='list') renderList();
   if(which==='quiz') startQuiz();
 }
@@ -789,6 +788,11 @@ function renderList(){
 if('speechSynthesis' in window){ speechSynthesis.onvoiceschanged = syncAudioUI; syncAudioUI(); setTimeout(syncAudioUI,600); }
 startTest();
 renderList();
+// restore the tab the user was last on (Daily practise / Daily test / Full list)
+try{
+  const savedTab = localStorage.getItem('bay_vocab_tab');
+  if(savedTab && savedTab!=='test'){ showTab(savedTab); }
+}catch(_){}
 // then load from the cloud (async) — refreshes the UI when real data arrives
 initCloud();
 // fallback: if we're not logged in / cloud never loads, still count the study day

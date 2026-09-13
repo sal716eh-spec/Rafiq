@@ -1342,7 +1342,7 @@ function drawRibbon(){
     const n=modeCount(m[0],u);
     b.innerHTML=`<span class="me">${m[2]}</span><span class="ma">${m[1]}</span>`+
                 (n?`<span class="cnt">${n}</span>`:'');
-    b.onclick=()=>{mode=m[0];render();focusDrill()};
+    b.onclick=()=>{mode=m[0];try{localStorage.setItem('bay_drills_mode',m[0])}catch(_){}render();focusDrill()};
     rmodesEl.appendChild(b);
   });
 }
@@ -1588,6 +1588,8 @@ function openUnit(i){
   unit = i;
   convoIdx = 0;                  // start each unit on its first conversation
   applyConvo();
+  // restore the drill type the user was last on (Listen/Build/Grammar/Speak)
+  try{ const sm=localStorage.getItem('bay_drills_mode'); if(sm) mode=sm; }catch(_){}
   if(mode==='review') mode='dialogue';
   pickerEl.classList.remove('on');
   shellEl.classList.remove('hidden');

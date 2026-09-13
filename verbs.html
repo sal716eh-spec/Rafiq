@@ -219,8 +219,8 @@ function answerRow(target){
 /* ── state ── */
 const TABS=[['table','Table','الجَدْوَل'],['drill','Drill me','التَّصْرِيف'],['sent','In a sentence','فِي جُمْلَة']];
 const qs=new URLSearchParams(location.search);
-let tab=TABS.some(t=>t[0]===qs.get('tab'))?qs.get('tab'):'table';
-let vi=0, qSet=[], qPos=0;
+let tab=TABS.some(t=>t[0]===qs.get('tab'))?qs.get('tab'):(function(){try{const s=localStorage.getItem('bay_verbs_tab');return TABS.some(t=>t[0]===s)?s:'table';}catch(_){return 'table';}})();
+let vi=(function(){try{const s=parseInt(localStorage.getItem('bay_verbs_vi'),10);return (s>=0)?s:0;}catch(_){return 0;}})(), qSet=[], qPos=0;
 const panel=document.getElementById('panel');
 const futureOf=p=>'سَ'+p;
 const formOf=(v,p,t)=>t==='past'?v.past[p]:t==='pr'?v.pr[p]:futureOf(v.pr[p]);
@@ -234,11 +234,11 @@ function render(){
   const tabsEl=document.getElementById('tabs');tabsEl.innerHTML='';
   TABS.forEach(([k,en,ar])=>{const b=document.createElement('button');b.type='button';b.setAttribute('role','tab');
     b.setAttribute('aria-selected',k===tab);b.textContent=en;
-    b.onclick=()=>{tab=k;if(k==='drill'){qSet=[];qPos=0}render()};tabsEl.appendChild(b)});
+    b.onclick=()=>{tab=k;try{localStorage.setItem('bay_verbs_tab',k)}catch(_){}if(k==='drill'){qSet=[];qPos=0}render()};tabsEl.appendChild(b)});
   const pick=document.getElementById('pick');pick.innerHTML='';
   VERBS.forEach((v,i)=>{const b=document.createElement('button');b.className='vchip'+(i===vi?' on':'');b.type='button';
     b.innerHTML=`<span class="va">${v.ar}</span><span class="ve">${v.en}</span>`;
-    b.onclick=()=>{vi=i;qSet=[];qPos=0;render()};pick.appendChild(b)});
+    b.onclick=()=>{vi=i;try{localStorage.setItem('bay_verbs_vi',String(i))}catch(_){}qSet=[];qPos=0;render()};pick.appendChild(b)});
   const v=VERBS[vi];
   document.getElementById('vhead').innerHTML=
     `<div class="vh-ar">${v.ar} · ${v.pres}</div><div class="vh-en">${v.en}</div><div class="vh-pat">${v.pat}</div>`;

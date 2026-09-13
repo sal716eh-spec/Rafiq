@@ -56,14 +56,6 @@ main.wrap{max-width:680px}
   <div class="group">
     <div class="glabel">Learning</div>
     <div class="row">
-      <div class="rl"><div class="rt">Your level</div><div class="rs">Changing this adjusts your daily new-word pace.</div></div>
-      <select id="levelSel">
-        <option value="beginner">Complete beginner</option>
-        <option value="intermediate">Intermediate</option>
-        <option value="revising">Revising / brushing up</option>
-      </select>
-    </div>
-    <div class="row">
       <div class="rl"><div class="rt">New words a day</div><div class="rs">How many brand-new words to add each day. Your reviews are always shown on top of this.</div></div>
       <span>
         <select id="paceSel">
@@ -228,7 +220,6 @@ const VOICE_KEY='bay_voice_uri', RATE_KEY='bay_voice_rate';
     if(typeof cloudLoadProfile==='function'){
       const prof=await cloudLoadProfile();
       if(prof){
-        if(prof.level) document.getElementById('levelSel').value=prof.level;
         if(prof.reason) document.getElementById('reasonSel').value=prof.reason;
         if(prof.age_range) document.getElementById('ageSel').value=prof.age_range;
         if(prof.first_language) document.getElementById('firstLangInput').value=prof.first_language;
@@ -268,22 +259,6 @@ wireProfileField('ageSel','ageSaved','age_range','change');
 wireProfileField('firstLangInput','firstLangSaved','first_language','change');
 wireProfileField('secondLangInput','secondLangSaved','second_language','change');
 wireProfileField('ethnicityInput','ethnicitySaved','ethnicity','change');
-
-document.getElementById('levelSel').addEventListener('change', async (e)=>{
-  const lvl=e.target.value, pace=LEVEL_PACE[lvl];
-  try{
-    if(typeof cloudLoadProfile==='function' && typeof cloudSaveProfile==='function'){
-      const prof=(await cloudLoadProfile())||{};
-      await cloudSaveProfile({ level:lvl, study_method:prof.study_method||null, duration:prof.duration||null });
-    }
-  }catch(_){}
-  if(pace){
-    document.getElementById('paceSel').value=String(pace);
-    try{ localStorage.setItem('bay_vocab_newperday',String(pace)); }catch(_){}
-    if(typeof cloudSaveNewPerDay==='function') await cloudSaveNewPerDay(pace);
-    flash('paceSaved');
-  }
-});
 
 // ---- name ----
 let nameTimer=null;

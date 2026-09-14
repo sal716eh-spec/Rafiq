@@ -392,6 +392,11 @@ async function initCloud(){
   startTest();
   renderList();
   const p=document.getElementById('paceSel'); if(p) p.value=String(newPerDay());
+  // NOW it's safe to restore the Daily test tab — dailyStatus is loaded, so
+  // startQuiz() will correctly show today's saved result instead of a fresh test.
+  try{
+    if(localStorage.getItem('bay_vocab_tab')==='quiz'){ showTab('quiz'); }
+  }catch(_){}
 }
 
 // --- Daily quota that ramps over the days you actually study ---
@@ -423,15 +428,16 @@ function seededShuffle(arr, seed){
 
 function buildQueue(){
   const t = today();
-  const reviewCap = dailyCap();   // the ramp governs REVIEWS only (5->30 over study days)
-  // 1) due reviews — up to the ramped cap, deterministically shuffled for today
-  //    so the set and order stay identical on every reload during the same day.
+  const cap = dailyCap();   // the ramp: today's TOTAL ceiling (5..30)
+  // 1) new words go in FIRST — up to the pace, but never more than the ceiling.
+  const freshAll = VOCAB.filter(w => progress[w.id].box===0);
+  const fresh = freshAll.slice(0, Math.min(newMax(), cap));
+  // 2) reviews fill the REMAINING room under the ceiling, deterministically
+  //    shuffled for today so the set/order stay identical on reload.
+  const room = Math.max(0, cap - fresh.length);
   const due = VOCAB.filter(w => progress[w.id].box>0 && progress[w.id].due <= t);
-  const shuffled = seededShuffle(due, t);
-  const reviews = shuffled.slice(0, reviewCap);
-  // 2) new words are ADDED ON TOP — independent of the review cap. The pace
-  //    setting only controls how many NEW words, and never limits reviews.
-  const fresh = VOCAB.filter(w => progress[w.id].box===0).slice(0, newMax());
+  const reviews = seededShuffle(due, t).slice(0, room);
+  // reviews shown first (priority), then the day's new words
   queue = reviews.concat(fresh);
 }
 function counts(){
@@ -669,8 +675,8 @@ function nextQuestion(){
     } else {
       promptEl.textContent='Which word is this?';
       wordEl.textContent=primary(qCurrent.en); wordEl.className='qword';
-      answer=qCurrent.ar;
-      options=[answer, ...others.slice(0,3).map(w=>w.ar)];
+      answer=primary(qCurrent.ar);
+      options=[answer, ...others.slice(0,3).map(w=>primary(w.ar))];
     }
     qShuffle(options);
     optsEl.innerHTML = options.map(o=>{
@@ -788,10 +794,13 @@ function renderList(){
 if('speechSynthesis' in window){ speechSynthesis.onvoiceschanged = syncAudioUI; syncAudioUI(); setTimeout(syncAudioUI,600); }
 startTest();
 renderList();
-// restore the tab the user was last on (Daily practise / Daily test / Full list)
+// restore the tab the user was last on — but the Daily TEST tab is restored
+// later (inside initCloud) once we know whether today's test is already done,
+// so a reload never wipes a completed test with a fresh one.
 try{
   const savedTab = localStorage.getItem('bay_vocab_tab');
-  if(savedTab && savedTab!=='test'){ showTab(savedTab); }
+  if(savedTab==='list'){ showTab('list'); }
+  // 'quiz' is handled after cloud load; 'test' (practise) is the default
 }catch(_){}
 // then load from the cloud (async) — refreshes the UI when real data arrives
 initCloud();

@@ -461,7 +461,12 @@ function counts(){
   return {due,fresh,learning,known,total:VOCAB.length};
 }
 
-function showTab(which){
+/* skipContent=true switches which tab/panel is active without running its
+   content function yet — used on load to land on the right tab immediately
+   (see the 'quiz' restore below), instead of flashing Daily practise first
+   and then jumping to Daily test once the cloud data needed to fill it
+   arrives. */
+function showTab(which, skipContent){
   document.getElementById('tabTest').classList.toggle('on', which==='test');
   document.getElementById('tabQuiz').classList.toggle('on', which==='quiz');
   document.getElementById('tabList').classList.toggle('on', which==='list');
@@ -469,6 +474,7 @@ function showTab(which){
   document.getElementById('panelQuiz').classList.toggle('on', which==='quiz');
   document.getElementById('panelList').classList.toggle('on', which==='list');
   try{ localStorage.setItem('bay_vocab_tab', which); }catch(_){}   // remember for reload
+  if(skipContent) return;
   if(which==='list') renderList();
   if(which==='quiz') startQuiz();
 }
@@ -806,13 +812,20 @@ function renderList(){
 if('speechSynthesis' in window){ speechSynthesis.onvoiceschanged = syncAudioUI; syncAudioUI(); setTimeout(syncAudioUI,600); }
 startTest();
 renderList();
-// restore the tab the user was last on — but the Daily TEST tab is restored
-// later (inside initCloud) once we know whether today's test is already done,
-// so a reload never wipes a completed test with a fresh one.
+// restore the tab the user was last on. The Daily test tab's CONTENT still
+// waits for initCloud() below, since only that tells us whether today's test
+// is already done — but switch to the tab itself right away (skipContent),
+// so returning to Words lands straight back on Daily test instead of flashing
+// Daily practise first and jumping over a moment later.
 try{
   const savedTab = localStorage.getItem('bay_vocab_tab');
   if(savedTab==='list'){ showTab('list'); }
-  // 'quiz' is handled after cloud load; 'test' (practise) is the default
+  else if(savedTab==='quiz'){
+    showTab('quiz', true);
+    const qa=document.getElementById('quizActive'), qd=document.getElementById('quizDone');
+    if(qa) qa.style.display='none';
+    if(qd) qd.style.display='none';
+  }
 }catch(_){}
 // then load from the cloud (async) — refreshes the UI when real data arrives
 initCloud();

@@ -4,6 +4,19 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="theme.js?v=1"></script>
+<script>
+/* Decide which tab paints FIRST, before the browser ever renders the static
+   markup below (which hardcodes Daily practise as visible). The tab-restore
+   logic further down the page runs correctly, but it's a <script> at the very
+   bottom of <body> — by the time it runs, the browser may already have
+   painted the default tab for a frame, which is the flash this avoids. */
+(function(){
+  try{
+    var t = localStorage.getItem('bay_vocab_tab');
+    if(t === 'quiz' || t === 'list') document.documentElement.setAttribute('data-vtab', t);
+  }catch(_){}
+})();
+</script>
 <title>Rafiq — your Arabic pal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -31,6 +44,22 @@
 .panel.on{display:block;animation:panelIn .22s var(--ease-out)}
 @keyframes panelIn{from{opacity:0}to{opacity:1}}
 @media (prefers-reduced-motion:reduce){ .panel.on{animation:none} }
+
+/* Paints the restored tab straight away, using the data-vtab attribute the
+   head script sets before first paint — so the static default (Daily
+   practise) never gets a chance to show at all, not even for a frame.
+   The id selectors give these enough specificity to beat .tabs button.on /
+   .panel.on regardless of source order; no animation here since this is
+   the initial paint, not a switch the person is watching happen. */
+html[data-vtab="quiz"] #tabTest.on{color:var(--ink-soft);border-bottom-color:transparent;font-weight:400}
+html[data-vtab="quiz"] #tabQuiz{color:var(--ink);border-bottom-color:var(--verdigris);font-weight:500}
+html[data-vtab="quiz"] #panelTest.on{display:none}
+html[data-vtab="quiz"] #panelQuiz{display:block;animation:none}
+
+html[data-vtab="list"] #tabTest.on{color:var(--ink-soft);border-bottom-color:transparent;font-weight:400}
+html[data-vtab="list"] #tabList{color:var(--ink);border-bottom-color:var(--verdigris);font-weight:500}
+html[data-vtab="list"] #panelTest.on{display:none}
+html[data-vtab="list"] #panelList{display:block;animation:none}
 
 /* full list */
 .search{border:1px solid var(--rule);border-radius:3px;background:var(--card);height:40px;display:flex;align-items:center;padding:0 12px;margin-bottom:14px}

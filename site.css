@@ -13,11 +13,11 @@
 /* Same manuscript — read at night. Ink well instead of paper, same three accents brightened for contrast. */
 @media (prefers-color-scheme:dark){
   :root{
-    --paper:#15181A; --paper-deep:#1C2022; --card:#1B1F21; --bg:#15181A;
-    --ink:#EDE6D6; --ink-soft:#9CA6A3;
-    --rubric:#E2685C; --verdigris:#49B39C; --gold:#D3AC58;
-    --rule:rgba(237,230,214,.14);
-    --paper-rgb:21,24,26; --ink-rgb:237,230,214;
+    --paper:#1B1815; --paper-deep:#221E19; --card:#211D19; --bg:#1B1815;
+    --ink:#E4DBC8; --ink-soft:#A69C8C;
+    --rubric:#B96257; --verdigris:#4C8F7F; --gold:#BB9855;
+    --rule:rgba(228,219,200,.13);
+    --paper-rgb:27,24,21; --ink-rgb:228,219,200;
   }
 }
 *{box-sizing:border-box;margin:0;padding:0}

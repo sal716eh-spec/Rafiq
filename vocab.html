@@ -15,7 +15,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
 <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F1ECE0">
-<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#15181A">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1815">
 <meta name="color-scheme" content="light dark">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -27,7 +27,9 @@
 .tabs button:active{transform:scale(.96)}
 .tabs button.on{color:var(--ink);border-bottom-color:var(--verdigris);font-weight:500}
 .panel{display:none;padding:22px 0 56px}
-.panel.on{display:block}
+.panel.on{display:block;animation:panelIn .22s var(--ease-out)}
+@keyframes panelIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){ .panel.on{animation:none} }
 
 /* full list */
 .search{border:1px solid var(--rule);border-radius:3px;background:var(--card);height:40px;display:flex;align-items:center;padding:0 12px;margin-bottom:14px}
@@ -115,6 +117,9 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
 
 .speak:hover{border-color:var(--verdigris);color:var(--verdigris)}
 .qopt:hover:not(:disabled){border-color:var(--verdigris)} /* was ungated — stuck after every tap on touch */
+.tabs button:hover{color:var(--ink)}
+.done .next a:hover{border-color:var(--verdigris)}
+.done .next a.primary:hover{background:#265f52;border-color:#265f52}
 }
 </style>
 </head>

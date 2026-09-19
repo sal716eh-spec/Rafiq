@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="theme.js?v=1"></script>
 <title>Settings — Rafiq</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -38,6 +39,15 @@ main.wrap{max-width:680px}
 .saved{font-size:12px;color:var(--verdigris);margin-left:8px;opacity:0;transition:opacity .2s}
 .saved.show{opacity:1}
 .rateval{font-family:var(--ut);font-size:12px;color:var(--ink-soft);margin-left:8px}
+
+.seg{display:inline-flex;border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.seg button{background:transparent;border:0;padding:8px 14px;font-family:var(--la);font-size:13px;
+  color:var(--ink-soft);cursor:pointer;touch-action:manipulation;
+  transition:transform var(--press) var(--ease-out),background .15s,color .15s}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button.on{background:var(--verdigris);color:var(--paper);font-weight:500}
+.seg button:active{transform:scale(.95)}
+@media (hover:hover) and (pointer:fine){ .seg button:not(.on):hover{background:rgba(var(--ink-rgb),.06)} }
 </style>
 </head>
 <body>
@@ -172,12 +182,16 @@ main.wrap{max-width:680px}
     </div>
   </div>
 
-  <!-- MORE (honest placeholders) -->
+  <!-- MORE -->
   <div class="group">
     <div class="glabel">More</div>
-    <div class="row soon">
-      <div class="rl"><div class="rt">Dark mode</div><div class="rs">A darker theme for night study.</div></div>
-      <span class="tag">Coming soon</span>
+    <div class="row">
+      <div class="rl"><div class="rt">Appearance</div><div class="rs">Follows your device by default — or pick one to always use.</div></div>
+      <span class="seg" id="themeSeg" role="group" aria-label="Theme">
+        <button type="button" data-v="system">System</button>
+        <button type="button" data-v="light">Light</button>
+        <button type="button" data-v="dark">Dark</button>
+      </span>
     </div>
     <div class="row soon">
       <div class="rl"><div class="rt">Daily reminders</div><div class="rs">A nudge to keep your streak going.</div></div>
@@ -321,6 +335,23 @@ async function resetProgress(){
   try{ localStorage.removeItem('bay_vocab_progress_v1'); }catch(_){}
   alert('Progress reset. Head to the Words page to start fresh.');
 }
+
+// ---- appearance (System / Light / Dark) ----
+(function(){
+  const seg = document.getElementById('themeSeg');
+  if(!seg) return;
+  function paint(){
+    const cur = (window.RafiqTheme && window.RafiqTheme.get()) || 'system';
+    seg.querySelectorAll('button').forEach(b => b.classList.toggle('on', b.dataset.v === cur));
+  }
+  seg.querySelectorAll('button').forEach(b => {
+    b.addEventListener('click', () => {
+      if(window.RafiqTheme) window.RafiqTheme.set(b.dataset.v);
+      paint();
+    });
+  });
+  paint();
+})();
 </script>
 <script src="vocab-data.js?v=900"></script>
 </body>

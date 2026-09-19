@@ -10,15 +10,26 @@
   --ease-out:cubic-bezier(.16,1,.3,1);        /* settle curve — a stand-in for a critically-damped spring where a JS spring isn't worth the wiring */
   --press:120ms; --settle:220ms;
 }
-/* Same manuscript — read at night. Ink well instead of paper, same three accents brightened for contrast. */
+/* Same manuscript — read at night. Ink well instead of paper, same three accents
+   muted for the darker ground. Follows the OS by default (the media query);
+   :not([data-theme="light"]) lets a manual "Light" choice in Settings override
+   an OS set to dark, and the [data-theme="dark"] rule below covers the reverse —
+   "Dark" chosen manually while the OS itself is still in light mode. */
 @media (prefers-color-scheme:dark){
-  :root{
+  :root:not([data-theme="light"]){
     --paper:#1B1815; --paper-deep:#221E19; --card:#211D19; --bg:#1B1815;
     --ink:#E4DBC8; --ink-soft:#A69C8C;
     --rubric:#B96257; --verdigris:#4C8F7F; --gold:#BB9855;
     --rule:rgba(228,219,200,.13);
     --paper-rgb:27,24,21; --ink-rgb:228,219,200;
   }
+}
+:root[data-theme="dark"]{
+  --paper:#1B1815; --paper-deep:#221E19; --card:#211D19; --bg:#1B1815;
+  --ink:#E4DBC8; --ink-soft:#A69C8C;
+  --rubric:#B96257; --verdigris:#4C8F7F; --gold:#BB9855;
+  --rule:rgba(228,219,200,.13);
+  --paper-rgb:27,24,21; --ink-rgb:228,219,200;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{min-height:100%;overflow-x:hidden}

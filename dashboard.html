@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="theme.js?v=1"></script>
 <title>Rafiq — your Arabic pal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,20 +12,24 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1815">
+<meta name="color-scheme" content="light dark">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 .hero{padding:40px 0 6px;text-align:center}
 .hero .greet{font-family:var(--ar);direction:rtl;font-size:clamp(26px,6vw,36px);font-weight:600;color:var(--ink);
   line-height:1.7;margin:0 0 10px;padding:4px 0}
-.hero .greet .nm{color:var(--rubric);cursor:pointer;border-bottom:1px dotted rgba(180,50,42,.4)}
+.hero .greet .nm{color:var(--rubric);cursor:pointer;border-bottom:1px dotted rgba(180,50,42,.4);transition:opacity .12s}
+.hero .greet .nm:active{opacity:.6}
 .hero h1{font-size:clamp(21px,4.4vw,26px);font-weight:700;margin:0 auto}
 .hero p{color:var(--ink-soft);font-size:14.5px;margin:8px auto 0;max-width:52ch}
 .today{font-family:var(--ut);font-size:11px;letter-spacing:.08em;color:var(--ink-soft);margin-top:14px}
 .today b{color:var(--rubric)}
 .tiles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;padding:28px 0 48px}
-.tile{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:28px;min-height:210px;position:relative;display:flex;flex-direction:column;transition:transform .18s,border-color .18s}
+.tile{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:28px;min-height:210px;position:relative;display:flex;flex-direction:column;transition:transform .18s,border-color .18s;touch-action:manipulation}
+.tile:active{transform:scale(.985)}
 .tilehead{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:4px}
 .tile .ar{font-family:var(--ar);direction:rtl;font-size:25px;font-weight:600;color:var(--ink);line-height:1.65;padding:2px 0}
 .tile h2{font-size:20px;margin-top:14px}
@@ -41,14 +46,24 @@
 .picksub{font-size:13.5px;color:var(--ink-soft);margin:0 0 16px}
 .qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
 .qcard{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--rule);
-  border-radius:8px;padding:16px 17px;transition:border-color .15s,transform .12s}
+  border-radius:8px;padding:16px 17px;transition:border-color .15s,transform .12s;touch-action:manipulation}
+.qcard:active{transform:scale(.98)}
 .qcard .qa{font-family:var(--ar);font-size:20px;direction:rtl;line-height:1.7;color:var(--rubric)}
 .qcard .qt{font-size:15.5px;font-weight:600;margin-top:2px}
 .qcard .qd{font-size:12.5px;color:var(--ink-soft);margin-top:4px;line-height:1.45}
 .qcard .qm{font-family:var(--ut);font-size:10.5px;color:var(--ink-soft);margin-top:9px;padding-top:8px;border-top:1px solid var(--rule)}
 .qcard .qm b{color:var(--rubric)}
+/* Was background:var(--ink);color:var(--paper) — an intentional light/dark
+   inversion in light mode, but --ink and --paper swap meaning under dark mode
+   too, so the "inverted" card re-inverted itself back to a bright cream block
+   sitting oddly on the dark page instead of popping the way it should.
+   var(--card)/var(--ink) stays in the same surface family as the rest of the
+   page in both themes; the verdigris border plus the accent-colored button
+   below are what make this one read as the primary action. */
 .bigcta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-  background:var(--ink);color:var(--paper);border-radius:8px;padding:18px 20px;margin:22px 0 4px;text-decoration:none}
+  background:var(--card);color:var(--ink);border:1px solid var(--verdigris);border-radius:8px;padding:18px 20px;margin:22px 0 4px;text-decoration:none;
+  transition:transform var(--press,120ms) var(--ease-out,ease-out);touch-action:manipulation}
+.bigcta:active{transform:scale(.98)}
 .bigcta .bc-t{font-size:17px;font-weight:600}
 .bigcta .bc-d{font-size:13px;opacity:.72;margin-top:3px}
 .bigcta .bc-go{background:var(--verdigris);color:#fff;border-radius:5px;padding:11px 20px;font-size:14.5px;white-space:nowrap}

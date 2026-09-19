@@ -3,15 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="theme.js?v=1"></script>
 <title>Welcome — Rafiq</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css?v=900">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1815">
+<meta name="color-scheme" content="light dark">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=3"></script>
 <style>
-.screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
+.screen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px}
 .card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:34px 38px;width:min(520px,100%)}
 .card .label{margin-bottom:8px}
 .card h1{font-size:24px;font-weight:700;margin-bottom:6px}
@@ -19,17 +24,21 @@
 .q{margin-bottom:22px}
 .q h2{font-size:14px;font-weight:600;margin-bottom:10px}
 .opts{display:flex;flex-direction:column;gap:8px}
-.opt{border:1px solid var(--rule);border-radius:6px;background:var(--paper);padding:12px 14px;font-family:var(--la);font-size:14px;color:var(--ink);cursor:pointer;text-align:left;transition:border-color .15s,background .15s}
-.opt:hover{border-color:var(--verdigris)}
+.opt{border:1px solid var(--rule);border-radius:6px;background:var(--paper);padding:12px 14px;font-family:var(--la);font-size:14px;color:var(--ink);cursor:pointer;text-align:left;
+  transition:border-color .15s,background .15s,transform var(--press,120ms) var(--ease-out,ease-out);touch-action:manipulation}
+.opt:active{transform:scale(.98)}
 .opt.sel{border-color:var(--verdigris);background:rgba(46,114,99,.10);font-weight:600}
+@media (hover:hover) and (pointer:fine){ .opt:hover{border-color:var(--verdigris)} }
 .actions{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
 .skip{background:none;border:none;color:var(--ink-soft);font-family:var(--la);font-size:13px;cursor:pointer;text-decoration:underline}
 .msg{font-size:12px;color:var(--ink-soft);margin-top:12px;min-height:16px}
 .qtext input{width:100%;border:1px solid var(--rule);border-radius:6px;background:var(--paper);
-  padding:11px 13px;font-family:var(--la);font-size:14px;color:var(--ink)}
+  padding:11px 13px;font-family:var(--la);font-size:16px;color:var(--ink)}
 .qtext input:focus{outline:none;border-color:var(--verdigris)}
 .qtext .opt{width:100%}
 .qnote{font-size:12px;color:var(--ink-soft);margin-top:6px}
+.skip{transition:opacity .12s}
+.skip:active{opacity:.6}
 </style>
 </head>
 <body>

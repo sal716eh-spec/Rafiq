@@ -3,6 +3,20 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="theme.js?v=1"></script>
+<script>
+/* Decide which tab paints FIRST, before the browser ever renders the static
+   markup below (which hardcodes Daily practise as visible). The tab-restore
+   logic further down the page runs correctly, but it's a <script> at the very
+   bottom of <body> — by the time it runs, the browser may already have
+   painted the default tab for a frame, which is the flash this avoids. */
+(function(){
+  try{
+    var t = localStorage.getItem('bay_vocab_tab');
+    if(t === 'quiz' || t === 'list') document.documentElement.setAttribute('data-vtab', t);
+  }catch(_){}
+})();
+</script>
 <title>Rafiq — your Arabic pal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,21 +28,42 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1815">
+<meta name="color-scheme" content="light dark">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
 .head{padding:32px 0 0}
 .head h1{font-size:26px;font-weight:700}
 .tabs{display:flex;margin-top:20px;border-bottom:1px solid var(--rule)}
-.tabs button{background:none;border:none;padding:12px 22px;font-family:var(--la);font-size:14px;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button{background:none;border:none;padding:12px 22px;font-family:var(--la);font-size:14px;color:var(--ink-soft);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;touch-action:manipulation;transition:transform .12s cubic-bezier(.16,1,.3,1)}
+.tabs button:active{transform:scale(.96)}
 .tabs button.on{color:var(--ink);border-bottom-color:var(--verdigris);font-weight:500}
 .panel{display:none;padding:22px 0 56px}
-.panel.on{display:block}
+.panel.on{display:block;animation:panelIn .22s var(--ease-out)}
+@keyframes panelIn{from{opacity:0}to{opacity:1}}
+@media (prefers-reduced-motion:reduce){ .panel.on{animation:none} }
+
+/* Paints the restored tab straight away, using the data-vtab attribute the
+   head script sets before first paint — so the static default (Daily
+   practise) never gets a chance to show at all, not even for a frame.
+   The id selectors give these enough specificity to beat .tabs button.on /
+   .panel.on regardless of source order; no animation here since this is
+   the initial paint, not a switch the person is watching happen. */
+html[data-vtab="quiz"] #tabTest.on{color:var(--ink-soft);border-bottom-color:transparent;font-weight:400}
+html[data-vtab="quiz"] #tabQuiz{color:var(--ink);border-bottom-color:var(--verdigris);font-weight:500}
+html[data-vtab="quiz"] #panelTest.on{display:none}
+html[data-vtab="quiz"] #panelQuiz{display:block;animation:none}
+
+html[data-vtab="list"] #tabTest.on{color:var(--ink-soft);border-bottom-color:transparent;font-weight:400}
+html[data-vtab="list"] #tabList{color:var(--ink);border-bottom-color:var(--verdigris);font-weight:500}
+html[data-vtab="list"] #panelTest.on{display:none}
+html[data-vtab="list"] #panelList{display:block;animation:none}
 
 /* full list */
 .search{border:1px solid var(--rule);border-radius:3px;background:var(--card);height:40px;display:flex;align-items:center;padding:0 12px;margin-bottom:14px}
-.search input{border:none;background:none;width:100%;font-family:var(--la);font-size:14px;color:var(--ink);outline:none}
+.search input{border:none;background:none;width:100%;font-family:var(--la);font-size:16px;color:var(--ink);outline:none}
 .filters{display:flex;gap:10px;margin-bottom:10px;flex-wrap:wrap}
 .filters .search{flex:1;min-width:180px;margin-bottom:0}
 #unitFilter{border:1px solid var(--rule);border-radius:3px;background:var(--card);height:40px;padding:0 10px;font-family:var(--la);font-size:14px;color:var(--ink);min-width:150px}
@@ -65,10 +100,10 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
 .qword{font-size:clamp(28px,6vw,44px);font-weight:600;line-height:1.5;padding:14px 0 6px;min-height:1.4em}
 .qword.ar-q{font-family:var(--ar);direction:rtl}
 .qopts{display:flex;flex-direction:column;gap:12px;margin-top:26px}
-.qopt{border:1px solid var(--rule);border-radius:6px;background:var(--paper);padding:15px 18px;font-family:var(--la);font-size:17px;color:var(--ink);cursor:pointer;text-align:center;transition:border-color .15s,background .15s;min-height:52px}
+.qopt{border:1px solid var(--rule);border-radius:6px;background:var(--paper);padding:15px 18px;font-family:var(--la);font-size:17px;color:var(--ink);cursor:pointer;text-align:center;transition:border-color .15s,background .15s,transform .12s cubic-bezier(.16,1,.3,1);min-height:52px;touch-action:manipulation}
 .qopt.ar-opt{font-family:var(--ar);direction:rtl;font-size:24px}
-.qopt:hover:not(:disabled){border-color:var(--verdigris)}
 .qopt:disabled{cursor:default}
+.qopt:active:not(:disabled){transform:scale(.98)}
 .qopt.correct{border-color:var(--verdigris);background:rgba(46,114,99,.12);color:var(--verdigris);font-weight:600}
 .qopt.wrong{border-color:var(--rubric);background:rgba(180,50,42,.10);color:var(--rubric)}
 .qfeedback{margin-top:20px;font-size:14px;min-height:24px;font-weight:500}
@@ -83,12 +118,14 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
 .done .ar{font-family:var(--ar);direction:rtl;font-size:38px;line-height:1.6;padding:4px 0;color:var(--verdigris)}
 .done .next{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
 .done .next a{display:inline-block;padding:11px 18px;border:1px solid var(--rule);border-radius:4px;
-  text-decoration:none;color:var(--ink);font-size:14px;background:var(--card)}
+  text-decoration:none;color:var(--ink);font-size:14px;background:var(--card);touch-action:manipulation;transition:transform .12s cubic-bezier(.16,1,.3,1)}
+.done .next a:active{transform:scale(.96)}
 .done .next a.primary{background:var(--verdigris);border-color:var(--verdigris);color:#fff}
 @media (max-width:860px){ .done .next{flex-direction:column} .done .next a{width:100%} }
 .done h2{font-size:22px;margin-top:14px}
 .done p{color:var(--ink-soft);margin-top:8px}
-.speak{background:none;border:1px solid var(--rule);border-radius:3px;padding:8px 14px;font-family:var(--la);font-size:13px;color:var(--ink-soft);cursor:pointer;margin-top:18px}
+.speak{background:none;border:1px solid var(--rule);border-radius:3px;padding:8px 14px;font-family:var(--la);font-size:13px;color:var(--ink-soft);cursor:pointer;margin-top:18px;touch-action:manipulation;transition:transform .12s cubic-bezier(.16,1,.3,1)}
+.speak:active{transform:scale(.95)}
 .reset{margin-top:30px;text-align:center}
 @media (max-width:860px){
   .head{padding:20px 0 0}
@@ -109,6 +146,10 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
 @media (hover:hover) and (pointer:fine){
 
 .speak:hover{border-color:var(--verdigris);color:var(--verdigris)}
+.qopt:hover:not(:disabled){border-color:var(--verdigris)} /* was ungated — stuck after every tap on touch */
+.tabs button:hover{color:var(--ink)}
+.done .next a:hover{border-color:var(--verdigris)}
+.done .next a.primary:hover{background:#265f52;border-color:#265f52}
 }
 </style>
 </head>
@@ -449,7 +490,12 @@ function counts(){
   return {due,fresh,learning,known,total:VOCAB.length};
 }
 
-function showTab(which){
+/* skipContent=true switches which tab/panel is active without running its
+   content function yet — used on load to land on the right tab immediately
+   (see the 'quiz' restore below), instead of flashing Daily practise first
+   and then jumping to Daily test once the cloud data needed to fill it
+   arrives. */
+function showTab(which, skipContent){
   document.getElementById('tabTest').classList.toggle('on', which==='test');
   document.getElementById('tabQuiz').classList.toggle('on', which==='quiz');
   document.getElementById('tabList').classList.toggle('on', which==='list');
@@ -457,6 +503,7 @@ function showTab(which){
   document.getElementById('panelQuiz').classList.toggle('on', which==='quiz');
   document.getElementById('panelList').classList.toggle('on', which==='list');
   try{ localStorage.setItem('bay_vocab_tab', which); }catch(_){}   // remember for reload
+  if(skipContent) return;
   if(which==='list') renderList();
   if(which==='quiz') startQuiz();
 }
@@ -794,13 +841,20 @@ function renderList(){
 if('speechSynthesis' in window){ speechSynthesis.onvoiceschanged = syncAudioUI; syncAudioUI(); setTimeout(syncAudioUI,600); }
 startTest();
 renderList();
-// restore the tab the user was last on — but the Daily TEST tab is restored
-// later (inside initCloud) once we know whether today's test is already done,
-// so a reload never wipes a completed test with a fresh one.
+// restore the tab the user was last on. The Daily test tab's CONTENT still
+// waits for initCloud() below, since only that tells us whether today's test
+// is already done — but switch to the tab itself right away (skipContent),
+// so returning to Words lands straight back on Daily test instead of flashing
+// Daily practise first and jumping over a moment later.
 try{
   const savedTab = localStorage.getItem('bay_vocab_tab');
   if(savedTab==='list'){ showTab('list'); }
-  // 'quiz' is handled after cloud load; 'test' (practise) is the default
+  else if(savedTab==='quiz'){
+    showTab('quiz', true);
+    const qa=document.getElementById('quizActive'), qd=document.getElementById('quizDone');
+    if(qa) qa.style.display='none';
+    if(qd) qd.style.display='none';
+  }
 }catch(_){}
 // then load from the cloud (async) — refreshes the UI when real data arrives
 initCloud();

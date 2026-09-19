@@ -3,17 +3,45 @@
   --ink:#17262B; --ink-soft:#5C6E70;
   --rubric:#B4322A; --verdigris:#2E7263; --gold:#A8842C;
   --rule:rgba(23,38,43,.16);
+  --paper-rgb:241,236,224; --ink-rgb:23,38,43;
   --ar:"IBM Plex Sans Arabic","Noto Sans Arabic",system-ui,sans-serif;
   --la:"Karla",system-ui,sans-serif;
   --ut:"JetBrains Mono",ui-monospace,monospace;
+  --ease-out:cubic-bezier(.16,1,.3,1);        /* settle curve — a stand-in for a critically-damped spring where a JS spring isn't worth the wiring */
+  --press:120ms; --settle:220ms;
+}
+/* Same manuscript — read at night. Ink well instead of paper, same three accents
+   muted for the darker ground. Follows the OS by default (the media query);
+   :not([data-theme="light"]) lets a manual "Light" choice in Settings override
+   an OS set to dark, and the [data-theme="dark"] rule below covers the reverse —
+   "Dark" chosen manually while the OS itself is still in light mode. */
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#1B1815; --paper-deep:#221E19; --card:#211D19; --bg:#1B1815;
+    --ink:#E4DBC8; --ink-soft:#A69C8C;
+    --rubric:#B96257; --verdigris:#4C8F7F; --gold:#BB9855;
+    --rule:rgba(228,219,200,.13);
+    --paper-rgb:27,24,21; --ink-rgb:228,219,200;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#1B1815; --paper-deep:#221E19; --card:#211D19; --bg:#1B1815;
+  --ink:#E4DBC8; --ink-soft:#A69C8C;
+  --rubric:#B96257; --verdigris:#4C8F7F; --gold:#BB9855;
+  --rule:rgba(228,219,200,.13);
+  --paper-rgb:27,24,21; --ink-rgb:228,219,200;
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{min-height:100%}
+html{min-height:100%;overflow-x:hidden}
+html,body{overscroll-behavior:none} /* this is an app shell, not a document — no page-wide pull-to-refresh/rubber-band */
 body{
   background:var(--paper);color:var(--ink);
   font-family:var(--la);font-size:16px;line-height:1.55;
   -webkit-font-smoothing:antialiased;
+  -webkit-text-size-adjust:100%;
 }
+h1,.hero h1{letter-spacing:-0.01em} /* large Latin display text tightens; never on .ar — tracking breaks Arabic letter joining */
+input,textarea,select{font-size:16px} /* the floor: anything smaller and iOS Safari zooms the page in on focus */
 :focus-visible{outline:2px solid var(--ink);outline-offset:-2px;border-radius:4px}
 /* Touchscreens leave a button focused after a tap, so the ring lingers with no
    purpose. Keyboard users on a pointer device still get one. */
@@ -30,8 +58,12 @@ a{color:inherit;text-decoration:none}
 .label{font-family:var(--ut);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink-soft)}
 .tag{display:inline-block;font-family:var(--ut);font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:2px;padding:3px 7px}
 
-/* nav */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 30px;border-bottom:1px solid var(--rule);position:sticky;top:0;background:var(--paper);z-index:5}
+/* nav — a translucent layer floating over content, not an opaque strip consuming it */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 30px;border-bottom:1px solid var(--rule);position:sticky;top:0;
+  background:rgba(var(--paper-rgb),.72);backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);z-index:5}
+@media (prefers-reduced-transparency:reduce){
+  .nav,.tabbar,.arkb{background:var(--paper);backdrop-filter:none;-webkit-backdrop-filter:none}
+}
 .brand{font-family:var(--ar);font-size:20px;font-weight:600;direction:rtl;line-height:1.7;padding:2px 0;
   display:inline-flex;align-items:center;gap:10px}
 .brand .bmark{width:28px;height:28px;flex:0 0 auto;border-radius:7px;background:var(--ink);position:relative;
@@ -45,9 +77,15 @@ a{color:inherit;text-decoration:none}
 .navlinks a.active{color:var(--ink);border-bottom:2px solid var(--verdigris);padding-bottom:2px}
 
 /* buttons */
-.btn{font-family:var(--la);font-size:15px;font-weight:500;border-radius:3px;border:1px solid var(--verdigris);background:var(--verdigris);color:var(--paper);padding:12px 26px;cursor:pointer;transition:background .18s,transform .18s}
+.btn{font-family:var(--la);font-size:15px;font-weight:500;border-radius:3px;border:1px solid var(--verdigris);background:var(--verdigris);color:var(--paper);padding:12px 26px;cursor:pointer;
+  transition:background .18s,border-color .18s,transform var(--press) var(--ease-out);
+  touch-action:manipulation;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
 .btn.ghost{background:transparent;color:var(--verdigris)}
 .btn.danger{border-color:var(--rubric);background:transparent;color:var(--rubric)}
+/* Respond the instant a finger lands, not when it lifts — the single biggest thing
+   that separated every button here from feeling native. Works identically on touch and mouse. */
+.btn:active{transform:scale(.97)}
+.btn.ghost:active{background:rgba(var(--ink-rgb),.06)}
 
 .wrap{max-width:1000px;margin:0 auto;padding:0 30px}
 
@@ -56,7 +94,7 @@ a{color:inherit;text-decoration:none}
   button,a{touch-action:manipulation}
   .nav{padding:11px 16px;flex-wrap:wrap;gap:8px}
   .brand{font-size:19px}
-  .navlinks{gap:13px;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .navlinks{gap:13px;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
   .navlinks::-webkit-scrollbar{display:none}
   .navlinks a{font-size:12.5px;white-space:nowrap;padding:4px 0}
   .wrap{padding:0 16px}
@@ -69,15 +107,18 @@ a{color:inherit;text-decoration:none}
 /* Bottom bar: three destinations within thumb reach, mobile only. */
 .tabbar{display:none}
 @media (max-width:860px){
-  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;background:var(--paper);
-    border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom);
-    box-shadow:0 -6px 14px -10px rgba(23,38,43,.35)}
+  .tabbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:60;
+    background:rgba(var(--paper-rgb),.82);backdrop-filter:blur(18px) saturate(140%);-webkit-backdrop-filter:blur(18px) saturate(140%);
+    border-top:1px solid var(--rule);padding-bottom:env(safe-area-inset-bottom,0px);
+    box-shadow:0 -6px 14px -10px rgba(var(--ink-rgb),.35)}
   .tabbar a{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:1px;padding:8px 2px 7px;
-    font-size:10px;color:var(--ink-soft);text-decoration:none;min-height:52px;justify-content:center;text-align:center}
+    font-size:10px;color:var(--ink-soft);text-decoration:none;min-height:52px;justify-content:center;text-align:center;
+    touch-action:manipulation;user-select:none;-webkit-user-select:none;transition:transform var(--press) var(--ease-out)}
+  .tabbar a:active{transform:scale(.94)}
   .tabbar a .ti{font-family:var(--ar);font-size:15px;line-height:1.5;white-space:nowrap}
   .tabbar a.on{color:var(--ink)}
   .tabbar a.on .ti{color:var(--rubric)}
-  body{padding-bottom:calc(68px + env(safe-area-inset-bottom))}
+  body{padding-bottom:calc(68px + env(safe-area-inset-bottom,0px))}
   .nav .navlinks{display:none}
   .nav{justify-content:center;padding:12px 16px}
 }
@@ -106,11 +147,19 @@ a{color:inherit;text-decoration:none}
 /* Audio settings — same control on every page */
 .headrow{display:flex;justify-content:space-between;align-items:flex-start;gap:18px;flex-wrap:wrap}
 .cog{display:inline-flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--rule);
-  border-radius:6px;padding:8px 13px;cursor:pointer;color:var(--ink-soft);font-family:var(--la);font-size:13px;min-height:42px}
+  border-radius:6px;padding:8px 13px;cursor:pointer;color:var(--ink-soft);font-family:var(--la);font-size:13px;min-height:42px;
+  touch-action:manipulation;transition:background .15s,border-color .15s,color .15s,transform var(--press) var(--ease-out)}
+.cog:active{transform:scale(.96)}
 .cog[aria-expanded=true]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
-.voicebox{display:none;background:var(--card);border:1px solid var(--rule);border-radius:8px;
-  padding:14px 16px;margin-top:10px;flex-direction:column;gap:10px;min-width:280px}
-body.gear-open .voicebox{display:flex}
+/* A settings panel opening is a tap, not a drag — no finger to hand velocity off from,
+   so a plain settle transition (not a JS spring) is the right tool here. It still
+   materializes rather than just appearing: scale and opacity together, from the trigger. */
+.voicebox{display:flex;flex-direction:column;gap:10px;min-width:280px;transform-origin:top left;
+  background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:14px 16px;margin-top:10px;
+  opacity:0;transform:scale(.96) translateY(-4px);max-height:0;overflow:hidden;visibility:hidden;
+  transition:opacity var(--settle) var(--ease-out),transform var(--settle) var(--ease-out),max-height var(--settle) var(--ease-out),visibility var(--settle);
+  pointer-events:none}
+body.gear-open .voicebox{opacity:1;transform:scale(1) translateY(0);max-height:600px;visibility:visible;pointer-events:auto}
 .voicerow{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .voicerow select{max-width:190px;border:1px solid var(--rule);border-radius:4px;background:var(--bg);
   height:38px;padding:0 8px;font-family:var(--la);font-size:13px;color:var(--ink)}

@@ -8,6 +8,9 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="site.css?v=900">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#15181A">
+<meta name="color-scheme" content="light dark">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=5"></script>
 <style>
@@ -21,14 +24,17 @@ main.wrap{max-width:680px}
 .row .rl{min-width:0;flex:1}
 .row .rt{font-size:15px;font-weight:500}
 .row .rs{font-size:12px;color:var(--ink-soft);margin-top:3px}
-.row select{border:1px solid var(--rule);border-radius:5px;background:var(--paper);height:38px;padding:0 10px;font-family:var(--la);font-size:14px;color:var(--ink);max-width:220px}
-.row input[type=text]{border:1px solid var(--rule);border-radius:5px;background:var(--paper);height:38px;padding:0 10px;font-family:var(--la);font-size:14px;color:var(--ink);width:180px}
-.row input[type=range]{width:180px}
+.row select{border:1px solid var(--rule);border-radius:5px;background:var(--paper);height:40px;padding:0 10px;font-family:var(--la);font-size:16px;color:var(--ink);max-width:220px}
+.row input[type=text]{border:1px solid var(--rule);border-radius:5px;background:var(--paper);height:40px;padding:0 10px;font-family:var(--la);font-size:16px;color:var(--ink);width:180px}
+.row input[type=text]:focus{outline:none;border-color:var(--verdigris)}
+.row input[type=range]{width:180px;accent-color:var(--verdigris)}
 .row.soon{opacity:.55}
 .row.soon .tag{font-family:var(--ut);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:2px;padding:3px 7px;white-space:nowrap}
 .btn.small{height:38px;padding:0 16px;font-size:13px}
 .btn.danger{border-color:var(--rubric);background:transparent;color:var(--rubric)}
-.btn.danger:hover{background:rgba(180,50,42,.08)}
+.btn.danger:active{background:rgba(180,50,42,.14)}
+/* was ungated — sat outside site.css's @media(hover:hover), so it stuck after every tap on touch */
+@media (hover:hover) and (pointer:fine){ .btn.danger:hover{background:rgba(180,50,42,.08)} }
 .saved{font-size:12px;color:var(--verdigris);margin-left:8px;opacity:0;transition:opacity .2s}
 .saved.show{opacity:1}
 .rateval{font-family:var(--ut);font-size:12px;color:var(--ink-soft);margin-left:8px}

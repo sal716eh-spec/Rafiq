@@ -11,11 +11,13 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icon-192.png">
-<meta name="theme-color" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#15181A">
+<meta name="color-scheme" content="light dark">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
-.screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
+.screen{min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px 20px}
 .wordmark{display:flex;align-items:center;justify-content:center;gap:14px}
 .word{font-family:var(--ar);direction:rtl;font-size:clamp(38px,8.5vw,58px);font-weight:600;line-height:1.6;padding:6px 0}
 /* the ر monogram, same mark as the nav on every other page */
@@ -31,7 +33,10 @@
 .card .label{margin-bottom:20px;text-align:center}
 .field{margin-bottom:16px}
 .field label{font-size:11px;color:var(--ink-soft);display:block;margin-bottom:5px}
-.field input{width:100%;border:1px solid var(--rule);border-radius:3px;background:var(--paper);height:40px;padding:0 12px;font-family:var(--la);font-size:15px;color:var(--ink)}
+.field input{width:100%;border:1px solid var(--rule);border-radius:3px;background:var(--paper);height:40px;padding:0 12px;font-family:var(--la);font-size:16px;color:var(--ink)}
+.field input:focus{outline:none;border-color:var(--verdigris)}
+.toggle a{transition:opacity .12s}
+.toggle a:active{opacity:.6}
 .card .btn{width:100%;margin-top:6px}
 .note{margin-top:16px;font-size:11px;color:var(--ink-soft);text-align:center;line-height:1.5}
 .msg{margin-top:14px;font-size:13px;text-align:center;line-height:1.5;display:none}

@@ -364,7 +364,11 @@ main{padding:18px 0 60px 28px;min-width:0}
 .line .ar{font-family:var(--ar);font-size:23px;direction:rtl;text-align:right;line-height:1.9;cursor:pointer;transition:opacity .1s;touch-action:manipulation}
 .line .ar:active{opacity:.55}
 .line .en{font-size:12.5px;color:var(--ink-soft);margin-top:2px}
-.hidden-txt{color:transparent;background:repeating-linear-gradient(90deg,var(--paper-deep) 0 14px,transparent 14px 22px);border-radius:2px}
+/* !important because this class is mixed onto elements (like .line .en) that set
+   their own color with higher specificity — without it, "Hide English" toggled
+   the class but the text stayed fully readable, showing only the stripe pattern
+   trailing uselessly behind it. */
+.hidden-txt{color:transparent!important;background:repeating-linear-gradient(90deg,var(--paper-deep) 0 14px,transparent 14px 22px);border-radius:2px}
 .speaking{color:var(--rubric)!important}
 .line.mine{background:rgba(168,132,44,.07)}
 
@@ -608,7 +612,7 @@ footer{border-top:1px solid var(--rule);padding:16px 28px 30px;font-size:12px;co
 .c-ex:hover{color:var(--verdigris)}
 .vtable td.vf:hover{color:var(--verdigris)}
 .line .ar:hover{color:var(--verdigris)}
-.hidden-txt:hover{color:var(--ink);background:none}
+.hidden-txt:hover{color:var(--ink)!important;background:none}
 .say:hover{color:var(--verdigris);border-color:var(--verdigris)}
 .chip:hover{border-color:var(--verdigris)}
 .opt:hover{border-color:var(--verdigris)}

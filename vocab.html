@@ -267,6 +267,7 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
 
 <script src="vocab-data.js?v=900"></script>
 <script src="audio.js?v=900"></script>
+<script src="judge.js?v=1"></script>
 <script>
 /* ---------- Leitner spaced repetition ----------
    Each word sits in a box (1..5). Higher box = longer gap.
@@ -650,7 +651,11 @@ function isTypable(w){
   const box = (progress[w.id] && progress[w.id].box) || 0;
   const en = primary(w.en);
   const wordCount = en.split(/\s+/).length;
-  const short = wordCount <= 2 && en.length <= 14 && !/[?/]/.test(en);
+  // With the judge on, synonyms and dropped "to"/"(m)" are accepted, so
+  // slightly longer answers are fair to type too.
+  const judge = window.RafiqJudge && RafiqJudge.on;
+  const short = judge ? wordCount <= 3 && en.length <= 20 && !/\?/.test(en)
+                      : wordCount <= 2 && en.length <= 14 && !/[?/]/.test(en);
   return box >= 3 && short;
 }
 
@@ -769,11 +774,19 @@ function submitTyped(){
     return;
   }
   qLocked=true;
-  const correct = answerMatches(inp.value, qCurrent);
   inp.disabled=true;
-  inp.classList.add(correct?'ok':'bad');
   const btn=document.querySelector('#qOpts .qopt'); if(btn) btn.disabled=true;
-  finishAnswer(correct, primary(qCurrent.en));
+  const w=qCurrent, typed=inp.value;
+  const done=correct=>{
+    if(w!==qCurrent) return;
+    inp.classList.add(correct?'ok':'bad');
+    finishAnswer(correct, primary(w.en));
+  };
+  // Exact match is free and never wrong; only a miss goes to the judge
+  // (synonyms, "go" for "to go", small typos). No judge → the miss stands.
+  if(answerMatches(typed, w) || !(window.RafiqJudge && RafiqJudge.on)){ done(answerMatches(typed, w)); return; }
+  const fb=document.getElementById('qFeedback'); fb.textContent='Checking…'; fb.className='qfeedback';
+  RafiqJudge.vocab(w.ar, w.en, typed).then(ok=>done(ok===true));
 }
 
 // shared: show feedback, update spaced repetition, move on

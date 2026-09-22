@@ -1,0 +1,7 @@
+name = "rafiq-judge"
+main = "src/index.js"
+compatibility_date = "2026-09-01"
+
+# The TypeSafe key is a secret, never in this file:
+#   Cloudflare dashboard → Workers → rafiq-judge → Settings → Variables and Secrets
+#   → add secret TYPESAFE_API_KEY

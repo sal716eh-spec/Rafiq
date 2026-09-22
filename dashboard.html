@@ -70,6 +70,9 @@
 .unit.done .st{background:var(--verdigris);color:#fff}
 .unit.now{border-color:var(--verdigris)} .unit.now .st{background:var(--gold);color:#fff}
 .unit.later{opacity:.62;width:100%;text-align:left;font:inherit;cursor:pointer}
+.unit.soon{border-style:dashed;background:transparent}
+.unit.soon .st{background:transparent;font-size:18px}
+.csub{font-size:13px;color:var(--ink-soft);margin:-4px 0 10px}
 .lockmsg{font-size:13px;color:var(--ink-soft);background:var(--paper-deep);border-radius:8px;padding:8px 12px;margin-top:-2px}
 .unit .nm{flex:1;min-width:0}.unit .nm b{display:block;font-size:15px}.unit .nm span{font-size:12px;color:var(--ink-soft)}
 .unit .ua{font-family:var(--ar);font-size:16px;color:var(--rubric);white-space:nowrap}
@@ -208,7 +211,11 @@ function paintHome(){
       ? `<button type="button" class="unit later" data-lock="${esc(U[cur].alpha?'the reading starter':'unit '+cur)}">${inner}</button>`
       : `<a class="unit ${done?'done':'now'}" href="learn.html?u=${p.n}">${inner}</a>`;
   }).join('');
-  el.innerHTML=card+stats+focus+review+`<div class="ph">Your path</div><div class="units">${units}</div>`;
+  const coming=`<div class="ph" style="margin-top:4px">More units coming</div>
+    <p class="csub">New units are added regularly — Complete members get them first.</p>
+    <div class="units">${RafiqPath.COMING.map(c=>`<div class="unit soon"><span class="st">✨</span>
+      <span class="nm"><b>${esc(c.en)}</b><span>${esc(c.d)}</span></span><span class="ua">${esc(c.ar)}</span></div>`).join('')}</div>`;
+  el.innerHTML=card+stats+focus+review+`<div class="ph">Your path</div><div class="units">${units}</div>`+coming;
   el.querySelectorAll('[data-lock]').forEach(b=>b.onclick=()=>{
     const m=el.querySelector('.lockmsg')||Object.assign(document.createElement('div'),{className:'lockmsg'});
     m.textContent='🔒 Finish '+b.dataset.lock+' first — each unit builds on the one before.';

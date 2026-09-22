@@ -22,6 +22,14 @@
   const UNITS = ALPHA.concat(PATH);
   const units = () => UNITS;
   const unitData = n => DATA.find(u => u.n === n);
+  /* Announced, not built yet: shown after the last unit on Home and on the
+     pricing page. Update as units ship (and move them into the path). */
+  const COMING = [
+    {ar:'السَّفَرُ',              en:'Travel & directions',    d:'Airports, hotels, asking the way'},
+    {ar:'الصِّحَّةُ',              en:'Health & the body',      d:'At the doctor, how you feel'},
+    {ar:'رَمَضانُ وَالْعِيدُ',      en:'Ramadan & Eid',          d:'Fasting, iftar, Eid visits'},
+    {ar:'الْحِكاياتُ',             en:'Telling stories',        d:'What happened — the past tense in use'},
+  ];
   const wordById = (() => { const m = new Map(); VOCAB.forEach(w => m.set(w.id, w)); return id => m.get(id); })();
 
   function steps(p){
@@ -99,6 +107,6 @@
     return ids.map(wordById).filter(Boolean);
   }
 
-  window.RafiqPath = { BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
+  window.RafiqPath = { COMING, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
                        complete, place, markDay, doneToday, streak, wordsOf, unitData, wordById };
 })();

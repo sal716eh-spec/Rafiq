@@ -65,7 +65,9 @@ No free tier; both plans have a 7-day free trial.
 | | Monthly | Yearly | |
 |---|---|---|---|
 | Essentials | £6.99 | £49.99 | The whole course, all practice, audio and review, 25 smart checks a day |
-| Complete | £11.99 | £79.99 | Everything in Essentials, plus unlimited smart checks, the conversation partner, speaking feedback and the mistake focus |
+| Complete | £11.99 | £79.99 | Everything in Essentials, plus unlimited smart checks, the conversation partner, speaking feedback, the mistake focus and first access to new units |
+
+Upcoming units (Travel & directions, Health & the body, Ramadan & Eid, Telling stories) are announced on Home after the path and on the pricing page. They're listed in `COMING` in `path.js`; move each into the path as it ships.
 
 `plan.js` has `BETA = true`, which gives everyone Complete and never asks anyone to subscribe. **Leave it on until payments work.** With it off, app pages send anyone without a plan to the pricing section of the landing page.
 

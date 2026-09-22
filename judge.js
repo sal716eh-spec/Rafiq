@@ -55,6 +55,7 @@
     const j = await post({kind:'produce', english, model, answer:said}, ['ok']);
     if(!j) return null;
     const verdict = j.ok>=0.8 ? 'right' : j.ok>=0.5 ? 'close' : 'wrong';
+    if(verdict==='wrong') note(j.err);
     return {verdict, why: verdict==='wrong' ? (ERR[j.err]||'Compare it with the answer.') : ''};
   }
 
@@ -77,6 +78,7 @@
     if(!j) return null;
     const p = Math.min(j.ok, j.changes);
     const verdict = p>=0.8 ? 'right' : p>=0.5 ? 'close' : 'wrong';
+    if(verdict==='wrong') note(j.err);
     return {verdict, why: verdict==='wrong' ? (ERR[j.err]||'Compare it with the answer.') : ''};
   }
 
@@ -89,8 +91,33 @@
     if(!j) return null;
     const done = j.done<0.67 ? 0 : j.done<1.34 ? 1 : 2;
     const grammarOk = j.grammar>=0.7;
+    if(!grammarOk) note(j.err);
     return {done, grammarOk, why: grammarOk ? '' : (ERR[j.err]||ERR.grammar_other)};
   }
 
-  window.RafiqJudge = { on: !!ENDPOINT, vocab, produce, build, rewrite, prompt };
+  /* Conversation partner: the learner's own reply to the other speaker →
+     {fits, grammar:'ok'|'unsure'|'slip', why} or null. fits was 40/40 at 0.5
+     (tools/typesafe-exp/round3.py). Grammar has a quiet middle band: two
+     correct short replies scored 0.52–0.54, so 0.5–0.7 gets no comment. */
+  async function reply(previous, previousEn, suggested, said){
+    const j = await post({kind:'reply', previous, previous_en:previousEn, suggested, answer:said}, ['fits','grammar']);
+    if(!j) return null;
+    const grammar = j.grammar>=0.7 ? 'ok' : j.grammar>=0.5 ? 'unsure' : 'slip';
+    if(grammar==='slip') note(j.err);
+    return {fits: j.fits>=0.5, grammar, why: grammar==='slip' ? (ERR[j.err]||ERR.grammar_other) : ''};
+  }
+
+  /* Mistake profile: every judged mistake type is counted with its date, so
+     Home can point at the one that keeps coming back (see mistakes.js). */
+  function note(err){
+    if(!err || err==='none' || err==='not_done') return;
+    try{
+      const k='rafiq_mistakes', m=JSON.parse(localStorage.getItem(k)||'{}');
+      (m[err]=m[err]||[]).push(Date.now());
+      m[err]=m[err].slice(-30);
+      localStorage.setItem(k, JSON.stringify(m));
+    }catch(_){}
+  }
+
+  window.RafiqJudge = { on: !!ENDPOINT, vocab, produce, build, rewrite, prompt, reply, note };
 })();

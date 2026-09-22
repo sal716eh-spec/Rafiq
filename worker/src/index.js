@@ -6,6 +6,7 @@
      POST {kind:'build',   english, model, answer}         → {ok, order}
      POST {kind:'rewrite', task, original, model, answer}  → {ok, changes, err}
      POST {kind:'prompt',  task, model, answer}            → {done, grammar, err}
+     POST {kind:'reply',   previous, previous_en, suggested, answer} → {fits, grammar, err}
 
    Values are TypeSafe probabilities (done is a 0–2 score); the page decides
    what to do with them. The questions are built here, not in the browser, so
@@ -130,6 +131,41 @@ const REWRITE_Q = {
   },
 };
 
+// Conversation partner: the learner replies in their own words to the other
+// speaker's line. 40/40 on "fits" in tools/typesafe-exp/round3.py.
+const REPLY_Q = {
+  fits: {
+    type: 'noul',
+    instructions: {
+      task: "In a beginner's Arabic conversation, the other person said `previous_line`. The learner replied " +
+            '`learner_reply`. Is it a sensible, relevant reply to what was just said?',
+      notes: ["It does not have to match `suggested_reply` — any natural answer counts, with the learner's own details",
+              'Ignore grammar and spelling here; judge only whether it answers or responds to `previous_line`'],
+    },
+    criteria: { true: 'A sensible reply', false: "Doesn't respond to what was said" },
+  },
+  grammar: {
+    type: 'noul',
+    instructions: {
+      task: 'Ignoring missing vowel marks, is `learner_reply` grammatical, correctly spelled Arabic?',
+      check: ['gender agreement, and addressing a man as أنتَ', 'the right person and tense on verbs',
+              'numbers with the right gender (ثلاثة إخوة, not ثلاث إخوة)'],
+    },
+    criteria: { true: 'No errors', false: 'At least one error' },
+  },
+  err: {
+    type: 'choice',
+    instructions: 'What is the main grammar or spelling problem in `learner_reply`?',
+    criteria: {
+      none: 'No grammar or spelling problem (missing vowel marks are fine)',
+      gender_agreement: ERRS.gender_agreement,
+      wrong_person_or_tense: ERRS.wrong_person_or_tense,
+      spelling: ERRS.spelling,
+      grammar_other: ERRS.grammar_other,
+    },
+  },
+};
+
 // Free speaking: an open answer to a prompt. Task completion and grammar are
 // separate, so a learner can hear "done, but check the grammar".
 const PROMPT_Q = {
@@ -205,6 +241,10 @@ export default {
     } else if (b.kind === 'rewrite' && str(b.task) && str(b.original) && str(b.model) && str(b.answer)) {
       state = { task: b.task, original: b.original, model_answer: b.model, learner_answer: b.answer };
       questions = REWRITE_Q;
+    } else if (b.kind === 'reply' && str(b.previous) && str(b.previous_en) && str(b.suggested) && str(b.answer)) {
+      state = { previous_line: b.previous, previous_line_english: b.previous_en,
+                suggested_reply: b.suggested, learner_reply: b.answer };
+      questions = REPLY_Q;
     } else if (b.kind === 'prompt' && str(b.task) && str(b.model) && str(b.answer)) {
       state = { task: b.task, model_answer: b.model, learner_answer: b.answer };
       questions = PROMPT_Q;

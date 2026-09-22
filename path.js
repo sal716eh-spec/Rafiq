@@ -4,14 +4,15 @@
 
    A unit is a short run of steps, each about 5–10 minutes:
      meet 10 words → hear the conversation → how it works (grammar) →
-     meet the next 10 → practise → … → say it yourself
+     meet the next 10 → practise → … → have the conversation → say it yourself
    Steps are stored in the shared progress store as 'p:<unit>|<step>', so the
    path follows the learner across devices. A unit skipped by the placement
    check is stored as 'p:<unit>|placed'. Each day with any finished step or
    session is 's:<yyyy-mm-dd>', which gives the streak and the daily goal. */
 (function(){
   const BATCH = 10;          // words met per step
-  const GOAL  = 2;           // steps (or sessions) a day to meet the daily goal
+  // steps (or sessions) a day to meet the daily goal; set at sign-up from minutes a day
+  const GOAL  = (() => { try{ const g=parseInt(localStorage.getItem('rafiq_goal'),10); return g>0 ? g : 2; }catch(_){ return 2; } })();
 
   /* Unit 0, the reading starter, comes first for everyone; readers skip it
      with one tap or through placement. It exists only if alphabet-data.js is
@@ -38,6 +39,7 @@
       if(i===1) out.push({key:'practise', kind:'practise', title:'Practise', mins:8});
     }
     if(nb<2) out.push({key:'practise', kind:'practise', title:'Practise', mins:8});
+    out.push({key:'chat',     kind:'chat',     title:'Have the conversation', mins:6});
     out.push({key:'speak',    kind:'speak',    title:'Say it yourself',       mins:6});
     return out;
   }

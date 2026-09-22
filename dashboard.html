@@ -73,6 +73,12 @@
 .unit .nm{flex:1;min-width:0}.unit .nm b{display:block;font-size:15px}.unit .nm span{font-size:12px;color:var(--ink-soft)}
 .unit .ua{font-family:var(--ar);font-size:16px;color:var(--rubric);white-space:nowrap}
 .hero{padding:26px 0 0}
+.focus{background:var(--card);border:1px solid var(--gold);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.focus .k{font-family:var(--ut);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.focus .t{font-size:16px;font-weight:700;margin-top:4px}.focus p{font-size:13.5px;color:var(--ink-soft);margin:6px 0 8px}
+.fx{display:flex;justify-content:space-between;gap:10px;align-items:baseline;border-top:1px dashed var(--rule);padding:6px 0;font-size:13px;color:var(--ink-soft)}
+.fx .fa{font-family:var(--ar);direction:rtl;font-size:18px;color:var(--ink)}
+.got{margin-top:8px;border:1px solid var(--rule);background:transparent;border-radius:8px;padding:7px 14px;color:var(--ink);cursor:pointer}
 .skip{display:block;text-align:center;margin-top:12px;font-size:13.5px;color:var(--ink-soft)}
 .pickhead{font-size:16px;font-weight:700;margin:26px 0 4px}
 .picksub{font-size:13.5px;color:var(--ink-soft);margin:0 0 16px}
@@ -183,6 +189,11 @@ function paintHome(){
        ${n.unit.alpha?'<a class="skip" href="#" id="skipRead">I can already read Arabic — skip this</a>':''}</div>`;
   const stats=`<div class="stats"><div><b>🔥 ${s}</b>day streak</div>
      <div><b>${today} / ${RafiqPath.GOAL}</b>today's goal<div class="goal"><i style="width:${100*today/RafiqPath.GOAL}%"></i></div></div></div>`;
+  const f = window.RafiqMistakes && RafiqMistakes.focus();
+  const focus = f ? `<div class="focus"><div class="k">Worth a look · came up ${f.count} times this week</div>
+     <div class="t">${esc(f.title)}</div><p>${esc(f.body)}</p>
+     ${f.ex.map(x=>`<div class="fx"><span class="fa">${esc(x[0])}</span><span>${esc(x[1])}</span></div>`).join('')}
+     <button class="got" type="button" data-k="${f.key}">Got it</button></div>` : '';
   const review = due ? `<a class="review" href="session.html"><span><b>${due}</b> to review from earlier lessons</span><span>Review →</span></a>` : '';
   const units=U.map((p,i)=>{
     const done=RafiqPath.unitDone(p), now=i===cur&&!done, later=i>cur;
@@ -192,7 +203,8 @@ function paintHome(){
       <span class="st">${done?'✓':now?'▶':i}</span><span class="nm"><b>${p.alpha?'':i+'. '}${esc(p.en)}</b><span>${sub}</span></span>
       <span class="ua">${esc(p.ar)}</span></a>`;
   }).join('');
-  el.innerHTML=card+stats+review+`<div class="ph">Your path</div><div class="units">${units}</div>`;
+  el.innerHTML=card+stats+focus+review+`<div class="ph">Your path</div><div class="units">${units}</div>`;
+  const g=el.querySelector('.got'); if(g) g.onclick=()=>{ RafiqMistakes.gotIt(g.dataset.k); paintHome(); };
   const sk=document.getElementById('skipRead');
   if(sk) sk.onclick=e=>{ e.preventDefault(); RafiqPath.skipReading(); paintHome(); };
 }
@@ -215,6 +227,7 @@ function paintHome(){
 <script src="auth.js?v=3"></script>
 <script src="progress.js?v=1"></script>
 <script src="path.js?v=1"></script>
+<script src="mistakes.js?v=1"></script>
 <script src="nav.js?v=1"></script>
 <script>
 requireLogin();

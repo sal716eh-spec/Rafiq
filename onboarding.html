@@ -46,143 +46,159 @@
 .qtext .opt{width:100%}
 .qnote{font-size:12px;color:var(--ink-soft);margin-top:6px}
 .skip{transition:opacity .12s}
+.pl-en{font-size:18px;font-weight:600;margin:6px 0 12px}
+.pl-in{width:100%;min-height:80px;font-family:var(--ar);font-size:21px;line-height:1.7;direction:rtl;text-align:right;border:1px solid var(--rule);border-radius:6px;background:var(--paper);padding:10px 12px;color:var(--ink)}
+.pl-bar{height:6px;background:var(--paper-deep);border-radius:3px;overflow:hidden;margin-bottom:16px}.pl-bar i{display:block;height:100%;background:var(--verdigris);width:0}
+.hide{display:none}
 .skip:active{opacity:.6}
 </style>
 </head>
 <body>
 <main class="screen">
-  <div class="card">
+  <div class="card" id="qs">
     <div class="label">Welcome to Rafiq</div>
-    <h1>Let's set you up</h1>
-    <p class="intro">A few quick questions so we can tailor your learning. You can change these later, or skip for now.</p>
+    <h1>Let's find your starting point</h1>
+    <p class="intro">Three quick questions. You can change your mind later.</p>
 
+    <div class="q" data-key="reads">
+      <h2>Can you read Arabic script?</h2>
+      <div class="opts">
+        <button class="opt" data-val="no">Not yet</button>
+        <button class="opt" data-val="little">A little, slowly</button>
+        <button class="opt" data-val="yes">Yes, comfortably</button>
+      </div>
+    </div>
     <div class="q" data-key="level">
-      <h2>How would you describe your Arabic?</h2>
+      <h2>How much Arabic do you know?</h2>
       <div class="opts">
-        <button class="opt" data-val="beginner">Complete beginner</button>
-        <button class="opt" data-val="intermediate">Intermediate</button>
-        <button class="opt" data-val="revising">Revising / brushing up</button>
+        <button class="opt" data-val="beginner">None yet</button>
+        <button class="opt" data-val="basics">Some basics — greetings, simple sentences</button>
+        <button class="opt" data-val="intermediate">Quite a lot</button>
       </div>
     </div>
-
-    <div class="q" data-key="study_method">
-      <h2>How are you studying?</h2>
-      <div class="opts">
-        <button class="opt" data-val="self">On my own</button>
-        <button class="opt" data-val="class">In a class</button>
-        <button class="opt" data-val="tutor">With a tutor</button>
-        <button class="opt" data-val="mix">A mix</button>
-      </div>
-    </div>
-
     <div class="q" data-key="duration">
-      <h2>How long have you been learning?</h2>
+      <h2>How much time a day?</h2>
       <div class="opts">
-        <button class="opt" data-val="new">Just starting</button>
-        <button class="opt" data-val="under6m">Under 6 months</button>
-        <button class="opt" data-val="6to12m">6–12 months</button>
-        <button class="opt" data-val="over1y">Over a year</button>
+        <button class="opt" data-val="5">About 5 minutes</button>
+        <button class="opt" data-val="10">About 10 minutes</button>
+        <button class="opt" data-val="20">20 minutes or more</button>
       </div>
     </div>
-
     <div class="q" data-key="reason">
-      <h2>What brings you to Arabic?</h2>
+      <h2>What brings you to Arabic? <span style="font-weight:400;color:var(--ink-soft)">(optional)</span></h2>
       <div class="opts">
         <button class="opt" data-val="religion">Religion &amp; the Qur'an</button>
         <button class="opt" data-val="heritage">Family &amp; heritage</button>
         <button class="opt" data-val="travel">Travel</button>
         <button class="opt" data-val="work">Work or study</button>
         <button class="opt" data-val="interest">Just interested</button>
-        <button class="opt" data-val="other">Other</button>
       </div>
     </div>
-
-    <div class="q" data-key="age_range">
-      <h2>Age range</h2>
-      <div class="opts">
-        <button class="opt" data-val="under18">Under 18</button>
-        <button class="opt" data-val="18-24">18–24</button>
-        <button class="opt" data-val="25-34">25–34</button>
-        <button class="opt" data-val="35-44">35–44</button>
-        <button class="opt" data-val="45-54">45–54</button>
-        <button class="opt" data-val="55plus">55+</button>
-      </div>
-    </div>
-
-    <div class="q qtext" data-key="first_language">
-      <h2>Your first language</h2>
-      <input id="firstLangInput" type="text" placeholder="e.g. English" autocomplete="off">
-    </div>
-
-    <div class="q qtext" data-key="second_language">
-      <h2>Any other languages you speak? <span style="font-weight:400;color:var(--ink-soft)">(optional)</span></h2>
-      <input id="secondLangInput" type="text" placeholder="e.g. Urdu — leave blank if none" autocomplete="off">
-    </div>
-
-    <div class="q qtext" data-key="ethnicity">
-      <h2>Ethnicity <span style="font-weight:400;color:var(--ink-soft)">(optional)</span></h2>
-      <input id="ethnicityInput" type="text" placeholder="Only if you're happy to share" autocomplete="off">
-      <div class="qnote">This helps us understand who we're building for. Never required.</div>
-    </div>
-
     <div class="actions">
       <button class="skip" id="skipBtn">Skip for now</button>
-      <button class="btn" id="doneBtn">Save &amp; continue</button>
+      <button class="btn" id="doneBtn">Continue</button>
     </div>
     <div class="msg" id="msg"></div>
   </div>
+
+  <!-- Placement: a few sentences from across the course, checked by the judge.
+       The first one that goes wrong is where the path starts. -->
+  <div class="card hide" id="pl">
+    <div class="label">Quick check · about 3 minutes</div>
+    <div class="pl-bar"><i id="plBar"></i></div>
+    <p class="intro" id="plIntro">Say this in Arabic. Vowel marks aren't needed. Not sure? Tap "I don't know yet" — that's useful too.</p>
+    <div class="pl-en" id="plEn"></div>
+    <textarea class="pl-in" id="plIn" dir="rtl"></textarea>
+    <div class="actions">
+      <button class="skip" id="plSkip">I don't know yet</button>
+      <button class="btn" id="plGo">Check</button>
+    </div>
+    <div class="msg" id="plMsg"></div>
+  </div>
 </main>
 
+<script src="vocab-data.js?v=900"></script>
+<script src="drills-data.js?v=901"></script>
+<script src="path-data.js?v=1"></script>
+<script src="alphabet-data.js?v=1"></script>
+<script src="progress.js?v=1"></script>
+<script src="path.js?v=1"></script>
+<script src="judge.js?v=3"></script>
 <script>
-// must be logged in to be here
 requireLogin();
-
-const answers = { level:null, study_method:null, duration:null, reason:null, age_range:null };
-
-// option selection (one per question)
+const answers = { reads:null, level:null, duration:null, reason:null };
 document.querySelectorAll('.q').forEach(q=>{
-  const key = q.dataset.key;
-  q.querySelectorAll('.opt').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      q.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
-      btn.classList.add('sel');
-      answers[key] = btn.dataset.val;
-    });
-  });
+  const key=q.dataset.key;
+  q.querySelectorAll('.opt').forEach(btn=>btn.addEventListener('click',()=>{
+    q.querySelectorAll('.opt').forEach(b=>b.classList.remove('sel'));
+    btn.classList.add('sel'); answers[key]=btn.dataset.val;
+  }));
 });
 
-// level -> starting new-words-per-day (gentle range; user can change later)
-const LEVEL_PACE = { beginner:2, book:3, intermediate:4, revising:5 };
+const GOAL_FOR={ '5':1, '10':2, '20':4 };       // lesson steps a day
+const LEVEL_PACE={ beginner:2, basics:4, intermediate:5 };   // extra new words a day in Words
 
-async function finish(saveAnswers){
-  const msg=document.getElementById('msg');
-  document.getElementById('doneBtn').disabled=true;
-  try{ localStorage.setItem('bay_onboarded','1'); }catch(_){}   // guard against redirect loop
+async function save(){
+  try{ localStorage.setItem('bay_onboarded','1'); }catch(_){}
+  try{ if(answers.duration) localStorage.setItem('rafiq_goal', String(GOAL_FOR[answers.duration])); }catch(_){}
   try{
-    if(saveAnswers){
-      // free-text fields aren't chips, so read them directly; all optional
-      const firstLang = (document.getElementById('firstLangInput').value || '').trim();
-      const secondLang = (document.getElementById('secondLangInput').value || '').trim();
-      const ethnicity = (document.getElementById('ethnicityInput').value || '').trim();
-      if(firstLang) answers.first_language = firstLang;
-      if(secondLang) answers.second_language = secondLang;
-      if(ethnicity) answers.ethnicity = ethnicity;
-      if(typeof cloudSaveProfile==='function') await cloudSaveProfile(answers);
-      // translate level into a starting pace, if they picked one
-      const pace = LEVEL_PACE[answers.level];
-      if(pace){
-        try{ localStorage.setItem('bay_vocab_newperday', String(pace)); }catch(_){}
-        if(typeof cloudSaveNewPerDay==='function') await cloudSaveNewPerDay(pace);
-      }
-    } else {
-      if(typeof cloudSaveProfile==='function') await cloudSaveProfile({level:null,study_method:null,duration:null});
-    }
+    if(typeof cloudSaveProfile==='function')
+      await cloudSaveProfile({ level:answers.level, duration:answers.duration, reason:answers.reason });
+    const pace=LEVEL_PACE[answers.level];
+    if(pace){ try{ localStorage.setItem('bay_vocab_newperday', String(pace)); }catch(_){}
+              if(typeof cloudSaveNewPerDay==='function') await cloudSaveNewPerDay(pace); }
   }catch(_){}
-  window.location.href='dashboard.html';
 }
+function home(){ Progress.flush && Progress.flush(); setTimeout(()=>{ window.location.href='dashboard.html'; }, 400); }
 
-document.getElementById('doneBtn').addEventListener('click', ()=>finish(true));
-document.getElementById('skipBtn').addEventListener('click', ()=>finish(false));
+document.getElementById('skipBtn').onclick=async()=>{
+  try{ localStorage.setItem('bay_onboarded','1'); }catch(_){}
+  if(typeof cloudSaveProfile==='function') await cloudSaveProfile({});
+  home();
+};
+document.getElementById('doneBtn').onclick=async()=>{
+  document.getElementById('doneBtn').disabled=true;
+  await Progress.init();
+  await save();
+  if(answers.reads==='yes') RafiqPath.skipReading();
+  const knows = answers.level==='basics' || answers.level==='intermediate';
+  if(knows && answers.reads!=='no' && window.RafiqJudge && RafiqJudge.on) return placement();
+  home();
+};
+
+/* One sentence from every other unit; the first miss sets the start. */
+const PROBE=['01','03','05','07','09','11'].map(n=>{
+  const u=DATA.find(x=>x.n===n), l=u.dialogue[1];
+  return {n, ar:l[1], en:l[2]};
+});
+function placement(){
+  document.getElementById('qs').classList.add('hide');
+  document.getElementById('pl').classList.remove('hide');
+  let i=0;
+  const en=document.getElementById('plEn'), inp=document.getElementById('plIn'), msg=document.getElementById('plMsg');
+  const go=document.getElementById('plGo'), skip=document.getElementById('plSkip');
+  const start=n=>{
+    const units=RafiqPath.units(), idx=units.findIndex(u=>u.n===n);
+    RafiqPath.place(idx<0?units.length-1:idx);
+    home();
+  };
+  const show=()=>{
+    if(i>=PROBE.length) return start(null);            // all right: start after the last probe
+    document.getElementById('plBar').style.width=Math.round(100*i/PROBE.length)+'%';
+    en.textContent=PROBE[i].en; inp.value=''; msg.textContent=''; go.disabled=false; inp.focus();
+  };
+  const miss=()=>start(PROBE[i].n);
+  skip.onclick=miss;
+  go.onclick=async()=>{
+    if(!inp.value.trim()) return miss();
+    go.disabled=true; msg.textContent='Checking…';
+    const v=await RafiqJudge.produce(PROBE[i].en, PROBE[i].ar, inp.value);
+    if(!v){ msg.textContent=''; return start(PROBE[i].n); }  // judge unavailable: start at this unit
+    if(v.verdict==='wrong') return miss();
+    i++; show();
+  };
+  show();
+}
 </script>
 </body>
 </html>

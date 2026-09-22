@@ -56,6 +56,18 @@ textarea.ar-in{width:100%;min-height:110px;font-family:var(--ar);font-size:21px;
 .done p{color:var(--ink-soft)}
 .streak{display:inline-block;margin-top:14px;font-family:var(--ut);font-size:12px;background:var(--card);border:1px solid var(--rule);border-radius:20px;padding:6px 14px}
 .hide{display:none}
+.chat{display:flex;flex-direction:column;gap:10px;margin-bottom:10px}
+.bub{max-width:86%;padding:10px 14px;border-radius:16px;line-height:1.6}
+.bub .a{font-family:var(--ar);direction:rtl;font-size:20px;line-height:1.8}
+.bub .e{font-size:13px;color:var(--ink-soft)}
+.bub.them{align-self:flex-start;background:var(--card);border:1px solid var(--rule);border-bottom-left-radius:4px;cursor:pointer}
+.bub.me{align-self:flex-end;background:var(--verdigris);color:#fff;border-bottom-right-radius:4px}
+.bub.me .e{color:rgba(255,255,255,.85)}
+.bub.note{align-self:stretch;max-width:none;background:transparent;border:1px dashed var(--rule);font-size:14px}
+.bub.note.ok{color:var(--verdigris)} .bub.note.no{color:var(--rubric)}
+/* While the on-screen Arabic keyboard is open on a phone it covers the bottom
+   of the screen, where this page keeps its buttons — make room above it. */
+@media (max-width:860px){ body:has(.arkb.on) .lx{padding-bottom:calc(290px + env(safe-area-inset-bottom))} }
 /* Arabic keyboard (arkb.js) */
 .arkb{position:absolute;z-index:200;background:rgba(var(--paper-rgb,241,236,224),.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--rule);border-radius:10px;box-shadow:0 10px 28px -10px rgba(var(--ink-rgb),.4);padding:10px;display:none;max-width:360px}
 .arkb.on{display:block}
@@ -273,6 +285,55 @@ function runVowels(p, step){
   meet();
 }
 
+/* Conversation partner: the other speaker's lines are the unit's own
+   conversation, read aloud; the learner answers in their own words and the
+   judge says whether the reply fits and how the grammar looks. Nothing is
+   generated — if it doesn't fit, a suggested reply from the conversation is
+   one tap away. */
+function runChat(p, step){
+  const lines=RafiqPath.unitData(p.n).dialogue;
+  const turns=[]; for(let i=0;i+1<lines.length;i+=2) turns.push([lines[i],lines[i+1]]);
+  const judge=window.RafiqJudge&&RafiqJudge.on;
+  let t=0;
+  const body=el(`<div><p class="kicker">Have the conversation · you reply</p><div class="chat" id="chat"></div>
+    <textarea class="ar-in" dir="rtl" placeholder="اكْتُبْ رَدَّكَ هُنا" style="min-height:70px"></textarea></div>`);
+  const chat=body.querySelector('#chat'), ta=body.querySelector('textarea');
+  const add=(cls,ar,en)=>{ const b=el(`<div class="bub ${cls}">${ar?`<div class="a">${esc(ar)}</div>`:''}${en?`<div class="e">${esc(en)}</div>`:''}</div>`);
+    chat.appendChild(b); b.scrollIntoView({block:'nearest'}); return b; };
+  const send=button(judge?'Send':'Show a suggested reply',()=>reply());
+  const hint=button('Hint',()=>{ add('note','',"Say something like: "+turns[t][1][2]); },true);
+  const next=button('Continue',()=>{ t++; turn(); });
+  function them(){
+    const [a]=turns[t]; setBar(t,turns.length);
+    const b=add('them',a[1],a[2]); b.onclick=()=>say(a[1],b); say(a[1],b);
+    ta.value=''; ta.classList.remove('hide');
+    screen(body,[send,hint]);
+  }
+  function turn(){ if(t>=turns.length) return finish(p, step); them(); }
+  async function reply(){
+    const [a,sug]=turns[t], said=ta.value.trim();
+    if(!judge){ add('me',sug[1],'Suggested: '+sug[2]); say(sug[1],null); ta.classList.add('hide'); screen(body,[next]); return; }
+    if(!said) return;
+    add('me',said,'');
+    ta.classList.add('hide');
+    const wait=add('note','','Checking…');
+    const v=await RafiqJudge.reply(a[1],a[2],sug[1],said);
+    wait.remove();
+    if(!v){ add('note','','Couldn\'t check just now. One way to reply: '+sug[1]+' — '+sug[2]); screen(body,[next]); return; }
+    if(!v.fits){
+      const n=add('note no','',"That doesn't quite answer what they said. Try again, or here's one way:");
+      const s=add('them',sug[1],sug[2]); s.onclick=()=>say(sug[1],s);
+      ta.classList.remove('hide'); ta.value='';
+      screen(body,[send,button('Carry on',()=>{t++;turn()},true)]);
+      return;
+    }
+    add('note '+(v.grammar==='slip'?'no':'ok'),'',
+      v.grammar==='ok'?'✓ Good reply.' : v.grammar==='slip'?'✓ Good reply — but check this: '+v.why : '✓ That works.');
+    screen(body,[next]);
+  }
+  turn();
+}
+
 function runPractise(p){
   location.href='session.html?unit='+p.n+'&n=10';
 }
@@ -303,7 +364,6 @@ function runSpeak(p, step){
       out.innerHTML='<div class="verdict">Checking…</div>';
       RafiqJudge.prompt(tEn,exAr,ta.value).then(v=>{
         if(!v){ out.innerHTML='<div class="verdict">Couldn\'t check just now — compare with the example.</div>'; return; }
-        if(window.RafiqMistakes && !v.grammarOk && v.err) RafiqMistakes.note(v.err);
         out.innerHTML=`<div class="verdict ${v.done===2?'ok':v.done===0?'no':''}">${DONE[v.done]}</div>`+
           `<div class="verdict ${v.grammarOk?'ok':'no'}">${v.grammarOk?'Grammar: no mistakes spotted ✓':'Grammar: check this — '+esc(v.why)}</div>`;
       });
@@ -338,7 +398,7 @@ function finish(p, step){
   const step=steps.find(s=>s.key===qs.get('s'))||steps.find(s=>!RafiqPath.stepDone(p.n,s.key))||steps[0];
   document.title=step.title+' — Rafiq';
   ({words:runWords,listen:runListen,grammar:runGrammar,practise:runPractise,speak:runSpeak,
-    letters:runLetters,vowels:runVowels})[step.kind](p,step);
+    letters:runLetters,vowels:runVowels,chat:runChat})[step.kind](p,step);
 })();
 </script>
 </body>

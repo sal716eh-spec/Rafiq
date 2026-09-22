@@ -37,7 +37,7 @@ On 80 hand-labelled learner answers (`tools/typesafe-exp/`), the judge was right
 
 ### Setting up the Worker
 
-1. Cloudflare dashboard → **Workers & Pages → Create → Import a repository** → this repo, root directory `worker`.
+1. Cloudflare dashboard → **Workers & Pages → Create → Import a repository** → this repo, root directory `/worker`. Every push to `main` rebuilds and redeploys it.
 2. Once deployed: **Settings → Variables and Secrets → Add** → type *Secret*, name `TYPESAFE_API_KEY`.
 3. Copy the Worker's URL (`https://rafiq-judge.<you>.workers.dev`) into `ENDPOINT` at the top of `judge.js`.
 

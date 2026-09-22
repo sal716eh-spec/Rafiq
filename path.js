@@ -94,6 +94,19 @@
 
   const iso = d => d.toISOString().slice(0,10);
   function markDay(){ Progress.touch('s:' + iso(new Date())); }
+  // one 'w:<date>' row per day; its count is the number of new words met that day
+  function wordMet(){ Progress.touch('w:' + iso(new Date())); }
+  /* The last 7 days: days active, steps and sessions finished, new words met. */
+  function week(){
+    let days=0, steps=0, words=0;
+    for(let k=0;k<7;k++){
+      const d=new Date(); d.setDate(d.getDate()-k); const day=iso(d);
+      const s=Progress.get('s:'+day), w=Progress.get('w:'+day);
+      if(s && s.seen){ days++; steps+=s.seen; }
+      if(w && w.seen) words+=w.seen;
+    }
+    return {days, steps, words};
+  }
   function doneToday(){ const r = Progress.get('s:' + iso(new Date())); return r ? r.seen : 0; }
   function streak(){
     const d = new Date(); let n = 0;
@@ -108,5 +121,5 @@
   }
 
   window.RafiqPath = { COMING, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
-                       complete, place, markDay, doneToday, streak, wordsOf, unitData, wordById };
+                       complete, place, markDay, wordMet, week, doneToday, streak, wordsOf, unitData, wordById };
 })();

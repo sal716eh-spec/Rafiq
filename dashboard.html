@@ -82,7 +82,14 @@
 .focus .t{font-size:16px;font-weight:700;margin-top:4px}.focus p{font-size:13.5px;color:var(--ink-soft);margin:6px 0 8px}
 .fx{display:flex;justify-content:space-between;gap:10px;align-items:baseline;border-top:1px dashed var(--rule);padding:6px 0;font-size:13px;color:var(--ink-soft)}
 .fx .fa{font-family:var(--ar);direction:rtl;font-size:18px;color:var(--ink)}
-.got{margin-top:8px;border:1px solid var(--rule);background:transparent;border-radius:8px;padding:7px 14px;color:var(--ink);cursor:pointer}
+.week{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.week .k{font-family:var(--ut);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft)}
+.wrow{display:flex;gap:8px;margin:8px 0 4px}.wrow div{flex:1;font-size:12px;color:var(--ink-soft)}
+.wrow b{display:block;font-size:20px;color:var(--ink)}.wrow small{font-size:12px;color:var(--ink-soft);font-weight:400}
+.week p{font-size:13.5px;color:var(--ink-soft);margin:6px 0 0}.week p b{color:var(--ink)}
+.frow{display:flex;gap:8px;margin-top:8px}
+.gopr{flex:1;text-align:center;text-decoration:none;background:var(--verdigris);color:#fff;border-radius:8px;padding:8px 14px;font-size:14px}
+.got{border:1px solid var(--rule);background:transparent;border-radius:8px;padding:7px 14px;color:var(--ink);cursor:pointer}
 .skipbtn{display:block;width:100%;margin-top:10px;min-height:48px;border-radius:12px;border:1.5px solid var(--verdigris);
   background:transparent;color:var(--verdigris);font:inherit;font-size:15.5px;font-weight:600;cursor:pointer}
 .skipbtn:active{transform:scale(.98)}
@@ -195,11 +202,20 @@ function paintHome(){
        ${n.unit.alpha?'<button type="button" class="skipbtn" id="skipRead">I can read Arabic — skip this</button>':''}</div>`;
   const stats=`<div class="stats"><div><b>🔥 ${s}</b>day streak</div>
      <div><b>${today} / ${RafiqPath.GOAL}</b>today's goal<div class="goal"><i style="width:${100*today/RafiqPath.GOAL}%"></i></div></div></div>`;
+  /* Your week: shown once there's anything to show. */
+  const wk=RafiqPath.week();
+  const cnt=window.RafiqMistakes?RafiqMistakes.counts():{};
+  const slip=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
+  const week = wk.days ? `<div class="week"><div class="k">Your week</div>
+     <div class="wrow"><div><b>${wk.days}<small>/7</small></b>days active</div><div><b>${wk.steps}</b>steps &amp; sessions</div><div><b>${wk.words}</b>new words</div></div>
+     <p>${wk.days>=5?'A brilliant week — this is how Arabic sticks.':wk.days>=3?'Good rhythm. A few minutes most days beats one long session.':'Every day you open Rafiq counts — try for a few minutes tomorrow.'}
+     ${slip&&slip[1]?` Most common slip: <b>${esc(RafiqMistakes.HELP[slip[0]].title.toLowerCase())}</b>.`:''}</p></div>` : '';
   const f = window.RafiqMistakes && RafiqMistakes.focus();
   const focus = f ? `<div class="focus"><div class="k">Worth a look · came up ${f.count} times this week</div>
      <div class="t">${esc(f.title)}</div><p>${esc(f.body)}</p>
      ${f.ex.map(x=>`<div class="fx"><span class="fa">${esc(x[0])}</span><span>${esc(x[1])}</span></div>`).join('')}
-     <button class="got" type="button" data-k="${f.key}">Got it</button></div>` : '';
+     <div class="frow"><a class="gopr" href="session.html?focus=weak">Practise it</a>
+     <button class="got" type="button" data-k="${f.key}">Got it</button></div></div>` : '';
   const review = due ? `<a class="review" href="session.html"><span><b>${due}</b> to review from earlier lessons</span><span>Review →</span></a>` : '';
   const units=U.map((p,i)=>{
     const done=RafiqPath.unitDone(p), now=i===cur&&!done, later=i>cur;
@@ -215,7 +231,7 @@ function paintHome(){
     <p class="csub">New units are added regularly — Complete members get them first.</p>
     <div class="units">${RafiqPath.COMING.map(c=>`<div class="unit soon"><span class="st">✨</span>
       <span class="nm"><b>${esc(c.en)}</b><span>${esc(c.d)}</span></span><span class="ua">${esc(c.ar)}</span></div>`).join('')}</div>`;
-  el.innerHTML=card+stats+focus+review+`<div class="ph">Your path</div><div class="units">${units}</div>`+coming;
+  el.innerHTML=card+stats+week+focus+review+`<div class="ph">Your path</div><div class="units">${units}</div>`+coming;
   el.querySelectorAll('[data-lock]').forEach(b=>b.onclick=()=>{
     const m=el.querySelector('.lockmsg')||Object.assign(document.createElement('div'),{className:'lockmsg'});
     m.textContent='🔒 Finish '+b.dataset.lock+' first — each unit builds on the one before.';

@@ -93,6 +93,7 @@ textarea.ar-in{width:100%;min-height:110px;font-family:var(--ar);font-size:21px;
 <script src="drills-data.js?v=901"></script>
 <script src="path-data.js?v=1"></script>
 <script src="alphabet-data.js?v=1"></script>
+<script src="scenes-data.js?v=1"></script>
 <script src="audio.js?v=900"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=3"></script>
@@ -144,7 +145,7 @@ function runWords(p, step){
   const order=shuffle(words);
   const check=k=>{
     if(k>=order.length){
-      words.forEach(w=>{ if(Progress.isNew('v:'+w.id)) Progress.grade('v:'+w.id,'good'); });  // into daily review
+      words.forEach(w=>{ if(Progress.isNew('v:'+w.id)){ Progress.grade('v:'+w.id,'good'); RafiqPath.wordMet(); } });  // into daily review
       return finish(p, step);
     }
     setBar(words.length+k,total);
@@ -292,22 +293,26 @@ function runVowels(p, step){
    judge says whether the reply fits and how the grammar looks. Nothing is
    generated — if it doesn't fit, a suggested reply from the conversation is
    one tap away. */
-function runChat(p, step){
-  const lines=RafiqPath.unitData(p.n).dialogue;
+/* opts (scenes): {lines, title, done} — a real-life scene instead of the unit's conversation */
+function runChat(p, step, opts){
+  const lines=opts ? opts.lines : RafiqPath.unitData(p.n).dialogue;
+  const situation=opts ? opts.situation : (()=>{ const u=RafiqPath.unitData(p.n); return u.en+': '+((u.convos&&u.convos[0].sub)||''); })();
+  const done=opts ? opts.done : ()=>finish(p, step);
   const turns=[]; for(let i=0;i+1<lines.length;i+=2) turns.push([lines[i],lines[i+1]]);
   const judge=window.RafiqJudge&&RafiqJudge.on;
   // The conversation partner is part of Complete (everyone has Complete during the beta).
   if(judge && window.RafiqPlan && !RafiqPlan.isComplete()){
     const c=RafiqPlan.PRICES.complete;
-    const body=el(`<div><p class="kicker">Have the conversation</p><div class="card">
+    const body=el(`<div><p class="kicker">${opts?esc(opts.title):'Have the conversation'}</p><div class="card">
       <div style="font-size:40px">💬</div><h3 style="margin:8px 0">Part of Rafiq Complete</h3>
       <p style="color:var(--ink-soft)">Reply to the other speaker in your own words and get feedback on every reply.
       ${c.yearly} a year or ${c.monthly} a month.</p></div></div>`);
-    screen(body,[button('See Complete',()=>{location.href='index.html#pricing'}),button('Skip this step',()=>finish(p, step),true)]);
+    screen(body,[button('See Complete',()=>{location.href='index.html#pricing'}),
+      opts ? button('Back to practice',()=>{location.href='practise.html'},true) : button('Skip this step',done,true)]);
     return;
   }
   let t=0;
-  const body=el(`<div><p class="kicker">Have the conversation · you reply</p><div class="chat" id="chat"></div>
+  const body=el(`<div><p class="kicker">${opts?esc(opts.title):'Have the conversation'} · you reply</p><div class="chat" id="chat"></div>
     <textarea class="ar-in" dir="rtl" placeholder="اكْتُبْ رَدَّكَ هُنا" style="min-height:70px"></textarea></div>`);
   const chat=body.querySelector('#chat'), ta=body.querySelector('textarea');
   const add=(cls,ar,en)=>{ const b=el(`<div class="bub ${cls}">${ar?`<div class="a">${esc(ar)}</div>`:''}${en?`<div class="e">${esc(en)}</div>`:''}</div>`);
@@ -321,7 +326,7 @@ function runChat(p, step){
     ta.value=''; ta.classList.remove('hide');
     screen(body,[send,hint]);
   }
-  function turn(){ if(t>=turns.length) return finish(p, step); them(); }
+  function turn(){ if(t>=turns.length) return done(); them(); }
   async function reply(){
     const [a,sug]=turns[t], said=ta.value.trim();
     if(!judge){ add('me',sug[1],'Suggested: '+sug[2]); say(sug[1],null); ta.classList.add('hide'); screen(body,[next]); return; }
@@ -329,7 +334,7 @@ function runChat(p, step){
     add('me',said,'');
     ta.classList.add('hide');
     const wait=add('note','','Checking…');
-    const v=await RafiqJudge.reply(a[1],a[2],sug[1],said);
+    const v=await RafiqJudge.reply(a[1],a[2],sug[1],said,situation);
     wait.remove();
     if(!v){ add('note','','Couldn\'t check just now. One way to reply: '+sug[1]+' — '+sug[2]); screen(body,[next]); return; }
     if(!v.fits){
@@ -402,9 +407,23 @@ function finish(p, step){
   screen(body,btns);
 }
 
+/* A real-life scene (?scene=id): Complete only, no path step. */
+function runScene(sc){
+  document.title=sc.en+' — Rafiq';
+  runChat(null, null, {lines:sc.lines, title:sc.pic+' '+sc.en, situation:sc.en+' ('+sc.d+')', done:()=>{
+    Progress.touch('x:'+sc.id); RafiqPath.markDay(); setBar(1,1);
+    const body=el(`<div class="done"><div class="tick">${sc.pic}</div><h2>${esc(sc.en)} — done</h2>
+      <p>Try it again another day with different replies — the more ways you can say it, the better.</p>
+      <span class="streak">🔥 ${RafiqPath.streak()}-day streak</span></div>`);
+    screen(body,[button('More scenes',()=>{location.href='practise.html#scenes'}),button('Back to home',()=>{location.href='dashboard.html'},true)]);
+  }});
+}
+
 (async function(){
   if(typeof requireLogin==='function') requireLogin();
   await Progress.init();
+  const scene=qs.get('scene')&&typeof SCENES!=='undefined'&&SCENES.find(s=>s.id===qs.get('scene'));
+  if(scene) return runScene(scene);
   let p=RafiqPath.units().find(x=>x.n===qs.get('u'))||RafiqPath.next().unit;
   // A locked unit or step (someone typed the address, or an old link) sends
   // you to where you actually are on the path.

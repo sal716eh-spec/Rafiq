@@ -6,7 +6,8 @@
        past that, checks fall back to ordinary matching.
      Complete    £11.99/month or £79.99/year
        everything in Essentials, plus unlimited smart checks, the
-       conversation partner, speaking feedback and the mistake focus.
+       conversation partner, real-life scenes, the weak-spots review,
+       speaking feedback, the mistake focus and first access to new units.
 
    BETA = true gives everyone Complete and never asks anyone to subscribe.
    Turn it off only once payments are live and paying accounts carry their

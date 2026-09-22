@@ -98,11 +98,12 @@
   }
 
   /* Conversation partner: the learner's own reply to the other speaker →
-     {fits, grammar:'ok'|'unsure'|'slip', why} or null. fits was 40/40 at 0.5
-     (tools/typesafe-exp/round3.py). Grammar has a quiet middle band: two
+     {fits, grammar:'ok'|'unsure'|'slip', why} or null. With the situation,
+     fits was 46/47 on labelled replies and 90/90 on the conversations' own
+     replies (tools/typesafe-exp/round3b.py). Grammar has a quiet middle band: two
      correct short replies scored 0.52–0.54, so 0.5–0.7 gets no comment. */
-  async function reply(previous, previousEn, suggested, said){
-    const j = await post({kind:'reply', previous, previous_en:previousEn, suggested, answer:said}, ['fits','grammar']);
+  async function reply(previous, previousEn, suggested, said, situation){
+    const j = await post({kind:'reply', situation, previous, previous_en:previousEn, suggested, answer:said}, ['fits','grammar']);
     if(!j) return null;
     const grammar = j.grammar>=0.7 ? 'ok' : j.grammar>=0.5 ? 'unsure' : 'slip';
     if(grammar==='slip') note(j.err);

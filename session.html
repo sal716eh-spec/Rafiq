@@ -181,6 +181,8 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 <script src="path-data.js?v=1"></script>
 <script src="alphabet-data.js?v=1"></script>
 <script src="path.js?v=1"></script>
+<script src="mistakes.js?v=1"></script>
+<script src="item-tags.js?v=1"></script>
 <script src="nav.js?v=1"></script>
 <script>
 DATA.forEach(u=>Object.assign(u,EXTRA[u.n]||{}));
@@ -283,6 +285,22 @@ function answerRow(target,check){
 const LEN=(()=>{const v=parseInt(new URLSearchParams(location.search).get('n'),10);return [8,10,12,20].includes(v)?v:12})();
 /* ?unit=NN: the Practise step of a lesson — only that unit's material. */
 const UNIT=new URLSearchParams(location.search).get('unit');
+/* ?focus=weak: the weak-spots review (Complete) — exercises for the learner's
+   repeat mistake types (tags in item-tags.js) plus items they recently missed. */
+const WEAK=new URLSearchParams(location.search).get('focus')==='weak';
+function buildWeak(n){
+  const counts=RafiqMistakes.counts();
+  const top=Object.entries(counts).filter(([k,c])=>c>0).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k])=>k);
+  const units=new Set(RafiqPath.reached().map(p=>p.n));
+  const dp=drillPool().filter(x=>units.has(x.unit.n));
+  const tagged=shuffle(dp.filter(x=>top.includes(ITEM_TAGS[x.id])));
+  const missed=shuffle(dp.filter(x=>{const r=Progress.get(ID.drill(x));return r&&r.box===1;}));
+  const seen=new Set(), items=[];
+  missed.concat(tagged).forEach(x=>{ if(!seen.has(x.id)&&items.length<n){ seen.add(x.id); items.push(x); } });
+  if(!items.length) return [];
+  const intro=top.length?[{kind:'weak',mode:'intro',help:RafiqMistakes.HELP[top[0]]}]:[];
+  return intro.concat(shuffle(items));
+}
 let Q=[], pos=0, tally={again:0,good:0,easy:0};
 let kindWrong={words:0,sentences:0,verbs:0,links:0};
 const panel=document.getElementById('panel');
@@ -305,7 +323,17 @@ function rateRow(onPick,kind){
     d.appendChild(b)});
   return d}
 
-const LABEL={words:'Words',sentences:'Sentences',verbs:'Verbs',links:'Joining words'};
+const LABEL={words:'Words',sentences:'Sentences',verbs:'Verbs',links:'Joining words',weak:'Weak spots'};
+function vIntro(it){
+  const h=it.help, c=document.createElement('div'); c.className='card';
+  c.innerHTML=`<div class="taskbar"><span class="t-en">Your weak spot this week</span></div>
+    <h3 style="margin:0 0 8px">${h.title}</h3><p style="color:var(--ink-soft)">${h.body}</p>`+
+    h.ex.map(x=>`<div style="display:flex;justify-content:space-between;gap:10px;border-top:1px dashed var(--rule);padding:8px 0">
+      <span style="font-family:var(--ar);font-size:19px;direction:rtl">${x[0]}</span><span style="color:var(--ink-soft);font-size:13px">${x[1]}</span></div>`).join('');
+  const b=document.createElement('button'); b.className='btn'; b.textContent='Practise it →'; b.style.cssText='width:100%;margin-top:12px';
+  b.onclick=()=>{pos++;render();window.scrollTo(0,0)};
+  c.appendChild(b); panel.appendChild(c);
+}
 function render(){
   RQ.stop(); panel.innerHTML='';
   document.getElementById('bar').style.width=Math.round(100*pos/Q.length)+'%';
@@ -316,7 +344,7 @@ function render(){
   from.innerHTML=`<span class="pill ${it.kind}">${LABEL[it.kind]}</span>`+
                  (it.unit?`<span>Unit ${it.unit.n} · ${it.unit.en}</span>`:'');
   panel.appendChild(from);
-  ({word:vWord,verb:vVerb,link:vLink}[it.mode]||vDrill)(it);
+  ({word:vWord,verb:vVerb,link:vLink,intro:vIntro}[it.mode]||vDrill)(it);
 }
 /* Where to send someone for each section, and what to call it on screen. */
 const FOCUS_PAGE={
@@ -483,7 +511,19 @@ function vDrill(it){
 }
 Progress.init().then(()=>{
   if(UNIT && !RafiqPath.unitOpen(UNIT)){ location.href='dashboard.html'; return; }   // locked unit
-  Q=build(UNIT?10:LEN);
+  if(WEAK && !RafiqPlan.isComplete()){
+    panel.innerHTML=`<div class="done"><div class="big">🎯</div><h2>Weak-spots review</h2>
+      <p>A session built from your own repeat mistakes is part of Rafiq Complete.</p>
+      <div class="nextrow"><a class="primary" href="index.html#pricing">See Complete</a><a href="dashboard.html">Back to home</a></div></div>`;
+    document.getElementById('count').textContent=''; return;
+  }
+  Q=WEAK ? buildWeak(10) : build(UNIT?10:LEN);
+  if(!Q.length && WEAK){
+    panel.innerHTML=`<div class="done"><div class="big">🎯</div><h2>No weak spots yet</h2>
+      <p>Keep going with your lessons — when the same kind of mistake comes up, it'll be waiting here.</p>
+      <div class="nextrow"><a class="primary" href="dashboard.html">Back to home</a></div></div>`;
+    document.getElementById('count').textContent=''; return;
+  }
   if(!Q.length){
     panel.innerHTML=`<div class="done"><div class="big">لا شَيْءَ بَعْدُ</div><h2>Nothing to review yet</h2>
       <p>Start your first lesson — what you learn there comes back here to review.</p>

@@ -6,7 +6,7 @@
      POST {kind:'build',   english, model, answer}         → {ok, order}
      POST {kind:'rewrite', task, original, model, answer}  → {ok, changes, err}
      POST {kind:'prompt',  task, model, answer}            → {done, grammar, err}
-     POST {kind:'reply',   previous, previous_en, suggested, answer} → {fits, grammar, err}
+     POST {kind:'reply',   situation, previous, previous_en, suggested, answer} → {fits, grammar, err}
 
    Values are TypeSafe probabilities (done is a 0–2 score); the page decides
    what to do with them. The questions are built here, not in the browser, so
@@ -132,17 +132,23 @@ const REWRITE_Q = {
 };
 
 // Conversation partner: the learner replies in their own words to the other
-// speaker's line. 40/40 on "fits" in tools/typesafe-exp/round3.py.
+// speaker's line. With the situation in the state: 46/47 labelled replies and
+// all 90 suggested replies judged a fit (tools/typesafe-exp/round3b.py).
 const REPLY_Q = {
   fits: {
     type: 'noul',
     instructions: {
-      task: "In a beginner's Arabic conversation, the other person said `previous_line`. The learner replied " +
-            '`learner_reply`. Is it a sensible, relevant reply to what was just said?',
-      notes: ["It does not have to match `suggested_reply` — any natural answer counts, with the learner's own details",
-              'Ignore grammar and spelling here; judge only whether it answers or responds to `previous_line`'],
+      task: "In a beginner's Arabic conversation (`situation`), the other person said `previous_line`. The learner " +
+            'replied `learner_reply`. Could this naturally be said next in this conversation?',
+      counts: ["an answer to a question, with the learner's own details (it need not match `suggested_reply`)",
+               'a thank-you, an acknowledgement or a polite response to what was said',
+               'a question or remark that naturally belongs to this situation at this point, as `suggested_reply` does'],
+      does_not_count: ['a remark about something unrelated to the situation or to what was just said',
+                       'an answer to a different question from the one asked',
+                       'a personal question out of the blue that ignores what was just said'],
+      note: 'Ignore grammar and spelling here.',
     },
-    criteria: { true: 'A sensible reply', false: "Doesn't respond to what was said" },
+    criteria: { true: 'A natural next line', false: "Doesn't follow on" },
   },
   grammar: {
     type: 'noul',
@@ -242,7 +248,8 @@ export default {
       state = { task: b.task, original: b.original, model_answer: b.model, learner_answer: b.answer };
       questions = REWRITE_Q;
     } else if (b.kind === 'reply' && str(b.previous) && str(b.previous_en) && str(b.suggested) && str(b.answer)) {
-      state = { previous_line: b.previous, previous_line_english: b.previous_en,
+      state = { situation: str(b.situation) ? b.situation : 'a friendly conversation',
+                previous_line: b.previous, previous_line_english: b.previous_en,
                 suggested_reply: b.suggested, learner_reply: b.answer };
       questions = REPLY_Q;
     } else if (b.kind === 'prompt' && str(b.task) && str(b.model) && str(b.answer)) {

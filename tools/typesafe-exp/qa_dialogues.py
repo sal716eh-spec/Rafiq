@@ -1,4 +1,4 @@
-"""QA for tools/new-dialogues.json: every line is checked for grammar, vowelling
+"""QA for tools/new-dialogues.json (or scenes-data.js: `qa_dialogues.py scenes`): every line is checked for grammar, vowelling
 and whether the English matches. Lines flagged here need a human look."""
 import json, os
 from concurrent.futures import ThreadPoolExecutor
@@ -13,7 +13,13 @@ Q = {
   "vowels": {"type": "noul", "instructions": "Are the vowel marks (harakat) on `arabic` correct throughout?"},
   "english": {"type": "noul", "instructions": "Is `english` an accurate translation of `arabic`?"},
 }
-D = json.load(open(os.path.join(os.path.dirname(__file__), "..", "new-dialogues.json")))
+import sys, subprocess
+ROOT = os.path.join(os.path.dirname(__file__), "..", "..")
+if len(sys.argv) > 1 and sys.argv[1] == "scenes":      # python3 qa_dialogues.py scenes
+    D = {x["id"]: {"sub": x["en"], "lines": x["lines"]} for x in json.loads(subprocess.check_output(
+        ["node", "-e", "const fs=require('fs');eval(fs.readFileSync('scenes-data.js','utf8').replace('const SCENES','globalThis.SCENES'));console.log(JSON.stringify(SCENES))"], cwd=ROOT))}
+else:
+    D = json.load(open(os.path.join(os.path.dirname(__file__), "..", "new-dialogues.json")))
 rows = [(u, i, l) for u, d in D.items() for i, l in enumerate(d["lines"])]
 with ThreadPoolExecutor(8) as ex:
     res = list(ex.map(lambda r: ask({"arabic": r[2][1], "english": r[2][2], "context": D[r[0]]["sub"]}, Q), rows))

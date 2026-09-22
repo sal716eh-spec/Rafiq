@@ -50,6 +50,7 @@
 @media (max-width:860px){ .acctbar{padding:14px 16px 0;margin-top:26px} .acctbar .btn{min-height:44px} }
 @media (min-width:861px){ .acctbar{display:none} }   /* desktop already has Log out in the top nav */
 
+.cx{font-family:var(--ut);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--verdigris);border:1px solid var(--verdigris);border-radius:10px;padding:1px 7px;margin-left:6px;vertical-align:middle}
 .pickhead{font-size:16px;font-weight:700;margin:26px 0 4px}
 .picksub{font-size:13.5px;color:var(--ink-soft);margin:0 0 16px}
 .qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
@@ -110,6 +111,7 @@
   <div id="picker"></div>
 </main>
 <script src="vocab-data.js?v=900"></script>
+<script src="scenes-data.js?v=1"></script>
 <script>
 /* Both apps keep their own schedule; the dashboard just reports on each. */
 const DAY=86400000, dayNow=Math.floor(Date.now()/DAY), iso=new Date().toISOString().slice(0,10);
@@ -125,7 +127,11 @@ function read(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(_){r
   el.textContent = name? ('Signed in as '+name) : 'Account';
 })();
 
-(function picker(){
+const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
+(async function picker(){
+  // progress.js loads further down the page; wait for it before marking scenes done
+  if(document.readyState!=='complete') await new Promise(r=>addEventListener('load',r,{once:true}));
+  if(typeof Progress!=='undefined') await Progress.init();
   const el=document.getElementById('picker');
   if(!el) return;
   const dr=read('bay_drills_progress_v1'), vc=read('bay_vocab_progress_v1');
@@ -156,6 +162,15 @@ function read(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(_){r
        <div><div class="bc-t">Mixed review</div>
        <div class="bc-d">A quick mix of everything you've reached so far</div></div>
        <span class="bc-go">Start →</span></a>
+     <div class="pickhead" id="scenes">Real-life scenes <span class="cx">Complete</span></div>
+     <p class="picksub">Short conversations for real situations — you reply in your own words.</p>
+     <div class="qgrid">${SCENES.map(x=>`<a class="qcard" href="learn.html?scene=${x.id}">
+       <div class="qa">${x.pic} ${x.ar}</div><div class="qt">${x.en}</div><div class="qd">${x.d}</div>
+       <div class="qm">${seen('x:'+x.id)?'<b>✓</b> done — try it again':'5 replies · about 5 minutes'}</div></a>`).join('')}</div>
+     <a class="bigcta" href="session.html?focus=weak" style="margin-top:14px">
+       <div><div class="bc-t">🎯 Weak-spots review <span class="cx">Complete</span></div>
+       <div class="bc-d">Exercises picked for the mistakes you keep making</div></div>
+       <span class="bc-go">Start →</span></a>
      <div class="pickhead">Or pick one area</div>
      <div class="qgrid">` +
     cards.map(c=>`<a class="qcard" href="${c.href}">
@@ -183,6 +198,7 @@ function read(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(_){r
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=3"></script>
 <script src="plan.js?v=2"></script>
+<script src="progress.js?v=1"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="nav.js?v=1"></script>
 <script>

@@ -14,12 +14,34 @@ Two halves that work on the same problem from different ends: a **vocabulary** t
 | `vocab-data.js` | 622 words, units 1–16, from the book's own printed lists |
 | `drills.html` | Twelve drill modes across units 1–12 |
 | `site.css` | Shared palette, nav and buttons |
+| `judge.js` | Asks the answer-checking Worker whether a typed answer is right (see below) |
 
 ## Drills
 
 Dialogue · Role-play · Dictation · Ladder · Substitution · Build-it · Transform · Gap-fill · Fix-it · Structures · Produce · Review.
 
 672 tracked items with spaced repetition, answer checking that ignores vowel marks, and speech input where the browser supports it. Vocabulary comes from the word lists printed at the back of the books themselves, so every word drilled is one the book teaches.
+
+## Answer checking
+
+Typed answers are checked in two layers:
+
+- **Exact match first**, in the browser — vowel marks ignored for Arabic, a leading "a/an/the" for English.
+- **If that fails, a judgment on meaning** from [TypeSafe](https://docs.typesafe.ai), through a small Cloudflare Worker in `worker/` that holds the API key. Vocab accepts synonyms, "go" for "to go", "you" for "you (m)" and small typos; Produce accepts sentences without vowel marks, with synonyms or another valid word order, and names the main mistake when there is one ("a word has the wrong gender").
+
+Dictation and verb forms stay exact-match: there the precise words are the point. If the Worker isn't configured, is offline or takes over 3 s, every page falls back to exact matching.
+
+On 80 hand-labelled learner answers (`tools/typesafe-exp/`), the judge was right 95% of the time on vocab (exact match: 53%) and 92–95% on Produce (word matching: 49–76%). Its misses were subtle (a gender slip, a misspelling, a wrong plural), so when it is unsure the learner gets "Nearly — compare with the model answer" rather than a verdict.
+
+**When it's on, what the learner typed is sent to the Worker and on to TypeSafe** to be judged. Nothing else is: no account, no progress.
+
+### Setting up the Worker
+
+1. Cloudflare dashboard → **Workers & Pages → Create → Import a repository** → this repo, root directory `worker`.
+2. Once deployed: **Settings → Variables and Secrets → Add** → type *Secret*, name `TYPESAFE_API_KEY`.
+3. Copy the Worker's URL (`https://rafiq-judge.<you>.workers.dev`) into `ENDPOINT` at the top of `judge.js`.
+
+The Worker only answers requests from `rafiq-arabic.com` and only asks the two fixed questions, so the key can't be borrowed for anything else.
 
 ## Progress
 

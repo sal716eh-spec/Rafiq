@@ -1151,16 +1151,32 @@ function tappable(el,text){
   el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}};
   return el;
 }
-function answerRow(target,onScore){
+/* en: the English prompt, when there is one. With it, the answer is judged on
+   meaning (judge.js), so synonyms and other valid word orders count; without
+   it (dictation) the exact words are the point, so word matching stays. */
+function answerRow(target,onScore,en){
   const row=document.createElement('div');row.className='ansrow';
   const inp=document.createElement('input');inp.className='ar-in';inp.dir='rtl';
   inp.placeholder='اكْتُبِ الْجُمْلَةَ هُنا';
   const chk=document.createElement('button');chk.className='btn';chk.type='button';chk.textContent='Check';
   const out=document.createElement('div');
+  let seq=0;
   const run=txt=>{
     const{html,score}=diffHTML(target,txt);
-    out.innerHTML=`<div class="diff">${html}</div><div class="score">${score}% of the words matched — struck-through words were missing</div>`;
+    const matched=`${score}% of the words matched — struck-through words were missing`;
+    out.innerHTML=`<div class="diff">${html}</div><div class="score">${matched}</div>`;
     if(onScore)onScore(score);
+    if(!en||!txt.trim()||!window.RafiqJudge||!RafiqJudge.on)return;
+    const line=out.querySelector('.score'),mine=++seq;
+    line.textContent='Checking…';
+    RafiqJudge.produce(en,target,txt).then(v=>{
+      if(mine!==seq)return;
+      if(!v){line.textContent=matched;return}
+      line.className='verdict '+(v.verdict==='right'?'ok':v.verdict==='wrong'?'no':'');
+      line.textContent=v.verdict==='right'?'Correct ✓ — the highlight only shows how close you were to this wording.':
+                       v.verdict==='close'?'Nearly — compare carefully with the model answer.':
+                       'Not quite. '+v.why;
+    });
   };
   chk.onclick=()=>run(inp.value);
   inp.onkeydown=e=>{if(e.key==='Enter')run(inp.value)};
@@ -1281,7 +1297,7 @@ const RENDER={
     const t=it.d,c=document.createElement('div');c.className='card';
     c.appendChild(taskBar(...TASKS.produce));
     c.insertAdjacentHTML('beforeend',`<div class="prompt-en">${t.en}</div>`);
-    c.appendChild(answerRow(t.ar));
+    c.appendChild(answerRow(t.ar,null,t.en));
     const btn=document.createElement('button');btn.className='btn';btn.type='button';btn.textContent='Show the answer';
     btn.style.marginTop='12px';
     const ans=document.createElement('div');ans.style.display='none';
@@ -1814,4 +1830,5 @@ backUnitsEl.addEventListener('click', showPicker);
 <script src="progress.js?v=1"></script>
 <script src="translations.js?v=1"></script>
 <script src="arkb.js?v=1" defer></script>
+<script src="judge.js?v=1"></script>
 <script>requireLogin();</script>

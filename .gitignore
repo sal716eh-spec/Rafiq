@@ -1,0 +1,2 @@
+tools/typesafe-exp/results*.json
+tools/typesafe-exp/__pycache__/

@@ -1,5 +1,7 @@
+# Cloudflare Worker that checks typed answers (worker/src/index.js).
+# Lives at the repo root so the Cloudflare build needs no root-directory setting.
 name = "rafiq-judge"
-main = "src/index.js"
+main = "worker/src/index.js"
 compatibility_date = "2026-09-01"
 
 # The TypeSafe key is a secret, never in this file:

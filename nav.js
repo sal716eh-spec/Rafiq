@@ -1,0 +1,21 @@
+/* nav.js — the same three places on every page: Home (your path), Practise
+   (words, sentences, verbs, joining words) and Settings. Rewrites the page's
+   own .navlinks (desktop) and .tabbar (phone) so they can't drift apart. */
+(function(){
+  const page = (location.pathname.split('/').pop() || 'dashboard.html').replace(/\?.*/, '');
+  const TAB = {'dashboard.html':'home','learn.html':'home','session.html':'home',
+               'practise.html':'practise','vocab.html':'practise','drills.html':'practise',
+               'verbs.html':'practise','connectors.html':'practise','settings.html':'settings'};
+  const on = TAB[page] || 'home';
+  const ITEMS = [['home','dashboard.html','الرَّئِيسَة','Home'],
+                 ['practise','practise.html','تَدْرِيب','Practise'],
+                 ['settings','settings.html','إِعْدادات','Settings']];
+  function draw(){
+    const links = document.querySelector('.navlinks');
+    if(links) links.innerHTML = ITEMS.map(([k,h,,en]) => `<a href="${h}"${k===on?' class="active"':''}>${en}</a>`).join('') +
+      '<a href="login.html" class="logout-link" onclick="logout();return false;">Log out</a>';
+    const bar = document.querySelector('.tabbar');
+    if(bar) bar.innerHTML = ITEMS.map(([k,h,ar,en]) => `<a href="${h}"${k===on?' class="on"':''}><span class="ti">${ar}</span>${en}</a>`).join('');
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', draw); else draw();
+})();

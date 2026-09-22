@@ -1,13 +1,16 @@
 /* rafiq-judge — a Cloudflare Worker that holds the TypeSafe key and answers
-   exactly two questions for the site:
+   a fixed set of questions for the site:
 
      POST {kind:'vocab',   arabic, glosses:[...], answer}  → {ok}
      POST {kind:'produce', english, model, answer}         → {ok, err}
+     POST {kind:'build',   english, model, answer}         → {ok, order}
+     POST {kind:'rewrite', task, original, model, answer}  → {ok, changes, err}
+     POST {kind:'prompt',  task, model, answer}            → {done, grammar, err}
 
-   ok is TypeSafe's probability (0–1) that the learner's answer is right; the
-   page decides what to do with it. The questions are built here, not in the
-   browser, so the endpoint can't be used as a general-purpose TypeSafe proxy.
-   Question wording comes from tools/typesafe-exp, where it was measured. */
+   Values are TypeSafe probabilities (done is a 0–2 score); the page decides
+   what to do with them. The questions are built here, not in the browser, so
+   the endpoint can't be used as a general-purpose TypeSafe proxy. Question
+   wording comes from tools/typesafe-exp, where it was measured. */
 
 const API = 'https://api.typesafe.ai/v1/systemone';
 const ORIGINS = [
@@ -15,7 +18,7 @@ const ORIGINS = [
   'https://www.rafiq-arabic.com',
   'https://sal716eh-spec.github.io',
 ];
-const MAX = 300;   // characters per field; every real prompt is far shorter
+const MAX = 600;   // characters per field; the longest model answer is ~250
 
 const VOCAB_Q = {
   ok: {
@@ -32,6 +35,16 @@ const VOCAB_Q = {
     },
     criteria: { true: 'Mark correct', false: 'Mark wrong' },
   },
+};
+
+const ERRS = {
+  gender_agreement: 'A word has the wrong gender (masculine/feminine) for what it refers to',
+  wrong_person_or_tense: 'A verb or pronoun is in the wrong person, number or tense',
+  wrong_word: 'One word or detail is replaced by a different one, changing a fact',
+  different_meaning: 'The words are rearranged or changed so the sentence says something else',
+  missing_word: 'Needed words are left out, so the sentence is incomplete',
+  spelling: 'A word is misspelled so it is a different or non-existent word',
+  grammar_other: 'Some other grammatical error',
 };
 
 const PRODUCE_Q = {
@@ -55,13 +68,99 @@ const PRODUCE_Q = {
     criteria: {
       none: 'Correct: same meaning as the model answer and grammatical. Missing vowel marks, ' +
             'hamza spelling, ة/ه and attached و are fine; so are synonyms and word orders Arabic allows.',
-      gender_agreement: 'A word has the wrong gender (masculine/feminine) for what it refers to',
-      wrong_person_or_tense: 'A verb or pronoun is in the wrong person, number or tense',
-      wrong_word: 'One word or detail is replaced by a different one, changing a fact',
-      different_meaning: 'The words are rearranged or changed so the sentence says something else',
-      missing_word: 'Needed words are left out, so the sentence is incomplete',
-      spelling: 'A word is misspelled so it is a different or non-existent word',
-      grammar_other: 'Some other grammatical error',
+      ...ERRS,
+    },
+  },
+};
+
+// Build-it: the learner's tile order differs from the book's. Meaning alone
+// let a scrambled order through (tools/typesafe-exp/round2b.py), so word
+// order gets its own question.
+const BUILD_Q = {
+  ok: PRODUCE_Q.ok,
+  order: {
+    type: 'noul',
+    instructions: {
+      task: '`learner_answer` is the pieces of `model_answer` put in a different order. Is the new order ' +
+            'natural, grammatical Arabic that means the same as `english_prompt`?',
+      rules: ['an adjective must come straight after its noun (الدور الخامس, not الخامس في الدور)',
+              'the order of events must not change',
+              'a demonstrative must agree with the noun after it'],
+    },
+    criteria: { true: 'Acceptable order', false: 'Unnatural, ungrammatical, or changes the meaning' },
+  },
+};
+
+// Transform and Fix-it: a typed rewrite of `original`.
+const REWRITE_Q = {
+  ok: {
+    type: 'noul',
+    instructions: {
+      task: 'A beginner was given `original` and asked to do `task`. They wrote `learner_answer`. ' +
+            '`model_answer` is one correct answer. Did they do the task correctly?',
+      ignore: ['missing vowel marks (harakat) and case endings that are not written',
+               'hamza forms, ة written as ه, ى as ي, spacing, punctuation',
+               'a different but equally correct way of doing the task'],
+      not_ignore: ['the change asked for was not made, or only partly made',
+                   'other words changed that should have stayed the same',
+                   'wrong gender, person, number or tense', 'misspelled words'],
+    },
+    criteria: { true: 'Task done correctly', false: 'Not done correctly' },
+  },
+  changes: {
+    type: 'noul',
+    instructions: {
+      task: 'Compare `original`, `model_answer` and `learner_answer`, ignoring vowel marks. Does `learner_answer` ' +
+            'make every change that `model_answer` makes, or an equally correct alternative, with no new mistakes?',
+      check: ['every verb that should change has changed (e.g. both verbs to the past)',
+              'after كم the noun is singular (كم حصة, never كم حصص)',
+              "the person is right: asking someone a question uses 'you' (تـ), not 'I' (أ)"],
+    },
+    criteria: { true: 'All required changes made correctly', false: 'A required change is missing or wrong' },
+  },
+  err: {
+    type: 'choice',
+    instructions: 'What is the main problem with `learner_answer` as an answer to `task` applied to `original`?',
+    criteria: {
+      none: 'Correct: the task is done and the sentence is grammatical. Missing vowel marks, ' +
+            'hamza spelling and ة/ه are fine, and so is another correct way of doing it.',
+      not_done: 'The change asked for in `task` was not made, or the sentence was copied unchanged',
+      ...ERRS,
+    },
+  },
+};
+
+// Free speaking: an open answer to a prompt. Task completion and grammar are
+// separate, so a learner can hear "done, but check the grammar".
+const PROMPT_Q = {
+  done: {
+    type: 'score',
+    instructions: 'A beginner was asked `task` and answered in Arabic with `learner_answer`. ' +
+                  '`model_answer` is one example answer; theirs may say different things. ' +
+                  'How completely does their answer do what `task` asks? Ignore grammar here.',
+    criteria: ['Does not answer the task: off-topic or nothing relevant',
+               'Partly answers: on topic, but noticeably less than the task asks for ' +
+               '(fewer sentences, questions or items than requested)',
+               'Fully answers the task, even if the details differ from the model answer'],
+  },
+  grammar: {
+    type: 'noul',
+    instructions: {
+      task: 'Ignoring missing vowel marks, is `learner_answer` grammatical, correctly spelled Arabic?',
+      check: ['gender agreement between nouns, adjectives, pronouns and verbs',
+              'the right person on verbs', 'indefinite accusative nouns written with their alif (دجاجا)'],
+    },
+    criteria: { true: 'No errors', false: 'At least one error' },
+  },
+  err: {
+    type: 'choice',
+    instructions: 'What is the main grammar or spelling problem in `learner_answer`?',
+    criteria: {
+      none: 'No grammar or spelling problem (missing vowel marks are fine)',
+      gender_agreement: ERRS.gender_agreement,
+      wrong_person_or_tense: ERRS.wrong_person_or_tense,
+      spelling: ERRS.spelling,
+      grammar_other: ERRS.grammar_other,
     },
   },
 };
@@ -100,9 +199,15 @@ export default {
         Array.isArray(b.glosses) && b.glosses.length > 0 && b.glosses.length <= 8 && b.glosses.every(str)) {
       state = { arabic: b.arabic, glosses: b.glosses, answer: b.answer };
       questions = VOCAB_Q;
-    } else if (b.kind === 'produce' && str(b.english) && str(b.model) && str(b.answer)) {
+    } else if ((b.kind === 'produce' || b.kind === 'build') && str(b.english) && str(b.model) && str(b.answer)) {
       state = { english_prompt: b.english, model_answer: b.model, learner_answer: b.answer };
-      questions = PRODUCE_Q;
+      questions = b.kind === 'build' ? BUILD_Q : PRODUCE_Q;
+    } else if (b.kind === 'rewrite' && str(b.task) && str(b.original) && str(b.model) && str(b.answer)) {
+      state = { task: b.task, original: b.original, model_answer: b.model, learner_answer: b.answer };
+      questions = REWRITE_Q;
+    } else if (b.kind === 'prompt' && str(b.task) && str(b.model) && str(b.answer)) {
+      state = { task: b.task, model_answer: b.model, learner_answer: b.answer };
+      questions = PROMPT_Q;
     } else {
       return reply({ error: 'bad request' }, 400, origin);
     }
@@ -113,9 +218,9 @@ export default {
       body: JSON.stringify({ state, model: 'jev-latest', questions }),
     });
     if (!r.ok) return reply({ error: 'upstream ' + r.status }, 502, origin);
-    const a = (await r.json()).answers;
-    const out = { ok: a.ok.noul };
-    if (a.err) out.err = a.err.choice;
+    // Flatten each answer to its number (noul, score) or label (choice).
+    const a = (await r.json()).answers, out = {};
+    for (const [k, v] of Object.entries(a)) out[k] = v.type === 'choice' ? v.choice : v.type === 'score' ? v.score : v.noul;
     return reply(out, 200, origin);
   },
 };

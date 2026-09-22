@@ -465,7 +465,9 @@ input.ar-in{flex:1;min-width:240px;font-family:var(--ar);font-size:21px;line-hei
   .arkb-key{min-width:8.6vw;min-height:42px;font-size:18px}
 }
 
-input.ar-in:focus{border-color:var(--verdigris);outline:none}
+input.ar-in:focus,textarea.ar-in:focus{border-color:var(--verdigris);outline:none}
+textarea.ar-in{flex:1 1 100%;min-width:0;font-family:var(--ar);font-size:21px;line-height:1.7;direction:rtl;text-align:right;
+  background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;color:var(--ink);resize:vertical}
 .mic{font-family:var(--la);font-size:13px;border:1px solid var(--rule);background:transparent;border-radius:2px;padding:6px 12px;cursor:pointer;color:var(--ink);touch-action:manipulation;transition:transform var(--press) var(--ease-out)}
 .mic:active{transform:scale(.95)}
 .mic.live{background:var(--rubric);border-color:var(--rubric);color:var(--paper)}
@@ -790,7 +792,7 @@ const GROUPS=[
  {k:'grammar', en:'Grammar', ar:'قَواعِد', modes:[
     ["transform","التَّحْوِيل","Transform"],["cloze","الفَراغات","Gap-fill"],["fix","التَّصْحِيح","Fix it"],["grammar","التَّراكِيب","Structures"]]},
  {k:'speak',   en:'Speak',   ar:'إِنْتاج', modes:[
-    ["produce","الإِنْتاج","Produce"]]},
+    ["produce","الإِنْتاج","Produce"],["prompts","التَّعْبِير","Free speaking"]]},
 ];
 const MODES=GROUPS.flatMap(g=>g.modes);
 const groupOf=m=>(GROUPS.find(g=>g.modes.some(x=>x[0]===m))||GROUPS[0]).k;
@@ -807,6 +809,7 @@ const HOW={
  fix:"Each sentence has one error. Find it, say the corrected sentence aloud, then check. Error-spotting builds a different muscle from producing: it teaches you to hear your own mistakes while you're still speaking.",
  grammar:"The structures behind the drills in this unit. Read these before a session, not during one — you want to be practising, not studying.",
  produce:"English in, Arabic out, from memory. This is the hardest drill here and the one that transfers most directly to speech. Say it aloud first, then type or use the microphone to check.",
+ prompts:"A real task, not a sentence to copy: introduce yourself, order a meal, describe your day. Say your answer aloud first, then type it or use the microphone. It is checked for whether you did what was asked and for grammar — your details can be anything, the example is only one way to do it.",
  review:"Everything you've answered, resurfaced when you're about to forget it. Items you find hard come back tomorrow; items you find easy come back in three weeks. Mixed across units on purpose — interleaving is harder than blocking, and that's why it works."
 };
 
@@ -1151,10 +1154,10 @@ function tappable(el,text){
   el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}};
   return el;
 }
-/* en: the English prompt, when there is one. With it, the answer is judged on
-   meaning (judge.js), so synonyms and other valid word orders count; without
-   it (dictation) the exact words are the point, so word matching stays. */
-function answerRow(target,onScore,en){
+/* check(typed) → Promise<{verdict,why}|null>: a judge.js call that decides on
+   meaning, so synonyms and other valid wordings count. Without one (dictation)
+   the exact words are the point, so word matching is the whole verdict. */
+function answerRow(target,onScore,check){
   const row=document.createElement('div');row.className='ansrow';
   const inp=document.createElement('input');inp.className='ar-in';inp.dir='rtl';
   inp.placeholder='اكْتُبِ الْجُمْلَةَ هُنا';
@@ -1166,10 +1169,10 @@ function answerRow(target,onScore,en){
     const matched=`${score}% of the words matched — struck-through words were missing`;
     out.innerHTML=`<div class="diff">${html}</div><div class="score">${matched}</div>`;
     if(onScore)onScore(score);
-    if(!en||!txt.trim()||!window.RafiqJudge||!RafiqJudge.on)return;
+    if(!check||!txt.trim()||!window.RafiqJudge||!RafiqJudge.on)return;
     const line=out.querySelector('.score'),mine=++seq;
     line.textContent='Checking…';
-    RafiqJudge.produce(en,target,txt).then(v=>{
+    check(txt).then(v=>{
       if(mine!==seq)return;
       if(!v){line.textContent=matched;return}
       line.className='verdict '+(v.verdict==='right'?'ok':v.verdict==='wrong'?'no':'');
@@ -1188,15 +1191,19 @@ function answerRow(target,onScore,en){
   return wrap;
 }
 
+const FIX_TASK='Correct the one mistake in this sentence';
+
 /* ── item renderers (shared by unit view and review) ────── */
 const RENDER={
   transform(it){
     const t=it.d,c=document.createElement('div');c.className='card tf';
-    c.appendChild(taskBar(t.task[1],t.task[0],'Change the sentence below, say it aloud, then check.'));
+    c.appendChild(taskBar(t.task[1],t.task[0],'Change the sentence below and say it aloud. Then type it to check, or just reveal the answer.'));
     const src=document.createElement('div');src.className='qar';src.textContent=t.src;
     c.appendChild(tappable(src,t.src));
+    c.appendChild(answerRow(t.ans,null,txt=>RafiqJudge.rewrite(t.task[1],t.src,t.ans,txt)));
 
-    const btn=document.createElement('button');btn.className='btn';btn.type='button';btn.textContent='Check';
+    const btn=document.createElement('button');btn.className='btn';btn.type='button';btn.textContent='Show the answer';
+    btn.style.marginTop='12px';
     const ans=document.createElement('div');ans.style.display='none';
     const ar=document.createElement('div');ar.className='good';ar.textContent=t.ans;
     ans.appendChild(tappable(ar,t.ans));
@@ -1238,7 +1245,8 @@ const RENDER={
     c.appendChild(taskBar(...TASKS.fix));
     const bad=document.createElement('div');bad.className='bad';bad.textContent=t.bad;
     c.appendChild(bad);
-    const btn=document.createElement('button');btn.className='btn';btn.type='button';btn.textContent='Check';
+    c.appendChild(answerRow(t.good,null,txt=>RafiqJudge.rewrite(FIX_TASK,t.bad,t.good,txt)));
+    const btn=document.createElement('button');btn.className='btn';btn.type='button';btn.textContent='Show the answer';
     btn.style.marginTop='12px';
     const ans=document.createElement('div');ans.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=t.good;
@@ -1283,8 +1291,23 @@ const RENDER={
         say(text,null);
         if(!c.dataset.done){c.dataset.done='1';c.appendChild(rateRow(it.id))}
       }else{
-        drop.classList.add('wrong');drop.classList.remove('right');
-        verdict.className='verdict no';verdict.textContent='Not yet. Look for the word that has to come first.';
+        const notYet=()=>{
+          drop.classList.add('wrong');drop.classList.remove('right');
+          verdict.className='verdict no';verdict.textContent='Not yet. Look for the word that has to come first.';
+        };
+        if(!(window.RafiqJudge&&RafiqJudge.on)){notYet();return}
+        // Arabic often allows more than one order; ask before calling it wrong.
+        const mine=placed.join('|');
+        verdict.className='verdict';verdict.textContent='Checking…';
+        RafiqJudge.build(t.en,text,joinAr(placed)).then(ok=>{
+          if(placed.join('|')!==mine)return;              // tiles moved while we waited
+          if(!ok){notYet();return}
+          drop.classList.add('right');drop.classList.remove('wrong');
+          verdict.className='verdict ok';
+          verdict.textContent='That order works too ✓ The book has: '+text;
+          say(joinAr(placed),null);
+          if(!c.dataset.done){c.dataset.done='1';c.appendChild(rateRow(it.id))}
+        });
       }
     };
     rst.onclick=()=>{placed.length=0;drop.classList.remove('right','wrong');verdict.textContent='';
@@ -1297,7 +1320,7 @@ const RENDER={
     const t=it.d,c=document.createElement('div');c.className='card';
     c.appendChild(taskBar(...TASKS.produce));
     c.insertAdjacentHTML('beforeend',`<div class="prompt-en">${t.en}</div>`);
-    c.appendChild(answerRow(t.ar,null,t.en));
+    c.appendChild(answerRow(t.ar,null,txt=>RafiqJudge.produce(t.en,t.ar,txt)));
     const btn=document.createElement('button');btn.className='btn';btn.type='button';btn.textContent='Show the answer';
     btn.style.marginTop='12px';
     const ans=document.createElement('div');ans.style.display='none';
@@ -1426,7 +1449,7 @@ function modeCount(m,u){
   if(m==='review') return INDEX.filter(isDue).length;
   if(!FIELD[m]) return (m==='dialogue'||m==='roleplay')?u.dialogue.length:
                         (m==='sub'?u.subs.length:(m==='ladder'?u.ladders.length:
-                        (m==='grammar'?(u.grammar||[]).length:0)));
+                        (m==='grammar'?(u.grammar||[]).length:(m==='prompts'?(u.prompts||[]).length:0))));
   return (u[FIELD[m]]||[]).length;
 }
 function modeDue(){ return 0; }   // this page shows coverage, not a schedule
@@ -1499,7 +1522,7 @@ function render(){
   panel.innerHTML=`<details class="how"${wide?' open':''}><summary>How to work this drill</summary><p>${HOW[mode]}</p></details>`;
   ({dialogue:vDialogue,roleplay:vRolePlay,dictation:vList('dictation'),ladder:vLadder,sub:vSub,
     build:vList('build'),transform:vList('transform'),cloze:vList('cloze'),fix:vList('fix'),
-    grammar:vGrammar,produce:vList('produce'),
+    grammar:vGrammar,produce:vList('produce'),prompts:vPrompts,
 })[mode](u);
 }
 
@@ -1629,6 +1652,54 @@ function vSub(u){
 }
 
 /* ── grammar notes ──────────────────────────────────────── */
+/* ── free speaking: open prompts ───────────────────────────
+   u.prompts rows are [task ar, task en, example ar, example en]. Not tracked
+   for review: there is no single right answer to schedule. */
+const DONE_MSG=['Not the task yet — read the question again.',
+                'Partly there — the task asks for a bit more.',
+                'Task done ✓'];
+function vPrompts(u){
+  (u.prompts||[]).forEach(p=>{
+    const [tAr,tEn,exAr,exEn]=p;
+    const c=document.createElement('div');c.className='card';
+    c.appendChild(taskBar(tEn,tAr,'Aloud first. Then type it, or use the microphone.'));
+    const judge=window.RafiqJudge&&RafiqJudge.on;
+    const inp=document.createElement('textarea');inp.className='ar-in';inp.dir='rtl';inp.rows=3;
+    inp.placeholder='اكْتُبْ جَوابَكَ هُنا';
+    const out=document.createElement('div');
+    const row=document.createElement('div');row.className='ansrow';row.appendChild(inp);
+    let seq=0;
+    const run=txt=>{
+      if(!judge||!txt.trim())return;
+      const mine=++seq;
+      out.innerHTML='<div class="verdict">Checking…</div>';
+      RafiqJudge.prompt(tEn,exAr,txt).then(v=>{
+        if(mine!==seq)return;
+        if(!v){out.innerHTML='<div class="verdict">Couldn\'t check just now — compare with the example below.</div>';return}
+        const a=document.createElement('div');a.className='verdict '+(v.done===2?'ok':v.done===0?'no':'');a.textContent=DONE_MSG[v.done];
+        const b=document.createElement('div');b.className='verdict '+(v.grammarOk?'ok':'no');
+        b.textContent=v.grammarOk?'Grammar: no mistakes spotted ✓':'Grammar: check this — '+v.why;
+        out.innerHTML='';out.appendChild(a);out.appendChild(b);
+      });
+    };
+    if(judge){
+      const chk=document.createElement('button');chk.className='btn';chk.type='button';chk.textContent='Check';
+      chk.onclick=()=>run(inp.value);row.appendChild(chk);
+      const mic=micButton(t=>{inp.value=(inp.value?inp.value+' ':'')+t;run(inp.value)});
+      if(mic)row.appendChild(mic);
+    }
+    c.appendChild(row);c.appendChild(out);
+    const btn=document.createElement('button');btn.className='btn';btn.type='button';btn.textContent='Show an example answer';
+    btn.style.marginTop='12px';
+    const ans=document.createElement('div');ans.style.display='none';
+    const g=document.createElement('div');g.className='good';g.textContent=exAr;ans.appendChild(tappable(g,exAr));
+    const tr=document.createElement('div');tr.className='tr';tr.textContent=exEn;ans.appendChild(tr);
+    btn.onclick=()=>{ans.style.display='block';btn.style.display='none';say(exAr,g)};
+    c.appendChild(btn);c.appendChild(ans);
+    panel.appendChild(c);
+  });
+}
+
 function vGrammar(u){
   (u.grammar||[]).forEach(g=>{
     const c=document.createElement('div');c.className='gcard';
@@ -1829,6 +1900,6 @@ backUnitsEl.addEventListener('click', showPicker);
 <script src="auth.js?v=1"></script>
 <script src="progress.js?v=1"></script>
 <script src="translations.js?v=1"></script>
-<script src="arkb.js?v=1" defer></script>
-<script src="judge.js?v=2"></script>
+<script src="arkb.js?v=2" defer></script>
+<script src="judge.js?v=3"></script>
 <script>requireLogin();</script>

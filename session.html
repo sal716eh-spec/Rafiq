@@ -169,9 +169,9 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=1"></script>
 <script src="progress.js?v=1"></script>
-<script src="arkb.js?v=1" defer></script>
+<script src="arkb.js?v=2" defer></script>
 <script src="translations.js?v=1"></script>
-<script src="judge.js?v=2"></script>
+<script src="judge.js?v=3"></script>
 <script>requireLogin();</script>
 <script src="vocab-data.js?v=900"></script>
 <script src="toolkit-data.js?v=900"></script>
@@ -247,9 +247,9 @@ function diffHTML(target,said){
 function tappable(el,t){el.style.cursor='pointer';el.onclick=()=>say(t,el);return el}
 function taskBar(en,ar){const d=document.createElement('div');d.className='taskbar';
   d.innerHTML=`<span class="t-en">${en}</span>`+(ar?`<span class="t-ar">${ar}</span>`:'');return d}
-/* en: the English prompt. When given, judge.js checks the meaning; verb forms
-   pass none, since there the exact form is what's being tested. */
-function answerRow(target,en){
+/* check(typed) → Promise<{verdict,why}|null>: a judge.js call that decides on
+   meaning. Verb forms pass none, since there the exact form is being tested. */
+function answerRow(target,check){
   const w=document.createElement('div'), row=document.createElement('div');row.className='ansrow';
   const inp=document.createElement('input');inp.className='ar-in';inp.dir='rtl';inp.placeholder='اكْتُبْ هُنا';
   const b=document.createElement('button');b.className='btn';b.textContent='Check';
@@ -257,10 +257,10 @@ function answerRow(target,en){
   let seq=0;
   const run=t=>{const{html,score}=diffHTML(target,t);
     out.innerHTML=`<div class="diff">${html}</div><div class="score">${score}% matched</div>`;
-    if(!en||!t.trim()||!window.RafiqJudge||!RafiqJudge.on)return;
+    if(!check||!t.trim()||!window.RafiqJudge||!RafiqJudge.on)return;
     const line=out.querySelector('.score'),mine=++seq;
     line.textContent='Checking…';
-    RafiqJudge.produce(en,target,t).then(v=>{
+    check(t).then(v=>{
       if(mine!==seq)return;
       if(!v){line.textContent=score+'% matched';return}
       line.className='score '+(v.verdict==='right'?'v-ok':v.verdict==='wrong'?'v-no':'');
@@ -416,7 +416,8 @@ function vDrill(it){
     c.appendChild(taskBar('Find the mistake and correct it','صَحِّحِ الْخَطَأَ'));
     const bad=document.createElement('div');bad.className='qar';bad.style.color='var(--rubric)';bad.textContent=d.bad;
     c.appendChild(bad);
-    const btn=document.createElement('button');btn.className='btn';btn.textContent='Check';btn.style.cssText='width:100%;margin-top:14px';
+    c.appendChild(answerRow(d.good,t=>RafiqJudge.rewrite('Correct the one mistake in this sentence',d.bad,d.good,t)));
+    const btn=document.createElement('button');btn.className='btn';btn.textContent='Show the answer';btn.style.cssText='width:100%;margin-top:14px';
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=d.good;box.appendChild(tappable(g,d.good));
     const w=document.createElement('div');w.className='why';w.textContent=d.w;box.appendChild(w);
@@ -428,7 +429,8 @@ function vDrill(it){
     c.appendChild(taskBar(d.task[1],d.task[0]));
     const src=document.createElement('div');src.className='qar';src.textContent=d.src;
     c.appendChild(tappable(src,d.src));
-    const btn=document.createElement('button');btn.className='btn';btn.textContent='Check';btn.style.cssText='width:100%;margin-top:14px';
+    c.appendChild(answerRow(d.ans,t=>RafiqJudge.rewrite(d.task[1],d.src,d.ans,t)));
+    const btn=document.createElement('button');btn.className='btn';btn.textContent='Show the answer';btn.style.cssText='width:100%;margin-top:14px';
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=d.ans;box.appendChild(tappable(g,d.ans));
     if(window.RAFIQ_TR){const trT=RAFIQ_TR.trOf(d.ans);if(trT){const trEl=document.createElement('div');trEl.className='tr';trEl.textContent=trT;box.appendChild(trEl);}}
@@ -439,7 +441,7 @@ function vDrill(it){
     c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
     c.insertAdjacentHTML('beforeend',`<div class="qen">${d.en}</div>`);
     const target=joinAr(d.parts);
-    c.appendChild(answerRow(target,d.en));
+    c.appendChild(answerRow(target,t=>RafiqJudge.produce(d.en,target,t)));
     const btn=document.createElement('button');btn.className='btn';btn.textContent='Show the answer';btn.style.cssText='width:100%;margin-top:12px';
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=target;box.appendChild(tappable(g,target));
@@ -449,7 +451,7 @@ function vDrill(it){
   } else {                                   // produce
     c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
     c.insertAdjacentHTML('beforeend',`<div class="qen">${d.en}</div>`);
-    c.appendChild(answerRow(d.ar,d.en));
+    c.appendChild(answerRow(d.ar,t=>RafiqJudge.produce(d.en,d.ar,t)));
     const btn=document.createElement('button');btn.className='btn';btn.textContent='Show the answer';btn.style.cssText='width:100%;margin-top:12px';
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=d.ar;box.appendChild(tappable(g,d.ar));

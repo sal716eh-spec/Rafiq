@@ -1,4 +1,4 @@
-/* arkb.js — a small on-screen Arabic keyboard for any input.ar-in on the page,
+/* arkb.js — a small on-screen Arabic keyboard for any input.ar-in or textarea.ar-in on the page,
    including ones that don't exist yet (every drill card is built by JS after
    this script loads, so it can't just scan the DOM once at startup).
 
@@ -98,13 +98,13 @@
   }
 
   document.addEventListener('focusin', e=>{
-    if(e.target.matches && e.target.matches('input.ar-in')) show(e.target);
+    if(e.target.matches && e.target.matches('input.ar-in, textarea.ar-in')) show(e.target);
   });
   document.addEventListener('focusout', e=>{
     // give a tap on the keyboard itself a moment to register before hiding
     setTimeout(()=>{
       if(panel && !panel.contains(document.activeElement) &&
-         !(document.activeElement && document.activeElement.matches && document.activeElement.matches('input.ar-in'))){
+         !(document.activeElement && document.activeElement.matches && document.activeElement.matches('input.ar-in, textarea.ar-in'))){
         hide();
       }
     },150);

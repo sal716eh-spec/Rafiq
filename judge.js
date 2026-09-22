@@ -25,6 +25,8 @@
      of check must return; anything else counts as unavailable. */
   async function post(body, need){
     if(!ENDPOINT || typeof fetch!=='function') return null;
+    // Free plan: a daily allowance of smart checks (plan.js); past it, fall back.
+    if(window.RafiqPlan && !RafiqPlan.useCheck()) return null;
     const ctl = typeof AbortController==='function' ? new AbortController() : null;
     const t = ctl && setTimeout(()=>ctl.abort(), TIMEOUT_MS);
     try{

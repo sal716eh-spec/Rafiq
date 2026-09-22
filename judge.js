@@ -25,6 +25,8 @@
      of check must return; anything else counts as unavailable. */
   async function post(body, need){
     if(!ENDPOINT || typeof fetch!=='function') return null;
+    // Free plan: a daily allowance of smart checks (plan.js); past it, fall back.
+    if(window.RafiqPlan && !RafiqPlan.useCheck()) return null;
     const ctl = typeof AbortController==='function' ? new AbortController() : null;
     const t = ctl && setTimeout(()=>ctl.abort(), TIMEOUT_MS);
     try{
@@ -55,10 +57,11 @@
     const j = await post({kind:'produce', english, model, answer:said}, ['ok']);
     if(!j) return null;
     const verdict = j.ok>=0.8 ? 'right' : j.ok>=0.5 ? 'close' : 'wrong';
+    if(verdict==='wrong') note(j.err);
     return {verdict, why: verdict==='wrong' ? (ERR[j.err]||'Compare it with the answer.') : ''};
   }
 
-  /* Build-it, when the tiles are in a different order from the book's →
+  /* Build-it, when the tiles are in a different order from the model answer →
      true (another valid order) / false / null. Needs both the meaning and a
      separate word-order judgment: on its own, meaning let a scrambled order
      through at 0.87 (tools/typesafe-exp/round2b.py). Every valid reorder
@@ -77,6 +80,7 @@
     if(!j) return null;
     const p = Math.min(j.ok, j.changes);
     const verdict = p>=0.8 ? 'right' : p>=0.5 ? 'close' : 'wrong';
+    if(verdict==='wrong') note(j.err);
     return {verdict, why: verdict==='wrong' ? (ERR[j.err]||'Compare it with the answer.') : ''};
   }
 
@@ -89,8 +93,34 @@
     if(!j) return null;
     const done = j.done<0.67 ? 0 : j.done<1.34 ? 1 : 2;
     const grammarOk = j.grammar>=0.7;
+    if(!grammarOk) note(j.err);
     return {done, grammarOk, why: grammarOk ? '' : (ERR[j.err]||ERR.grammar_other)};
   }
 
-  window.RafiqJudge = { on: !!ENDPOINT, vocab, produce, build, rewrite, prompt };
+  /* Conversation partner: the learner's own reply to the other speaker →
+     {fits, grammar:'ok'|'unsure'|'slip', why} or null. With the situation,
+     fits was 46/47 on labelled replies and 90/90 on the conversations' own
+     replies (tools/typesafe-exp/round3b.py). Grammar has a quiet middle band: two
+     correct short replies scored 0.52–0.54, so 0.5–0.7 gets no comment. */
+  async function reply(previous, previousEn, suggested, said, situation){
+    const j = await post({kind:'reply', situation, previous, previous_en:previousEn, suggested, answer:said}, ['fits','grammar']);
+    if(!j) return null;
+    const grammar = j.grammar>=0.7 ? 'ok' : j.grammar>=0.5 ? 'unsure' : 'slip';
+    if(grammar==='slip') note(j.err);
+    return {fits: j.fits>=0.5, grammar, why: grammar==='slip' ? (ERR[j.err]||ERR.grammar_other) : ''};
+  }
+
+  /* Mistake profile: every judged mistake type is counted with its date, so
+     Home can point at the one that keeps coming back (see mistakes.js). */
+  function note(err){
+    if(!err || err==='none' || err==='not_done') return;
+    try{
+      const k='rafiq_mistakes', m=JSON.parse(localStorage.getItem(k)||'{}');
+      (m[err]=m[err]||[]).push(Date.now());
+      m[err]=m[err].slice(-30);
+      localStorage.setItem(k, JSON.stringify(m));
+    }catch(_){}
+  }
+
+  window.RafiqJudge = { on: !!ENDPOINT, vocab, produce, build, rewrite, prompt, reply, note };
 })();

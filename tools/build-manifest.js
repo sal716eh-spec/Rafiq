@@ -19,6 +19,7 @@ function load(file, names){
 load('drills-data.js',  ['DATA','EXTRA']);
 load('vocab-data.js',   ['VOCAB']);
 load('toolkit-data.js', ['CONNECTORS','CONNECT_EX','VERBS','PRONOUNS','VERB_SENT']);
+load('scenes-data.js',  ['SCENES']);
 Object.keys(EXTRA).forEach(k=>{
   const u=DATA.find(x=>x.n===k);
   if(u) Object.assign(u,EXTRA[k]);
@@ -48,6 +49,8 @@ DATA.forEach(u=>{
 });
 
 VOCAB.forEach(v=>add('vocab',v.unit,v.ar));
+
+SCENES.forEach(sc=>sc.lines.forEach(l=>add('scene',sc.id,l[1])));
 
 CONNECTORS.forEach(cat=>cat.items.forEach(it=>{
   add('connector','-',it.ar);

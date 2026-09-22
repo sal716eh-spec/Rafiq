@@ -6,6 +6,7 @@
      POST {kind:'build',   english, model, answer}         → {ok, order}
      POST {kind:'rewrite', task, original, model, answer}  → {ok, changes, err}
      POST {kind:'prompt',  task, model, answer}            → {done, grammar, err}
+     POST {kind:'reply',   situation, previous, previous_en, suggested, answer} → {fits, grammar, err}
 
    Values are TypeSafe probabilities (done is a 0–2 score); the page decides
    what to do with them. The questions are built here, not in the browser, so
@@ -73,7 +74,7 @@ const PRODUCE_Q = {
   },
 };
 
-// Build-it: the learner's tile order differs from the book's. Meaning alone
+// Build-it: the learner's tile order differs from the model answer. Meaning alone
 // let a scrambled order through (tools/typesafe-exp/round2b.py), so word
 // order gets its own question.
 const BUILD_Q = {
@@ -126,6 +127,47 @@ const REWRITE_Q = {
             'hamza spelling and ة/ه are fine, and so is another correct way of doing it.',
       not_done: 'The change asked for in `task` was not made, or the sentence was copied unchanged',
       ...ERRS,
+    },
+  },
+};
+
+// Conversation partner: the learner replies in their own words to the other
+// speaker's line. With the situation in the state: 46/47 labelled replies and
+// all 90 suggested replies judged a fit (tools/typesafe-exp/round3b.py).
+const REPLY_Q = {
+  fits: {
+    type: 'noul',
+    instructions: {
+      task: "In a beginner's Arabic conversation (`situation`), the other person said `previous_line`. The learner " +
+            'replied `learner_reply`. Could this naturally be said next in this conversation?',
+      counts: ["an answer to a question, with the learner's own details (it need not match `suggested_reply`)",
+               'a thank-you, an acknowledgement or a polite response to what was said',
+               'a question or remark that naturally belongs to this situation at this point, as `suggested_reply` does'],
+      does_not_count: ['a remark about something unrelated to the situation or to what was just said',
+                       'an answer to a different question from the one asked',
+                       'a personal question out of the blue that ignores what was just said'],
+      note: 'Ignore grammar and spelling here.',
+    },
+    criteria: { true: 'A natural next line', false: "Doesn't follow on" },
+  },
+  grammar: {
+    type: 'noul',
+    instructions: {
+      task: 'Ignoring missing vowel marks, is `learner_reply` grammatical, correctly spelled Arabic?',
+      check: ['gender agreement, and addressing a man as أنتَ', 'the right person and tense on verbs',
+              'numbers with the right gender (ثلاثة إخوة, not ثلاث إخوة)'],
+    },
+    criteria: { true: 'No errors', false: 'At least one error' },
+  },
+  err: {
+    type: 'choice',
+    instructions: 'What is the main grammar or spelling problem in `learner_reply`?',
+    criteria: {
+      none: 'No grammar or spelling problem (missing vowel marks are fine)',
+      gender_agreement: ERRS.gender_agreement,
+      wrong_person_or_tense: ERRS.wrong_person_or_tense,
+      spelling: ERRS.spelling,
+      grammar_other: ERRS.grammar_other,
     },
   },
 };
@@ -205,6 +247,11 @@ export default {
     } else if (b.kind === 'rewrite' && str(b.task) && str(b.original) && str(b.model) && str(b.answer)) {
       state = { task: b.task, original: b.original, model_answer: b.model, learner_answer: b.answer };
       questions = REWRITE_Q;
+    } else if (b.kind === 'reply' && str(b.previous) && str(b.previous_en) && str(b.suggested) && str(b.answer)) {
+      state = { situation: str(b.situation) ? b.situation : 'a friendly conversation',
+                previous_line: b.previous, previous_line_english: b.previous_en,
+                suggested_reply: b.suggested, learner_reply: b.answer };
+      questions = REPLY_Q;
     } else if (b.kind === 'prompt' && str(b.task) && str(b.model) && str(b.answer)) {
       state = { task: b.task, model_answer: b.model, learner_answer: b.answer };
       questions = PROMPT_Q;

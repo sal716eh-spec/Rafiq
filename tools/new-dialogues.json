@@ -1,0 +1,662 @@
+{
+ "01": {
+  "sub": "A new neighbour",
+  "lines": [
+   [
+    "ي",
+    "السَّلامُ عَلَيْكُمْ. أَنا جارُكَ الْجَدِيدُ.",
+    "Peace be upon you. I'm your new neighbour."
+   ],
+   [
+    "ح",
+    "وَعَلَيْكُمُ السَّلامُ، أَهْلًا وَسَهْلًا! ما اسْمُكَ؟",
+    "And peace be upon you — welcome! What's your name?"
+   ],
+   [
+    "ي",
+    "اسْمِي يُوسُفُ. وَأَنْتَ، ما اسْمُكَ؟",
+    "My name is Yusuf. And you, what's your name?"
+   ],
+   [
+    "ح",
+    "اسْمِي حَمْزَةُ. مِنْ أَيْنَ أَنْتَ يا يُوسُفُ؟",
+    "My name is Hamza. Where are you from, Yusuf?"
+   ],
+   [
+    "ي",
+    "أَنا مِنَ الْمَغْرِبِ. وَأَنْتَ؟",
+    "I'm from Morocco. And you?"
+   ],
+   [
+    "ح",
+    "أَنا سُودانِيٌّ. هَلْ أَنْتَ طالِبٌ؟",
+    "I'm Sudanese. Are you a student?"
+   ],
+   [
+    "ي",
+    "لا، أَنا مُدَرِّسٌ. وَهَذا ابْنِي، هُوَ طالِبٌ.",
+    "No, I'm a teacher. And this is my son — he's a student."
+   ],
+   [
+    "ح",
+    "ما شاءَ اللهُ. أَنا طَبِيبٌ، وَبَيْتِي هُنا.",
+    "Mashallah. I'm a doctor, and my house is here."
+   ],
+   [
+    "ي",
+    "تَشَرَّفْنا يا حَمْزَةُ.",
+    "Pleased to meet you, Hamza."
+   ],
+   [
+    "ح",
+    "وَأَنا أَيْضًا. مَعَ السَّلامَةِ.",
+    "Me too. Goodbye."
+   ]
+  ]
+ },
+ "02": {
+  "sub": "Eid with the family",
+  "lines": [
+   [
+    "ز",
+    "عِيدٌ مُبارَكٌ يا عَلِيُّ!",
+    "Eid Mubarak, Ali!"
+   ],
+   [
+    "ع",
+    "عِيدٌ مُبارَكٌ! تَفَضَّلْ، هَذِهِ أُسْرَتِي.",
+    "Eid Mubarak! Come in — this is my family."
+   ],
+   [
+    "ز",
+    "ما شاءَ اللهُ! مَنْ هَذا الرَّجُلُ؟",
+    "Mashallah! Who's this man?"
+   ],
+   [
+    "ع",
+    "هَذا أَبِي، وَهَذِهِ أُمِّي بِجانِبِهِ.",
+    "This is my father, and this is my mother next to him."
+   ],
+   [
+    "ز",
+    "وَمَنْ هَذا الْوَلَدُ الصَّغِيرُ؟",
+    "And who's this little boy?"
+   ],
+   [
+    "ع",
+    "هَذا أَخِي الصَّغِيرُ، وَهَذِهِ أُخْتِي الْكَبِيرَةُ.",
+    "That's my little brother, and this is my big sister."
+   ],
+   [
+    "ز",
+    "كَمْ أَخًا عِنْدَكَ؟",
+    "How many brothers do you have?"
+   ],
+   [
+    "ع",
+    "عِنْدِي ثَلاثَةُ إِخْوَةٍ وَأُخْتانِ.",
+    "I have three brothers and two sisters."
+   ],
+   [
+    "ز",
+    "أُسْرَتُكَ كَبِيرَةٌ! وَأَيْنَ جَدُّكَ؟",
+    "Your family is big! And where's your grandfather?"
+   ],
+   [
+    "ع",
+    "جَدِّي فِي الْحَدِيقَةِ مَعَ عَمِّي.",
+    "My grandfather is in the garden with my uncle."
+   ]
+  ]
+ },
+ "03": {
+  "sub": "A new house",
+  "lines": [
+   [
+    "م",
+    "هَلْ بَيْتُكَ الْجَدِيدُ بَعِيدٌ؟",
+    "Is your new house far?"
+   ],
+   [
+    "س",
+    "لا، هُوَ قَرِيبٌ مِنَ الْمَسْجِدِ. تَفَضَّلْ مَعِي.",
+    "No, it's near the mosque. Come with me."
+   ],
+   [
+    "م",
+    "ما شاءَ اللهُ، الْبَيْتُ جَمِيلٌ! كَمْ غُرْفَةً فِيهِ؟",
+    "Mashallah, the house is lovely! How many rooms does it have?"
+   ],
+   [
+    "س",
+    "فِيهِ أَرْبَعُ غُرَفٍ وَمَطْبَخٌ وَحَمَّامانِ.",
+    "It has four rooms, a kitchen and two bathrooms."
+   ],
+   [
+    "م",
+    "وَأَيْنَ غُرْفَةُ الْجُلُوسِ؟",
+    "And where's the sitting room?"
+   ],
+   [
+    "س",
+    "هُنا، عَلَى الْيَمِينِ. فِيها كَنَبَةٌ وَتِلْفازٌ.",
+    "Here, on the right. There's a sofa and a television in it."
+   ],
+   [
+    "م",
+    "وَغُرْفَةُ نَوْمِكَ؟",
+    "And your bedroom?"
+   ],
+   [
+    "س",
+    "فِي الدَّوْرِ الثَّانِي. فِيها سَرِيرٌ وَمَكْتَبٌ وَنافِذَةٌ كَبِيرَةٌ.",
+    "Upstairs. There's a bed, a desk and a big window."
+   ],
+   [
+    "م",
+    "هَلْ أَنْتَ الْمالِكُ؟",
+    "Are you the owner?"
+   ],
+   [
+    "س",
+    "لا، أَنا مُسْتَأْجِرٌ. الْإِيجارُ مُرْتَفِعٌ قَلِيلًا!",
+    "No, I'm renting. The rent is a bit high!"
+   ]
+  ]
+ },
+ "04": {
+  "sub": "A busy day",
+  "lines": [
+   [
+    "ن",
+    "يا هُدى، مَتى تَسْتَيْقِظِينَ فِي الصَّباحِ؟",
+    "Huda, when do you wake up in the morning?"
+   ],
+   [
+    "ه",
+    "أَسْتَيْقِظُ فِي السَّاعَةِ السَّادِسَةِ، ثُمَّ أُصَلِّي الْفَجْرَ.",
+    "I wake up at six, then I pray Fajr."
+   ],
+   [
+    "ن",
+    "وَماذا تَفْعَلِينَ بَعْدَ الصَّلاةِ؟",
+    "And what do you do after the prayer?"
+   ],
+   [
+    "ه",
+    "أَشْرَبُ الشَّايَ وَأَقْرَأُ قَلِيلًا.",
+    "I drink tea and read a little."
+   ],
+   [
+    "ن",
+    "كَيْفَ تَذْهَبِينَ إِلى الْعَمَلِ؟",
+    "How do you get to work?"
+   ],
+   [
+    "ه",
+    "أَذْهَبُ بِالْقِطارِ، وَأَحْيانًا أَمْشِي.",
+    "I go by train, and sometimes I walk."
+   ],
+   [
+    "ن",
+    "مَتى تَرْجِعِينَ إِلى الْبَيْتِ؟",
+    "When do you get back home?"
+   ],
+   [
+    "ه",
+    "أَرْجِعُ فِي السَّاعَةِ الْخامِسَةِ مَساءً، ثُمَّ أَطْبُخُ الْعَشاءَ.",
+    "I get back at five in the evening, then I cook dinner."
+   ],
+   [
+    "ن",
+    "وَمَتى تَنامِينَ؟",
+    "And when do you go to sleep?"
+   ],
+   [
+    "ه",
+    "أَنامُ مُبَكِّرًا، فِي السَّاعَةِ الْعاشِرَةِ.",
+    "I go to bed early, at ten."
+   ]
+  ]
+ },
+ "05": {
+  "sub": "Cooking together",
+  "lines": [
+   [
+    "أ",
+    "ماذا نَطْبُخُ الْيَوْمَ يا فاطِمَةُ؟",
+    "What shall we cook today, Fatima?"
+   ],
+   [
+    "ف",
+    "نَطْبُخُ الْأَرُزَّ مَعَ الدَّجاجِ.",
+    "Let's cook rice with chicken."
+   ],
+   [
+    "أ",
+    "فِكْرَةٌ جَيِّدَةٌ! هَلْ عِنْدَنا خُضارٌ؟",
+    "Good idea! Do we have vegetables?"
+   ],
+   [
+    "ف",
+    "نَعَمْ، عِنْدَنا طَماطِمُ وَبَصَلٌ وَجَزَرٌ.",
+    "Yes, we have tomatoes, onions and carrots."
+   ],
+   [
+    "أ",
+    "وَماذا نَشْرَبُ؟",
+    "And what shall we drink?"
+   ],
+   [
+    "ف",
+    "نَشْرَبُ الْعَصِيرَ أَوِ الْماءَ.",
+    "We'll drink juice or water."
+   ],
+   [
+    "أ",
+    "أَنا جائِعَةٌ جِدًّا!",
+    "I'm very hungry!"
+   ],
+   [
+    "ف",
+    "صَبْرًا، الطَّعامُ جاهِزٌ بَعْدَ نِصْفِ ساعَةٍ.",
+    "Patience — the food will be ready in half an hour."
+   ],
+   [
+    "أ",
+    "هَلْ نَأْكُلُ الْحَلْوى بَعْدَ الْعَشاءِ؟",
+    "Shall we have dessert after dinner?"
+   ],
+   [
+    "ف",
+    "نَعَمْ، عِنْدَنا تَمْرٌ وَكَعْكٌ.",
+    "Yes, we have dates and cake."
+   ]
+  ]
+ },
+ "06": {
+  "sub": "Friday prayer",
+  "lines": [
+   [
+    "ب",
+    "الْيَوْمَ الْجُمُعَةُ. هَلْ تَذْهَبُ إِلى الْمَسْجِدِ؟",
+    "Today is Friday. Are you going to the mosque?"
+   ],
+   [
+    "ط",
+    "نَعَمْ، أَذْهَبُ مُبَكِّرًا لِصَلاةِ الْجُمُعَةِ.",
+    "Yes, I'm going early for the Friday prayer."
+   ],
+   [
+    "ب",
+    "مَتى تَبْدَأُ الْخُطْبَةُ؟",
+    "When does the sermon start?"
+   ],
+   [
+    "ط",
+    "تَبْدَأُ فِي السَّاعَةِ الْواحِدَةِ ظُهْرًا.",
+    "It starts at one in the afternoon."
+   ],
+   [
+    "ب",
+    "هَلِ الْمَسْجِدُ بَعِيدٌ عَنْ بَيْتِكَ؟",
+    "Is the mosque far from your house?"
+   ],
+   [
+    "ط",
+    "لا، هُوَ قَرِيبٌ جِدًّا، بِجانِبِ السُّوقِ.",
+    "No, it's very close, next to the market."
+   ],
+   [
+    "ب",
+    "هَلْ أَذْهَبُ مَعَكَ؟",
+    "Shall I come with you?"
+   ],
+   [
+    "ط",
+    "طَبْعًا! نَتَوَضَّأُ فِي الْبَيْتِ، ثُمَّ نَمْشِي مَعًا.",
+    "Of course! We'll do wudu at home, then walk together."
+   ],
+   [
+    "ب",
+    "وَبَعْدَ الصَّلاةِ؟",
+    "And after the prayer?"
+   ],
+   [
+    "ط",
+    "نَزُورُ أَبِي، ثُمَّ نَأْكُلُ الْغَداءَ عِنْدَهُ.",
+    "We'll visit my father, then have lunch at his place."
+   ]
+  ]
+ },
+ "07": {
+  "sub": "A new student",
+  "lines": [
+   [
+    "ك",
+    "هَلْ أَنْتَ طالِبٌ جَدِيدٌ فِي الْمَعْهَدِ؟",
+    "Are you a new student at the institute?"
+   ],
+   [
+    "د",
+    "نَعَمْ، أَدْرُسُ اللُّغَةَ الْعَرَبِيَّةَ هُنا.",
+    "Yes, I'm studying Arabic here."
+   ],
+   [
+    "ك",
+    "وَأَنا أَيْضًا! فِي أَيِّ مُسْتَوًى أَنْتَ؟",
+    "Me too! Which level are you in?"
+   ],
+   [
+    "د",
+    "أَنا فِي الْمُسْتَوَى الْأَوَّلِ.",
+    "I'm in the first level."
+   ],
+   [
+    "ك",
+    "كَمْ دَرْسًا عِنْدَكَ الْيَوْمَ؟",
+    "How many lessons do you have today?"
+   ],
+   [
+    "د",
+    "عِنْدِي ثَلاثَةُ دُرُوسٍ: الْقِراءَةُ، وَالنَّحْوُ، وَالْمُحادَثَةُ.",
+    "I have three lessons: reading, grammar and conversation."
+   ],
+   [
+    "ك",
+    "مَنْ مُدَرِّسُ النَّحْوِ؟",
+    "Who's the grammar teacher?"
+   ],
+   [
+    "د",
+    "الْأُسْتاذُ سَعِيدٌ. هُوَ مُدَرِّسٌ مُمْتازٌ.",
+    "Mr Said. He's an excellent teacher."
+   ],
+   [
+    "ك",
+    "أَيْنَ تُذاكِرُ بَعْدَ الدُّرُوسِ؟",
+    "Where do you revise after lessons?"
+   ],
+   [
+    "د",
+    "أُذاكِرُ فِي الْمَكْتَبَةِ، ثُمَّ أَرْجِعُ إِلى السَّكَنِ.",
+    "I revise in the library, then go back to my accommodation."
+   ]
+  ]
+ },
+ "08": {
+  "sub": "Talking about work",
+  "lines": [
+   [
+    "ص",
+    "أَيْنَ تَعْمَلُ الْآنَ يا وَلِيدُ؟",
+    "Where do you work now, Walid?"
+   ],
+   [
+    "و",
+    "أَعْمَلُ مُحاسِبًا فِي شَرِكَةٍ كَبِيرَةٍ.",
+    "I work as an accountant at a big company."
+   ],
+   [
+    "ص",
+    "ما شاءَ اللهُ! هَلْ عَمَلُكَ صَعْبٌ؟",
+    "Mashallah! Is your work hard?"
+   ],
+   [
+    "و",
+    "لا، لَيْسَ صَعْبًا، لَكِنَّهُ طَوِيلٌ.",
+    "No, it's not hard, but it's long."
+   ],
+   [
+    "ص",
+    "كَمْ ساعَةً تَعْمَلُ فِي الْيَوْمِ؟",
+    "How many hours a day do you work?"
+   ],
+   [
+    "و",
+    "أَعْمَلُ ثَمانِيَ ساعاتٍ، مِنَ التَّاسِعَةِ إِلى الْخامِسَةِ.",
+    "I work eight hours, from nine to five."
+   ],
+   [
+    "ص",
+    "وَأَنا أَعْمَلُ مُهَنْدِسًا فِي مَصْنَعٍ.",
+    "And I work as an engineer in a factory."
+   ],
+   [
+    "و",
+    "هَلْ تُحِبُّ عَمَلَكَ؟",
+    "Do you like your work?"
+   ],
+   [
+    "ص",
+    "نَعَمْ، أُحِبُّهُ كَثِيرًا، وَزُمَلائِي طَيِّبُونَ.",
+    "Yes, I like it a lot, and my colleagues are kind."
+   ],
+   [
+    "و",
+    "الْحَمْدُ لِلَّهِ. الْعَمَلُ الطَّيِّبُ نِعْمَةٌ.",
+    "Praise God. Good work is a blessing."
+   ]
+  ]
+ },
+ "09": {
+  "sub": "At the fruit stall",
+  "lines": [
+   [
+    "ز",
+    "السَّلامُ عَلَيْكُمْ. بِكَمْ كِيلُو التُّفّاحِ؟",
+    "Peace be upon you. How much is a kilo of apples?"
+   ],
+   [
+    "ب",
+    "وَعَلَيْكُمُ السَّلامُ. الْكِيلُو بِعَشَرَةِ رِيالاتٍ.",
+    "And peace be upon you. Ten riyals a kilo."
+   ],
+   [
+    "ز",
+    "هَذا غالٍ! هَلْ عِنْدَكَ شَيْءٌ أَرْخَصُ؟",
+    "That's expensive! Do you have anything cheaper?"
+   ],
+   [
+    "ب",
+    "الْبُرْتُقالُ بِسِتَّةِ رِيالاتٍ لِلْكِيلُو، وَهُوَ طازَجٌ.",
+    "Oranges are six riyals a kilo, and they're fresh."
+   ],
+   [
+    "ز",
+    "طَيِّبٌ، أُرِيدُ كِيلُو بُرْتُقالٍ وَنِصْفَ كِيلُو عِنَبٍ.",
+    "Fine — I'd like a kilo of oranges and half a kilo of grapes."
+   ],
+   [
+    "ب",
+    "تَفَضَّلْ. هَلْ تُرِيدُ شَيْئًا آخَرَ؟",
+    "Here you are. Anything else?"
+   ],
+   [
+    "ز",
+    "نَعَمْ، أُرِيدُ مَوْزًا أَيْضًا.",
+    "Yes, I'd like some bananas too."
+   ],
+   [
+    "ب",
+    "الْمَجْمُوعُ عِشْرُونَ رِيالًا.",
+    "That's twenty riyals altogether."
+   ],
+   [
+    "ز",
+    "تَفَضَّلْ. شُكْرًا جَزِيلًا.",
+    "Here you are. Thank you very much."
+   ],
+   [
+    "ب",
+    "عَفْوًا، مَعَ السَّلامَةِ.",
+    "You're welcome. Goodbye."
+   ]
+  ]
+ },
+ "10": {
+  "sub": "Planning a day out",
+  "lines": [
+   [
+    "ر",
+    "ما رَأْيُكَ؟ نَذْهَبُ إِلى الْحَدِيقَةِ غَدًا؟",
+    "What do you think — shall we go to the park tomorrow?"
+   ],
+   [
+    "ع",
+    "فِكْرَةٌ جَمِيلَةٌ، لَكِنْ كَيْفَ الْجَوُّ غَدًا؟",
+    "Nice idea, but what's the weather like tomorrow?"
+   ],
+   [
+    "ر",
+    "الْجَوُّ مُشْمِسٌ وَدافِئٌ إِنْ شاءَ اللهُ.",
+    "Sunny and warm, God willing."
+   ],
+   [
+    "ع",
+    "وَالْيَوْمَ؟ السَّماءُ غائِمَةٌ.",
+    "And today? The sky is cloudy."
+   ],
+   [
+    "ر",
+    "نَعَمْ، الْيَوْمَ بارِدٌ، وَفِيهِ رِياحٌ قَوِيَّةٌ.",
+    "Yes, today is cold, with strong winds."
+   ],
+   [
+    "ع",
+    "كَمْ دَرَجَةُ الْحَرارَةِ غَدًا؟",
+    "What's the temperature tomorrow?"
+   ],
+   [
+    "ر",
+    "عِشْرُونَ دَرَجَةً تَقْرِيبًا.",
+    "About twenty degrees."
+   ],
+   [
+    "ع",
+    "مُمْتازٌ! أَنا أُحِبُّ الْجَوَّ الْمُعْتَدِلَ.",
+    "Excellent! I love mild weather."
+   ],
+   [
+    "ر",
+    "وَإِذا أَمْطَرَتْ؟",
+    "And if it rains?"
+   ],
+   [
+    "ع",
+    "نَجْلِسُ فِي الْبَيْتِ وَنَشْرَبُ الشَّايَ!",
+    "We'll stay at home and drink tea!"
+   ]
+  ]
+ },
+ "11": {
+  "sub": "Visiting a new city",
+  "lines": [
+   [
+    "ت",
+    "عَفْوًا، أَنا زائِرٌ هُنا. أَيْنَ وَسَطُ الْمَدِينَةِ؟",
+    "Excuse me, I'm visiting. Where's the city centre?"
+   ],
+   [
+    "ن",
+    "وَسَطُ الْمَدِينَةِ قَرِيبٌ، بَعْدَ الْجِسْرِ.",
+    "The city centre is close, just after the bridge."
+   ],
+   [
+    "ت",
+    "هَلِ الْمَدِينَةُ كَبِيرَةٌ؟",
+    "Is the city big?"
+   ],
+   [
+    "ن",
+    "نَعَمْ، فِيها أَسْواقٌ قَدِيمَةٌ وَمَساجِدُ جَمِيلَةٌ.",
+    "Yes, it has old markets and beautiful mosques."
+   ],
+   [
+    "ت",
+    "وَأَيْنَ الْمَتْحَفُ؟",
+    "And where's the museum?"
+   ],
+   [
+    "ن",
+    "الْمَتْحَفُ بِجانِبِ الْحَدِيقَةِ الْكَبِيرَةِ.",
+    "The museum is next to the big park."
+   ],
+   [
+    "ت",
+    "هَلْ أَذْهَبُ بِالْحافِلَةِ أَمْ أَمْشِي؟",
+    "Should I take the bus or walk?"
+   ],
+   [
+    "ن",
+    "امْشِ، الطَّرِيقُ جَمِيلٌ وَهادِئٌ.",
+    "Walk — the road is pretty and quiet."
+   ],
+   [
+    "ت",
+    "شُكْرًا لَكَ. مِنْ أَيْنَ أَنْتَ؟",
+    "Thank you. Where are you from?"
+   ],
+   [
+    "ن",
+    "أَنا مِنْ هَذِهِ الْمَدِينَةِ، وُلِدْتُ هُنا.",
+    "I'm from this city — I was born here."
+   ]
+  ]
+ },
+ "12": {
+  "sub": "Free time",
+  "lines": [
+   [
+    "ج",
+    "ماذا تَفْعَلُ فِي وَقْتِ الْفَراغِ يا حَسَنُ؟",
+    "What do you do in your free time, Hasan?"
+   ],
+   [
+    "ح",
+    "أَلْعَبُ كُرَةَ الْقَدَمِ مَعَ أَصْدِقائِي.",
+    "I play football with my friends."
+   ],
+   [
+    "ج",
+    "مَتى تَلْعَبُونَ؟",
+    "When do you play?"
+   ],
+   [
+    "ح",
+    "نَلْعَبُ يَوْمَ السَّبْتِ فِي الصَّباحِ. وَأَنْتَ؟",
+    "We play on Saturday mornings. And you?"
+   ],
+   [
+    "ج",
+    "أَنا أُحِبُّ الرَّسْمَ وَالْقِراءَةَ.",
+    "I love drawing and reading."
+   ],
+   [
+    "ح",
+    "ماذا تَرْسُمُ؟",
+    "What do you draw?"
+   ],
+   [
+    "ج",
+    "أَرْسُمُ الطَّبِيعَةَ: الْجِبالَ وَالْبَحْرَ وَالْأَشْجارَ.",
+    "I draw nature: mountains, the sea and trees."
+   ],
+   [
+    "ح",
+    "هَذِهِ هِوايَةٌ جَمِيلَةٌ! هَلْ تَتَعَلَّمُ الْخَطَّ الْعَرَبِيَّ أَيْضًا؟",
+    "That's a lovely hobby! Do you learn Arabic calligraphy too?"
+   ],
+   [
+    "ج",
+    "نَعَمْ، أَتَعَلَّمُهُ مَعَ مُدَرِّسٍ كُلَّ أُسْبُوعٍ.",
+    "Yes, I learn it with a teacher every week."
+   ],
+   [
+    "ح",
+    "ما شاءَ اللهُ! أُرِيدُ أَنْ أَرى رُسُومَكَ.",
+    "Mashallah! I'd like to see your drawings."
+   ]
+  ]
+ }
+}

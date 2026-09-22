@@ -1,4 +1,4 @@
-// Al-ʿArabiyyah Bayna Yadayk — REORDERED for sentence-building (proposed, for review).
+// Rafiq core vocabulary, ordered for sentence-building (proposed, for review).
 // Order: greetings, core sentence-builders, then broad themes. IDs are UNCHANGED from the
 // original data so saved progress and audio clips still map correctly. Only order + unit changed.
 // The final "General vocabulary" group still needs a human/teacher pass.

@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+(function(){
+  if (location.hostname === 'sal716eh-spec.github.io') {
+    var path = location.pathname.replace(/^\/Rafiq/, '') || '/';
+    location.replace('https://rafiq-arabic.com' + path + location.search + location.hash);
+  }
+})();
+</script>
+<script src="theme.js?v=2"></script>
+<title>Practise — Rafiq</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=901">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1815">
+<meta name="color-scheme" content="light dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+.hero{padding:40px 0 6px;text-align:center}
+.hero .greet{font-family:var(--ar);direction:rtl;font-size:clamp(26px,6vw,36px);font-weight:600;color:var(--ink);
+  line-height:1.7;margin:0 0 10px;padding:4px 0}
+.hero .greet .nm{color:var(--rubric);cursor:pointer;border-bottom:1px dotted rgba(180,50,42,.4);transition:opacity .12s}
+.hero .greet .nm:active{opacity:.6}
+.hero h1{font-size:clamp(21px,4.4vw,26px);font-weight:700;margin:0 auto}
+.hero p{color:var(--ink-soft);font-size:14.5px;margin:8px auto 0;max-width:52ch}
+.today{font-family:var(--ut);font-size:11px;letter-spacing:.08em;color:var(--ink-soft);margin-top:14px}
+.today b{color:var(--rubric)}
+.tiles{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px;padding:28px 0 48px}
+.tile{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:28px;min-height:210px;position:relative;display:flex;flex-direction:column;transition:transform .18s,border-color .18s;touch-action:manipulation}
+.tile:active{transform:scale(.985)}
+.tilehead{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:4px}
+.tile .ar{font-family:var(--ar);direction:rtl;font-size:25px;font-weight:600;color:var(--ink);line-height:1.65;padding:2px 0}
+.tile h2{font-size:20px;margin-top:14px}
+.tile p{color:var(--ink-soft);font-size:13px;margin-top:8px;flex:1}
+.tile .go{font-size:13px;color:var(--verdigris);font-weight:500;margin-top:12px}
+.tile.drills .ar{color:var(--rubric)}
+.corner{flex:0 0 auto}
+.acctbar{max-width:1000px;margin:34px auto 0;padding:16px 30px 0;border-top:1px solid var(--rule);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (max-width:860px){ .acctbar{padding:14px 16px 0;margin-top:26px} .acctbar .btn{min-height:44px} }
+@media (min-width:861px){ .acctbar{display:none} }   /* desktop already has Log out in the top nav */
+
+.cx{font-family:var(--ut);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--verdigris);border:1px solid var(--verdigris);border-radius:10px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+.pickhead{font-size:16px;font-weight:700;margin:26px 0 4px}
+.picksub{font-size:13.5px;color:var(--ink-soft);margin:0 0 16px}
+.qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.qcard{display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--rule);
+  border-radius:8px;padding:16px 17px;transition:border-color .15s,transform .12s;touch-action:manipulation}
+.qcard:active{transform:scale(.98)}
+.qcard .qa{font-family:var(--ar);font-size:20px;direction:rtl;line-height:1.7;color:var(--rubric)}
+.qcard .qt{font-size:15.5px;font-weight:600;margin-top:2px}
+.qcard .qd{font-size:12.5px;color:var(--ink-soft);margin-top:4px;line-height:1.45}
+.qcard .qm{font-family:var(--ut);font-size:10.5px;color:var(--ink-soft);margin-top:9px;padding-top:8px;border-top:1px solid var(--rule)}
+.qcard .qm b{color:var(--rubric)}
+/* Was background:var(--ink);color:var(--paper) — an intentional light/dark
+   inversion in light mode, but --ink and --paper swap meaning under dark mode
+   too, so the "inverted" card re-inverted itself back to a bright cream block
+   sitting oddly on the dark page instead of popping the way it should.
+   var(--card)/var(--ink) stays in the same surface family as the rest of the
+   page in both themes; the verdigris border plus the accent-colored button
+   below are what make this one read as the primary action. */
+.bigcta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  background:var(--card);color:var(--ink);border:1px solid var(--verdigris);border-radius:8px;padding:18px 20px;margin:22px 0 4px;text-decoration:none;
+  transition:transform var(--press,120ms) var(--ease-out,ease-out);touch-action:manipulation}
+.bigcta:active{transform:scale(.98)}
+.bigcta .bc-t{font-size:17px;font-weight:600}
+.bigcta .bc-d{font-size:13px;opacity:.72;margin-top:3px}
+.bigcta .bc-go{background:var(--verdigris);color:#fff;border-radius:5px;padding:11px 20px;font-size:14.5px;white-space:nowrap}
+@media (max-width:860px){ .qgrid{grid-template-columns:minmax(0,1fr)} .bigcta{flex-direction:column;align-items:stretch}
+  .bigcta .bc-go{text-align:center} }
+.stat{font-family:var(--ut);font-size:11px;letter-spacing:.08em;color:var(--ink-soft);margin-top:10px;padding-top:10px;border-top:1px solid var(--rule)}
+.stat b{color:var(--rubric);font-weight:600}
+.stat.none{color:var(--ink-soft)}
+@media (max-width:640px){.tiles{grid-template-columns:minmax(0,1fr)}}
+
+/* Pointer devices only — :hover sticks after a tap on touchscreens. */
+@media (hover:hover) and (pointer:fine){
+
+.tile:hover{transform:translateY(-2px);border-color:var(--verdigris)}
+.qcard:hover{border-color:var(--verdigris);transform:translateY(-1px)}
+}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="dashboard.html"><span class="bmark"></span>رَفِيق</a>
+  <div class="navlinks">
+    <a class="active" href="dashboard.html">Dashboard</a>
+    <a href="vocab.html">Words</a>
+    <a href="drills.html">Sentences</a><a href="verbs.html">Verbs</a><a href="connectors.html">Connectors</a>
+    <a href="settings.html">Settings</a>
+    <a href="login.html" class="logout-link" onclick="logout();return false;">Log out</a>
+  </div>
+</nav>
+<main class="wrap">
+  <section class="hero">
+    <div class="greet">تَدْرِيب</div>
+    <h1>Practise</h1>
+    <p>Extra practice on anything you've met, whenever you like. Your lessons are on Home.</p>
+  </section>
+  <div id="picker"></div>
+</main>
+<script src="vocab-data.js?v=20260922"></script>
+<script src="scenes-data.js?v=20260922"></script>
+<script>
+/* Both apps keep their own schedule; the dashboard just reports on each. */
+const DAY=86400000, dayNow=Math.floor(Date.now()/DAY), iso=new Date().toISOString().slice(0,10);
+function read(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(_){return null}}
+
+
+(async function whoAmI(){
+  const el=document.getElementById('whoami'); if(!el) return;
+  let name=''; try{name=localStorage.getItem('bay_name')||''}catch(e){}
+  if(typeof sb!=='undefined' && sb){
+    try{const {data}=await sb.auth.getUser(); if(data&&data.user) name=name||data.user.email||''}catch(e){}
+  }
+  el.textContent = name? ('Signed in as '+name) : 'Account';
+})();
+
+const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
+(async function picker(){
+  // progress.js loads further down the page; wait for it before marking scenes done
+  if(document.readyState!=='complete') await new Promise(r=>addEventListener('load',r,{once:true}));
+  if(typeof Progress!=='undefined') await Progress.init();
+  const el=document.getElementById('picker');
+  if(!el) return;
+  const dr=read('bay_drills_progress_v1'), vc=read('bay_vocab_progress_v1');
+  let drDue=0, drKnown=0;
+  if(dr&&dr.items) Object.values(dr.items).forEach(r=>{if(r.due<=iso)drDue++;if(r.box>=3)drKnown++});
+  let vcDue=0, vcNew=0;
+  const vTotal=(typeof VOCAB!=='undefined')?VOCAB.length:0;
+  if(vc) Object.values(vc).forEach(r=>{if(!r||!r.box){vcNew++;return}if(r.due!=null&&r.due<=dayNow)vcDue++});
+  else vcNew=vTotal;
+
+  const cards=[
+    {href:'vocab.html', ar:'مُفْرَدات', t:'Words',
+     d:'Daily spaced-repetition review of 779 core words.',
+     m: vcDue? `<b>${vcDue}</b> due today` : `${vTotal-vcNew} started of ${vTotal}`},
+    {href:'drills.html', ar:'جُمَل', t:'Sentences',
+     d:'Twelve drills across units 1\u201312 \u2014 dialogue, ladders, gap-fill, production.',
+     m: drDue? `<b>${drDue}</b> due today` : `${drKnown} known of 672`},
+    {href:'verbs.html?tab=drill', ar:'أَفْعال', t:'Practise your tenses',
+     d:'Past, present and future across 21 verbs \u2014 table, drill, then in a sentence.',
+     m:'21 verbs \u00b7 18 forms each'},
+    {href:'connectors.html?tab=ex', ar:'رَوابِط', t:'Joining words',
+     d:'\u062B\u064F\u0645\u0651 \u00b7 \u0644\u0623\u0646\u0651 \u00b7 \u0644\u0643\u0646\u0651 \u2014 plus question and opinion openers.',
+     m:'53 connectors \u00b7 24 exercises'}
+  ];
+  const total=drDue+vcDue;
+  el.innerHTML =
+    `<a class="bigcta" href="session.html">
+       <div><div class="bc-t">Mixed review</div>
+       <div class="bc-d">A quick mix of everything you've reached so far</div></div>
+       <span class="bc-go">Start →</span></a>
+     <div class="pickhead" id="scenes">Real-life scenes <span class="cx">Complete</span></div>
+     <p class="picksub">Short conversations for real situations — you reply in your own words.</p>
+     <div class="qgrid">${SCENES.map(x=>`<a class="qcard" href="learn.html?scene=${x.id}">
+       <div class="qa">${x.pic} ${x.ar}</div><div class="qt">${x.en}</div><div class="qd">${x.d}</div>
+       <div class="qm">${seen('x:'+x.id)?'<b>✓</b> done — try it again':'5 replies · about 5 minutes'}</div></a>`).join('')}</div>
+     <a class="bigcta" href="session.html?focus=weak" style="margin-top:14px">
+       <div><div class="bc-t">🎯 Weak-spots review <span class="cx">Complete</span></div>
+       <div class="bc-d">Exercises picked for the mistakes you keep making</div></div>
+       <span class="bc-go">Start →</span></a>
+     <div class="pickhead">Or pick one area</div>
+     <div class="qgrid">` +
+    cards.map(c=>`<a class="qcard" href="${c.href}">
+       <div class="qa">${c.ar}</div><div class="qt">${c.t}</div>
+       <div class="qd">${c.d}</div><div class="qm">${c.m}</div></a>`).join('') +
+    `</div>`;
+})();
+
+
+</script>
+
+<div class="acctbar">
+  <span class="label" id="whoami">Account</span>
+  <button class="btn logout-link" type="button">Sign out</button>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a class="on" href="dashboard.html"><span class="ti">الرَّئِيسَة</span>Home</a>
+  <a href="vocab.html"><span class="ti">مُفْرَدات</span>Words</a>
+  <a href="drills.html"><span class="ti">جُمَل</span>Sentences</a>
+  <a href="verbs.html"><span class="ti">أَفْعال</span>Verbs</a>
+  <a href="connectors.html"><span class="ti">رَوابِط</span>Links</a>
+  <a href="settings.html"><span class="ti">إِعْدادات</span>Settings</a>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js?v=3"></script>
+<script src="plan.js?v=20260922"></script>
+<script src="progress.js?v=1"></script>
+<script>RafiqPlan.requirePlan();</script>
+<script src="nav.js?v=20260922"></script>
+<script>
+requireLogin();
+</script>
+</body>
+</html>

@@ -766,7 +766,7 @@ footer{border-top:1px solid var(--rule);padding:16px 28px 30px;font-size:12px;co
   Progress is saved on this device where the browser allows it; otherwise it lasts for the session.
 </footer>
 
-<script src="drills-data.js?v=900"></script>
+<script src="drills-data.js?v=20260922"></script>
 <script>
 /* ── merge extra content + derive pools ─────────────────── */
 DATA.forEach(u=>Object.assign(u,EXTRA[u.n]||{}));
@@ -1304,7 +1304,7 @@ const RENDER={
           if(!ok){notYet();return}
           drop.classList.add('right');drop.classList.remove('wrong');
           verdict.className='verdict ok';
-          verdict.textContent='That order works too ✓ The book has: '+text;
+          verdict.textContent='That order works too ✓ Another way to say it: '+text;
           say(joinAr(placed),null);
           if(!c.dataset.done){c.dataset.done='1';c.appendChild(rateRow(it.id))}
         });
@@ -1785,7 +1785,7 @@ function openUnit(i){
 function drawPicker(){
   pickerEl.innerHTML =
     '<h1 style="font-size:26px;font-weight:700;margin:18px 0 4px">Which unit today?</h1>'+
-    '<p style="color:var(--ink-soft);font-size:14px;margin-bottom:20px;max-width:56ch">Pick a unit to see its conversations. Each unit follows the book\u2019s order.</p>'+
+    '<p style="color:var(--ink-soft);font-size:14px;margin-bottom:20px;max-width:56ch">Pick a unit to see its conversations. Each one builds on the last.</p>'+
     '<div class="picker-grid" id="pickerGrid"></div>';
   const grid = document.getElementById('pickerGrid');
   DATA.forEach((u,i)=>{
@@ -1898,8 +1898,11 @@ backUnitsEl.addEventListener('click', showPicker);
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=1"></script>
+<script src="nav.js?v=20260922"></script>
 <script src="progress.js?v=1"></script>
 <script src="translations.js?v=1"></script>
 <script src="arkb.js?v=2" defer></script>
-<script src="judge.js?v=3"></script>
+<script src="plan.js?v=20260922"></script>
+<script>RafiqPlan.requirePlan();</script>
+<script src="judge.js?v=20260922"></script>
 <script>requireLogin();</script>

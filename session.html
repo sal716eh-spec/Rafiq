@@ -152,7 +152,6 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
     <div class="sess-prog"><i id="bar" style="width:0"></i></div>
     <span class="sess-n" id="count">—</span>
     <button class="btn" id="quit" type="button">End</button>
-    <button class="btn logout-link" id="signout" type="button" title="Sign out">Sign out</button>
   </div>
   <div id="panel"></div>
 </main>
@@ -171,12 +170,20 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 <script src="progress.js?v=1"></script>
 <script src="arkb.js?v=2" defer></script>
 <script src="translations.js?v=1"></script>
-<script src="judge.js?v=3"></script>
+<script src="plan.js?v=20260922"></script>
+<script>RafiqPlan.requirePlan();</script>
+<script src="judge.js?v=20260922"></script>
 <script>requireLogin();</script>
-<script src="vocab-data.js?v=900"></script>
+<script src="vocab-data.js?v=20260922"></script>
 <script src="toolkit-data.js?v=900"></script>
-<script src="drills-data.js?v=900"></script>
+<script src="drills-data.js?v=20260922"></script>
 <script src="audio.js?v=900"></script>
+<script src="path-data.js?v=20260922"></script>
+<script src="alphabet-data.js?v=20260922"></script>
+<script src="path.js?v=20260922b"></script>
+<script src="mistakes.js?v=20260922"></script>
+<script src="item-tags.js?v=20260922"></script>
+<script src="nav.js?v=20260922"></script>
 <script>
 DATA.forEach(u=>Object.assign(u,EXTRA[u.n]||{}));
 const glue=(a,s)=>a+(s.startsWith('،')?'':' ')+s, joinAr=a=>a.reduce(glue);
@@ -200,32 +207,35 @@ function drillPool(){
 }
 function build(n){
   const share = k => Math.max(1, Math.round(n*k));
+  // Only what the learner has reached on the path: new words arrive through
+  // lessons, so a session reviews words already met and drills from reached units.
+  const units = new Set(UNIT ? [UNIT] : RafiqPath.reached().map(p=>p.n));
+  const unitWords = UNIT ? new Set((PATH.find(p=>p.n===UNIT)||{words:[]}).words) : null;
 
-  // words: those due first, then unseen ones in book order
-  const wDue = VOCAB.filter(w=>Progress.isDue(ID.word(w)));
-  const wNew = VOCAB.filter(w=>Progress.isNew(ID.word(w)));
+  const met  = VOCAB.filter(w=>!Progress.isNew(ID.word(w)) && (!unitWords || unitWords.has(w.id)));
+  const wDue = met.filter(w=>Progress.isDue(ID.word(w)));
   const words = shuffle(wDue).slice(0, share(0.35))
-    .concat(wNew.slice(0, Math.max(0, share(0.35)-wDue.length)))
+    .concat(shuffle(met.filter(w=>!Progress.isDue(ID.word(w)))).slice(0, UNIT ? Math.max(0, share(0.35)-wDue.length) : 0))
     .map(w=>({kind:'words', mode:'word', w}));
 
-  const dp   = drillPool();
+  const dp   = drillPool().filter(x=>units.has(x.unit.n));
   const dDue = dp.filter(x=>Progress.isDue(ID.drill(x)));
   const dNew = dp.filter(x=>Progress.isNew(ID.drill(x)));
   const sentences = shuffle(dDue).slice(0, share(0.35))
-    .concat(shuffle(dNew).slice(0, Math.max(0, share(0.35)-dDue.length)));
+    .concat(shuffle(dNew).slice(0, Math.max(0, (UNIT ? n-words.length : share(0.35))-dDue.length)));
 
   /* Verb patterns are scheduled per verb+tense; the pronoun is picked fresh
      each time so you meet the pattern, not a memorised single form. */
   const vPat=[];
   VERBS.forEach(v=>['past','pr','fut'].forEach(t=>vPat.push({v,t})));
-  const verbs = shuffle(vPat).slice(0, share(0.15)).map(x=>{
+  const verbs = shuffle(vPat).slice(0, UNIT ? 0 : share(0.15)).map(x=>{
     const p=Math.floor(Math.random()*PRONOUNS.length);
     const ans = x.t==='past' ? x.v.past[p] : x.t==='pr' ? x.v.pr[p] : 'سَ'+x.v.pr[p];
     return {kind:'verbs', mode:'verb', v:x.v, p, t:x.t, ans};
   });
 
   // connectors: scheduled by the connector itself, so the same trap resurfaces
-  const links = shuffle(CONNECT_EX).slice(0, share(0.15))
+  const links = shuffle(CONNECT_EX).slice(0, UNIT ? 0 : share(0.15))
     .map(t=>({kind:'links', mode:'link', d:t}));
 
   return shuffle(words.concat(sentences, verbs, links)).slice(0,n);
@@ -272,11 +282,30 @@ function answerRow(target,check){
   row.appendChild(inp);row.appendChild(b);w.appendChild(row);w.appendChild(out);return w}
 
 /* ── session ── */
-const LEN=(()=>{const v=parseInt(new URLSearchParams(location.search).get('n'),10);return [8,12,20].includes(v)?v:12})();
+const LEN=(()=>{const v=parseInt(new URLSearchParams(location.search).get('n'),10);return [8,10,12,20].includes(v)?v:12})();
+/* ?unit=NN: the Practise step of a lesson — only that unit's material. */
+const UNIT=new URLSearchParams(location.search).get('unit');
+/* ?focus=weak: the weak-spots review (Complete) — exercises for the learner's
+   repeat mistake types (tags in item-tags.js) plus items they recently missed. */
+const WEAK=new URLSearchParams(location.search).get('focus')==='weak';
+function buildWeak(n){
+  const counts=RafiqMistakes.counts();
+  const top=Object.entries(counts).filter(([k,c])=>c>0).sort((a,b)=>b[1]-a[1]).slice(0,2).map(([k])=>k);
+  const units=new Set(RafiqPath.reached().map(p=>p.n));
+  const dp=drillPool().filter(x=>units.has(x.unit.n));
+  const tagged=shuffle(dp.filter(x=>top.includes(ITEM_TAGS[x.id])));
+  const missed=shuffle(dp.filter(x=>{const r=Progress.get(ID.drill(x));return r&&r.box===1;}));
+  const seen=new Set(), items=[];
+  missed.concat(tagged).forEach(x=>{ if(!seen.has(x.id)&&items.length<n){ seen.add(x.id); items.push(x); } });
+  if(!items.length) return [];
+  const intro=top.length?[{kind:'weak',mode:'intro',help:RafiqMistakes.HELP[top[0]]}]:[];
+  return intro.concat(shuffle(items));
+}
 let Q=[], pos=0, tally={again:0,good:0,easy:0};
 let kindWrong={words:0,sentences:0,verbs:0,links:0};
 const panel=document.getElementById('panel');
-document.getElementById('quit').onclick=()=>{pos=Q.length;render()};
+// Ending early: a lesson step isn't done until its items are; a free session still counts what was done.
+document.getElementById('quit').onclick=()=>{ if(UNIT||pos===0){location.href='dashboard.html';return} pos=Q.length;render(); };
 
 /* Verbs and joining words are practice, not scheduled review — so they get a
    plain "next" rather than a rating that would go nowhere. */
@@ -294,7 +323,17 @@ function rateRow(onPick,kind){
     d.appendChild(b)});
   return d}
 
-const LABEL={words:'Words',sentences:'Sentences',verbs:'Verbs',links:'Joining words'};
+const LABEL={words:'Words',sentences:'Sentences',verbs:'Verbs',links:'Joining words',weak:'Weak spots'};
+function vIntro(it){
+  const h=it.help, c=document.createElement('div'); c.className='card';
+  c.innerHTML=`<div class="taskbar"><span class="t-en">Your weak spot this week</span></div>
+    <h3 style="margin:0 0 8px">${h.title}</h3><p style="color:var(--ink-soft)">${h.body}</p>`+
+    h.ex.map(x=>`<div style="display:flex;justify-content:space-between;gap:10px;border-top:1px dashed var(--rule);padding:8px 0">
+      <span style="font-family:var(--ar);font-size:19px;direction:rtl">${x[0]}</span><span style="color:var(--ink-soft);font-size:13px">${x[1]}</span></div>`).join('');
+  const b=document.createElement('button'); b.className='btn'; b.textContent='Practise it →'; b.style.cssText='width:100%;margin-top:12px';
+  b.onclick=()=>{pos++;render();window.scrollTo(0,0)};
+  c.appendChild(b); panel.appendChild(c);
+}
 function render(){
   RQ.stop(); panel.innerHTML='';
   document.getElementById('bar').style.width=Math.round(100*pos/Q.length)+'%';
@@ -305,7 +344,7 @@ function render(){
   from.innerHTML=`<span class="pill ${it.kind}">${LABEL[it.kind]}</span>`+
                  (it.unit?`<span>Unit ${it.unit.n} · ${it.unit.en}</span>`:'');
   panel.appendChild(from);
-  ({word:vWord,verb:vVerb,link:vLink}[it.mode]||vDrill)(it);
+  ({word:vWord,verb:vVerb,link:vLink,intro:vIntro}[it.mode]||vDrill)(it);
 }
 /* Where to send someone for each section, and what to call it on screen. */
 const FOCUS_PAGE={
@@ -333,13 +372,22 @@ function finish(){
   document.getElementById('count').textContent=Q.length+' / '+Q.length;
   document.getElementById('bar').style.width='100%';
   const n=tally.again+tally.good+tally.easy;
+  if(UNIT){
+    RafiqPath.complete(UNIT,'practise');
+    const nx=RafiqPath.next();
+    panel.innerHTML=`<div class="done"><div class="big">أَحْسَنْت</div><h2>Practise — done</h2>
+      <p>${n} item${n===1?'':'s'} practised.</p>${focusHTML()}
+      <div class="nextrow">${nx.step?`<a class="primary" href="learn.html?u=${nx.unit.n}&s=${nx.step.key}">Next: ${nx.step.title}</a>`:''}
+      <a href="dashboard.html">Back to home</a></div></div>`;
+    return;
+  }
+  RafiqPath.markDay();
   panel.innerHTML=`<div class="done"><div class="big">أَحْسَنْت</div><h2>Session complete</h2>
     <p>${n} item${n===1?'':'s'} practised across the four sections.</p>
     <div class="tally"><div><b>${tally.easy}</b>easy</div><div><b>${tally.good}</b>good</div><div><b>${tally.again}</b>again</div></div>
     ${focusHTML()}
-    <div class="nextrow"><a class="primary" href="session.html?n=${LEN}">Another session</a>
-    <a href="dashboard.html">Back to home</a>
-    <button class="logout-link" type="button">Sign out</button></div></div>`;
+    <div class="nextrow"><a class="primary" href="session.html?n=${LEN}">Another round</a>
+    <a href="dashboard.html">Back to home</a></div></div>`;
 }
 
 function vWord(it){
@@ -461,5 +509,28 @@ function vDrill(it){
   }
   panel.appendChild(c);
 }
-Progress.init().then(()=>{ Q=build(LEN); render(); });
+Progress.init().then(()=>{
+  if(UNIT && !RafiqPath.unitOpen(UNIT)){ location.href='dashboard.html'; return; }   // locked unit
+  if(WEAK && !RafiqPlan.isComplete()){
+    panel.innerHTML=`<div class="done"><div class="big">🎯</div><h2>Weak-spots review</h2>
+      <p>A session built from your own repeat mistakes is part of Rafiq Complete.</p>
+      <div class="nextrow"><a class="primary" href="index.html#pricing">See Complete</a><a href="dashboard.html">Back to home</a></div></div>`;
+    document.getElementById('count').textContent=''; return;
+  }
+  Q=WEAK ? buildWeak(10) : build(UNIT?10:LEN);
+  if(!Q.length && WEAK){
+    panel.innerHTML=`<div class="done"><div class="big">🎯</div><h2>No weak spots yet</h2>
+      <p>Keep going with your lessons — when the same kind of mistake comes up, it'll be waiting here.</p>
+      <div class="nextrow"><a class="primary" href="dashboard.html">Back to home</a></div></div>`;
+    document.getElementById('count').textContent=''; return;
+  }
+  if(!Q.length){
+    panel.innerHTML=`<div class="done"><div class="big">لا شَيْءَ بَعْدُ</div><h2>Nothing to review yet</h2>
+      <p>Start your first lesson — what you learn there comes back here to review.</p>
+      <div class="nextrow"><a class="primary" href="dashboard.html">Go to your lessons</a></div></div>`;
+    document.getElementById('count').textContent='';
+    return;
+  }
+  render();
+});
 </script>

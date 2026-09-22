@@ -7,7 +7,7 @@
    questions in the Worker change. */
 (function(){
   // Paste the Worker's URL here once it's deployed; empty means "judge off".
-  const ENDPOINT = '';
+  const ENDPOINT = 'https://rafiq-judge.luq09.workers.dev';
   const TIMEOUT_MS = 3000;
 
   const ERR = {

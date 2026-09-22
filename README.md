@@ -1,95 +1,92 @@
-# بين يديك — Arabic
+# رَفِيق — Rafiq
 
-A study site for **Al-ʿArabiyyah Bayna Yadayk** (العربية بين يديك), Book 1. Modern Standard Arabic.
+Learn to read, understand and speak **Modern Standard Arabic** in short daily lessons, fully vowelled, with instant feedback on what you write and say. Live at [rafiq-arabic.com](https://rafiq-arabic.com).
 
-Two halves that work on the same problem from different ends: a **vocabulary** trainer for recall, and a **speaking drills** app for production. Static files — no build step, no server, no dependencies.
+Static site (GitHub Pages) + Supabase for accounts and progress + one Cloudflare Worker for answer checking. No build step.
 
-## Pages
+## How it's organised
+
+**Home** is a single path with one **Continue** button. Each unit is a run of 5–10 minute steps:
+
+> meet 10 words → hear the conversation → how it works → meet the next 10 → practise → … → have the conversation → say it yourself
+
+A **reading starter** (unit 0: the 28 letters in shape families, then the vowel marks) comes first; readers skip it with one tap. Sign-up asks three questions — can you read Arabic, how much do you know, minutes a day — and learners who know some Arabic take a 6-sentence placement check that sets their starting unit.
+
+**Practise** holds the extra practice: Words (spaced repetition over all 779 words), Sentences (13 drill modes across 12 units), Verbs, Joining words, and a mixed review.
 
 | File | |
 |---|---|
-| `index.html` | Sign-in screen. Placeholder — any details take you through. |
-| `dashboard.html` | Entry point; shows what's due in both halves |
-| `vocab.html` | Daily spaced-repetition review + searchable word list |
-| `vocab-data.js` | 622 words, units 1–16, from the book's own printed lists |
-| `drills.html` | Thirteen drill modes across units 1–12 |
-| `site.css` | Shared palette, nav and buttons |
-| `judge.js` | Asks the answer-checking Worker whether a typed answer is right (see below) |
-
-## Drills
-
-Dialogue · Role-play · Dictation · Ladder · Substitution · Build-it · Transform · Gap-fill · Fix-it · Structures · Produce · Free speaking · Review.
-
-672 tracked items with spaced repetition, answer checking that ignores vowel marks, and speech input where the browser supports it. Vocabulary comes from the word lists printed at the back of the books themselves, so every word drilled is one the book teaches.
-
-## Answer checking
-
-Typed answers are checked in two layers:
-
-- **Exact match first**, in the browser — vowel marks ignored for Arabic, a leading "a/an/the" for English.
-- **If that fails, a judgment on meaning** from [TypeSafe](https://docs.typesafe.ai), through a small Cloudflare Worker in `worker/` that holds the API key:
-  - **Vocab** accepts synonyms, "go" for "to go", "you" for "you (m)" and small typos.
-  - **Produce** accepts sentences without vowel marks, with synonyms or another valid word order, and names the main mistake ("a word has the wrong gender").
-  - **Build-it** accepts another valid tile order ("That order works too ✓") instead of only the book's.
-  - **Transform** and **Fix-it** take a typed answer and check the change was made — all of it, and nothing else broken.
-  - **Free speaking** (new) gives open tasks from the book — introduce yourself, order a meal — and checks whether you did what was asked and, separately, your grammar. Without the judge it shows an example answer.
-
-Dictation and verb forms stay exact-match: there the precise words are the point. If the Worker isn't configured, is offline or takes over 3 s, every page falls back to exact matching.
-
-Measured on hand-labelled learner answers in `tools/typesafe-exp/`:
-
-| Check | Cases | Judge | Before |
-|---|---|---|---|
-| Vocab | 43 | 95% | 53% (exact match) |
-| Produce | 37 | 92–95% | 49–76% (word matching) |
-| Build-it reorders | 15 | 15/15 | only the book's order |
-| Transform / Fix-it | 33 | 31/33 | reveal only |
-| Free speaking: task done | 17 | 17/17 | — |
-| Free speaking: grammar | 17 | 17/17 | — |
-
-The misses are subtle (a gender slip, a wrong plural, one verb of two left in the present), so when the judge is unsure the learner gets "Nearly — compare with the model answer" rather than a verdict. The small case counts mean these numbers are a sanity check, not a guarantee.
-
-**When it's on, what the learner typed is sent to the Worker and on to TypeSafe** to be judged. Nothing else is: no account, no progress.
-
-### Setting up the Worker
-
-1. Cloudflare dashboard → **Workers & Pages → Create → Import a repository** → this repo, root directory `/worker`. Every push to `main` rebuilds and redeploys it.
-2. Once deployed: **Settings → Variables and Secrets → Add** → type *Secret*, name `TYPESAFE_API_KEY`.
-3. Copy the Worker's URL (`https://rafiq-judge.<you>.workers.dev`) into `ENDPOINT` at the top of `judge.js`.
-
-The Worker only answers requests from `rafiq-arabic.com` and only asks the two fixed questions, so the key can't be borrowed for anything else.
+| `index.html` | Landing page, pricing |
+| `onboarding.html` | Three questions + placement check |
+| `dashboard.html` | Home: today's step, streak, daily goal, mistake focus, the path |
+| `learn.html` | Runs one lesson step, one card at a time |
+| `practise.html` | Extra practice menu |
+| `session.html` | Review session; `?unit=NN` is a lesson's Practise step |
+| `vocab.html`, `drills.html`, `verbs.html`, `connectors.html` | The practice areas |
+| `path.js` / `path-data.js` | The path: steps, progress, streak. `path-data.js` is generated by `tools/build-path.js` |
+| `alphabet-data.js` | The reading starter |
+| `vocab-data.js`, `drills-data.js`, `toolkit-data.js` | Words, units, verbs and joining words |
+| `judge.js` | Talks to the checking Worker; falls back to plain matching |
+| `mistakes.js` | The mistake profile shown on Home |
+| `plan.js` | Free vs Plus |
+| `nav.js` | The three tabs (Home, Practise, Settings) on every page |
+| `worker/` | The Cloudflare Worker holding the TypeSafe key |
+| `tools/` | Build scripts and the TypeSafe experiments |
 
 ## Progress
 
-The two halves keep separate schedules, on purpose — single words and whole sentences are not forgotten at the same rate.
+One store (`progress.js`) in Supabase, with an offline mirror. Ids are namespaced: `v:` words, `d:` sentence drills, `p:<unit>|<step>` lesson steps (and `p:<unit>|placed` for units skipped by placement), `s:<date>` days with activity (streak and daily goal). Words met in a lesson enter spaced repetition due the next day; sessions only use units the learner has reached.
 
-| | Store | Boxes |
+## Answer checking
+
+Two layers: an **exact match** in the browser (vowel marks ignored; "a/an/the" ignored for English), then, if that fails, a **judgment on meaning** from [TypeSafe](https://docs.typesafe.ai) through the Worker. The Worker only asks fixed questions — its kinds are `vocab`, `produce`, `build`, `rewrite`, `prompt` and `reply` — so the key can't be used for anything else, and only answers requests from `rafiq-arabic.com`. If the Worker is unreachable or slow (3 s), pages fall back to exact matching. Dictation and verb forms stay exact-match on purpose.
+
+Each check was measured on hand-labelled answers before it shipped (`tools/typesafe-exp/`):
+
+| Check | Cases | Judge | Before |
+|---|---|---|---|
+| Vocab: typed English | 43 | 95% | 53% (exact match) |
+| Produce: typed Arabic | 37 | 92–95% | 49–76% (word matching) |
+| Build-it reorders | 15 | 15/15 | only one order accepted |
+| Transform / Fix-it | 33 | 31/33 | reveal only |
+| Free speaking: task done / grammar | 17 | 17/17 / 17/17 | — |
+| Conversation: does the reply fit? | 40 | 40/40 | — |
+
+The case counts are small — a sanity check, not a guarantee. When the judge is unsure the learner gets "Nearly — compare with the model answer" rather than a verdict.
+
+TypeSafe is also used offline, never at run time, to pick a picture for 114 concrete words from a fixed emoji list (`pick_pictures.py`) and to check the grammar of new dialogue lines (`qa_dialogues.py`). It chooses; it never writes Arabic.
+
+**Privacy:** for a smart check, what the learner typed is sent to the Worker and on to TypeSafe. Nothing else is.
+
+## Pricing
+
+| | Price | |
 |---|---|---|
-| Vocab | `bay_vocab_progress_v1` | 1, 2, 4, 8, 16 days · 12 new words/day by default |
-| Drills | `bay_drills_progress_v1` | 1, 3, 7, 21, 60 days |
+| Free | £0 | The whole course, audio, review, drills, placement, 10 smart checks a day |
+| Plus | £4.99/month or £34.99/year | Unlimited smart checks, conversation partner, speaking feedback, mistake focus. 7-day trial on yearly |
 
-Both use `localStorage`, so progress is per-device and per-browser. The dashboard reads both and reports them side by side.
+`plan.js` has `BETA = true`, which gives everyone Plus. **Leave it on until payments work.**
 
-## Running it
+### Taking payments (to do)
 
-Open `index.html`, or publish with GitHub Pages: **Settings → Pages → Deploy from a branch → `main` → `/ (root)`**.
+1. Create a Stripe account; add two Payment Links (monthly £4.99, yearly £34.99 with a 7-day trial).
+2. Add a `plan` column to the Supabase `profiles` table.
+3. Add a Stripe webhook (a second route on the Worker is the simplest place) that sets `plan = 'plus'` for the paying user and back to `'free'` on cancellation. The Worker will need the Stripe signing secret and a Supabase service key as secrets.
+4. In `plan.js`, read the profile's `plan` in `isPlus()` and set `BETA = false`.
 
-On a phone, open the published URL and **Add to Home Screen** — it runs full-screen with the manifest and icons here.
+## Setting up
 
-Audio needs an Arabic voice on the device; microphone input needs Chrome or another browser with the Web Speech API.
+- **Site:** GitHub Pages from `main`, root.
+- **Worker:** Cloudflare Workers & Pages → import this repo, root directory `/worker`; add secret `TYPESAFE_API_KEY`. Every push to `main` redeploys it. `judge.js` points at `https://rafiq-judge.luq09.workers.dev`.
+- **Audio:** run the **Render audio** GitHub Action (ElevenLabs) to record clips for new lines; until then the device's Arabic voice is used. The 12 dialogues written for the independent app don't have clips yet.
+- **Rebuild the path** after changing words or units: `node tools/build-path.js`.
 
-## Known gaps
+## Content notes
 
-- **The sign-in is cosmetic.** No accounts, no server, nothing checked — it sets a flag and moves on. Don't put anything private behind it.
-- **English glosses and transliteration in `vocab-data.js` are editorial** — the book prints Arabic only. Worth spot-checking with a teacher.
-- Units 13–16 are not in the drills yet.
-
-## Caveats
-
-Vowel marks, model answers and grammar notes are a study aid, not an authority — worth checking with a teacher, especially case endings. Built-in speech synthesis is fine for rhythm and shadowing but is not a pronunciation model.
+- The 12 first-conversation dialogues were rewritten for the independent app (`tools/new-dialogues.json`) and checked with TypeSafe; **a teacher should still read them**, along with the vowel marks and case endings throughout.
+- English glosses and transliterations in `vocab-data.js` are editorial.
+- Built-in speech is fine for rhythm and shadowing, not a pronunciation model.
 
 ## Licence
 
-Code and original drill content: MIT (see `LICENSE`).
-
-*Al-ʿArabiyyah Bayna Yadayk* is © Arabic For All (العربية للجميع). Unofficial personal study aid, not affiliated with or endorsed by the publisher, and not a substitute for the books.
+Code and content: MIT (see `LICENSE`).

@@ -115,22 +115,6 @@
 const DAY=86400000, dayNow=Math.floor(Date.now()/DAY), iso=new Date().toISOString().slice(0,10);
 function read(k){try{return JSON.parse(localStorage.getItem(k))||null}catch(_){return null}}
 
-const NAME_KEY='bay_name';
-function getName(){ try{return (localStorage.getItem(NAME_KEY)||'').trim()}catch(_){return ''} }
-function setName(n){ try{localStorage.setItem(NAME_KEY,n.trim())}catch(_){} paintGreeting(); }
-function askName(){
-  const n=prompt('What should the app call you?', getName());
-  if(n!==null) setName(n);
-}
-function paintGreeting(){
-  const name=getName();
-  const el=document.getElementById('greetAr');
-  el.innerHTML='السَّلامُ عَلَيْكُم' +
-    (name? ' يا <span class="nm" title="Tap to change">'+name+'</span>' : '');
-  const nm=el.querySelector('.nm');
-  if(nm) nm.onclick=askName;                 // the name itself is the control
-}
-paintGreeting();
 
 (async function whoAmI(){
   const el=document.getElementById('whoami'); if(!el) return;

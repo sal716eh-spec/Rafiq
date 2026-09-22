@@ -150,10 +150,10 @@
   </section>
   <div id="home"></div>
 </main>
-<script src="vocab-data.js?v=900"></script>
-<script src="drills-data.js?v=901"></script>
-<script src="path-data.js?v=1"></script>
-<script src="alphabet-data.js?v=1"></script>
+<script src="vocab-data.js?v=20260922"></script>
+<script src="drills-data.js?v=20260922"></script>
+<script src="path-data.js?v=20260922"></script>
+<script src="alphabet-data.js?v=20260922"></script>
 <script>
 /* Both apps keep their own schedule; the dashboard just reports on each. */
 const DAY=86400000, dayNow=Math.floor(Date.now()/DAY), iso=new Date().toISOString().slice(0,10);
@@ -258,15 +258,24 @@ function paintHome(){
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=3"></script>
-<script src="plan.js?v=2"></script>
+<script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="progress.js?v=1"></script>
-<script src="path.js?v=1"></script>
-<script src="mistakes.js?v=1"></script>
-<script src="nav.js?v=1"></script>
+<script src="path.js?v=20260922"></script>
+<script src="mistakes.js?v=20260922"></script>
+<script src="nav.js?v=20260922"></script>
 <script>
 requireLogin();
-Progress.init().then(paintHome);
+/* Never leave Home blank: show that it's loading, and if anything fails say
+   so plainly (with the error, so it can be reported) instead of an empty page. */
+(function(){
+  const el=document.getElementById('home');
+  if(el) el.innerHTML='<p style="color:var(--ink-soft);text-align:center;padding:30px 0">Loading your path…</p>';
+  const fail=e=>{ console.error(e); if(el) el.innerHTML=`<div class="today-card"><div class="t">Something went wrong loading your path</div>
+    <div class="m">Pull down to refresh, or try again in a minute. If it keeps happening, send us this: <code>${String(e&&e.message||e).replace(/</g,'&lt;')}</code></div>
+    <a class="cont" href="dashboard.html">Try again</a></div>`; };
+  Progress.init().then(()=>{ try{ paintHome(); }catch(e){ fail(e); } }).catch(fail);
+})();
 // send brand-new users to onboarding once (skips silently if already done or offline)
 (async ()=>{
   try{

@@ -201,7 +201,7 @@ function drillPool(){
 function build(n){
   const share = k => Math.max(1, Math.round(n*k));
 
-  // words: those due first, then unseen ones in book order
+  // words: those due first, then unseen ones in course order
   const wDue = VOCAB.filter(w=>Progress.isDue(ID.word(w)));
   const wNew = VOCAB.filter(w=>Progress.isNew(ID.word(w)));
   const words = shuffle(wDue).slice(0, share(0.35))

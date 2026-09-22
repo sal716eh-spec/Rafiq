@@ -1304,7 +1304,7 @@ const RENDER={
           if(!ok){notYet();return}
           drop.classList.add('right');drop.classList.remove('wrong');
           verdict.className='verdict ok';
-          verdict.textContent='That order works too ✓ The book has: '+text;
+          verdict.textContent='That order works too ✓ Another way to say it: '+text;
           say(joinAr(placed),null);
           if(!c.dataset.done){c.dataset.done='1';c.appendChild(rateRow(it.id))}
         });
@@ -1785,7 +1785,7 @@ function openUnit(i){
 function drawPicker(){
   pickerEl.innerHTML =
     '<h1 style="font-size:26px;font-weight:700;margin:18px 0 4px">Which unit today?</h1>'+
-    '<p style="color:var(--ink-soft);font-size:14px;margin-bottom:20px;max-width:56ch">Pick a unit to see its conversations. Each unit follows the book\u2019s order.</p>'+
+    '<p style="color:var(--ink-soft);font-size:14px;margin-bottom:20px;max-width:56ch">Pick a unit to see its conversations. Each one builds on the last.</p>'+
     '<div class="picker-grid" id="pickerGrid"></div>';
   const grid = document.getElementById('pickerGrid');
   DATA.forEach((u,i)=>{

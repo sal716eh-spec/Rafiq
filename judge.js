@@ -58,7 +58,7 @@
     return {verdict, why: verdict==='wrong' ? (ERR[j.err]||'Compare it with the answer.') : ''};
   }
 
-  /* Build-it, when the tiles are in a different order from the book's →
+  /* Build-it, when the tiles are in a different order from the model answer →
      true (another valid order) / false / null. Needs both the meaning and a
      separate word-order judgment: on its own, meaning let a scrambled order
      through at 0.87 (tools/typesafe-exp/round2b.py). Every valid reorder

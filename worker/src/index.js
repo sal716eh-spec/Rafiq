@@ -73,7 +73,7 @@ const PRODUCE_Q = {
   },
 };
 
-// Build-it: the learner's tile order differs from the book's. Meaning alone
+// Build-it: the learner's tile order differs from the model answer. Meaning alone
 // let a scrambled order through (tools/typesafe-exp/round2b.py), so word
 // order gets its own question.
 const BUILD_Q = {

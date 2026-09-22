@@ -53,7 +53,7 @@ def ask(state, questions):
             res["_ms"] = round(1000 * (time.time() - t0))
             return res
         except urllib.error.HTTPError as e:
-            if e.code in (429, 500, 502, 503, 504) and attempt < 3:
+            if e.code in (429, 500, 502, 503, 504, 529) and attempt < 3:
                 time.sleep(2 ** attempt); continue
             raise RuntimeError(f"HTTP {e.code}: {e.read()[:300]!r}")
 

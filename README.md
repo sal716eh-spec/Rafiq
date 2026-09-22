@@ -6,7 +6,7 @@ Static site (GitHub Pages) + Supabase for accounts and progress + one Cloudflare
 
 ## How it's organised
 
-**Home** is a single path with one **Continue** button. Each unit is a run of 5–10 minute steps:
+**Home** is a single path with one **Continue** button. Units open in order — a unit unlocks when the one before it is done (or skipped by placement), and steps inside a unit open in order; anything finished can be revisited. The Practise area is never locked. Each unit is a run of 5–10 minute steps:
 
 > meet 10 words → hear the conversation → how it works → meet the next 10 → practise → … → have the conversation → say it yourself
 
@@ -28,7 +28,7 @@ A **reading starter** (unit 0: the 28 letters in shape families, then the vowel 
 | `vocab-data.js`, `drills-data.js`, `toolkit-data.js` | Words, units, verbs and joining words |
 | `judge.js` | Talks to the checking Worker; falls back to plain matching |
 | `mistakes.js` | The mistake profile shown on Home |
-| `plan.js` | Free vs Plus |
+| `plan.js` | Essentials vs Complete, and the beta switch |
 | `nav.js` | The three tabs (Home, Practise, Settings) on every page |
 | `worker/` | The Cloudflare Worker holding the TypeSafe key |
 | `tools/` | Build scripts and the TypeSafe experiments |
@@ -60,19 +60,21 @@ TypeSafe is also used offline, never at run time, to pick a picture for 114 conc
 
 ## Pricing
 
-| | Price | |
-|---|---|---|
-| Free | £0 | The whole course, audio, review, drills, placement, 10 smart checks a day |
-| Plus | £4.99/month or £34.99/year | Unlimited smart checks, conversation partner, speaking feedback, mistake focus. 7-day trial on yearly |
+No free tier; both plans have a 7-day free trial.
 
-`plan.js` has `BETA = true`, which gives everyone Plus. **Leave it on until payments work.**
+| | Monthly | Yearly | |
+|---|---|---|---|
+| Essentials | £6.99 | £49.99 | The whole course, all practice, audio and review, 25 smart checks a day |
+| Complete | £11.99 | £79.99 | Everything in Essentials, plus unlimited smart checks, the conversation partner, speaking feedback and the mistake focus |
+
+`plan.js` has `BETA = true`, which gives everyone Complete and never asks anyone to subscribe. **Leave it on until payments work.** With it off, app pages send anyone without a plan to the pricing section of the landing page.
 
 ### Taking payments (to do)
 
-1. Create a Stripe account; add two Payment Links (monthly £4.99, yearly £34.99 with a 7-day trial).
-2. Add a `plan` column to the Supabase `profiles` table.
-3. Add a Stripe webhook (a second route on the Worker is the simplest place) that sets `plan = 'plus'` for the paying user and back to `'free'` on cancellation. The Worker will need the Stripe signing secret and a Supabase service key as secrets.
-4. In `plan.js`, read the profile's `plan` in `isPlus()` and set `BETA = false`.
+1. Create a Stripe account; add four Payment Links (Essentials and Complete, monthly and yearly), each with a 7-day trial.
+2. Add a `plan` column (`essentials` / `complete` / null) to the Supabase `profiles` table.
+3. Add a Stripe webhook (a second route on the Worker is the simplest place) that sets the paying user's `plan` and clears it on cancellation. The Worker will need the Stripe signing secret and a Supabase service key as secrets.
+4. In `plan.js`, read the profile's `plan` in `tier()` and set `BETA = false`.
 
 ## Setting up
 

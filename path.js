@@ -59,6 +59,19 @@
     const s = steps(p).find(s => !stepDone(p.n, s.key)) || null;
     return {unit:p, index:i, step:s, finishedAll: i === UNITS.length-1 && unitDone(p)};
   }
+  /* Locks: a unit opens once every unit before it is done (or skipped by
+     placement); inside the current unit, steps open in order. Anything
+     finished can always be revisited. The Practise area is never locked. */
+  const unitIndex = n => UNITS.findIndex(p => p.n === n);
+  const unitOpen = n => { const i = unitIndex(n); return i >= 0 && i <= currentIndex(); };
+  function stepOpen(n, key){
+    const i = unitIndex(n); if(i < 0) return false;
+    const cur = currentIndex();
+    if(i < cur) return true;
+    if(i > cur) return false;
+    const p = UNITS[i], first = steps(p).find(s => !stepDone(p.n, s.key));
+    return stepDone(n, key) || (first && first.key === key);
+  }
   // units whose material sessions may use (the reading starter has none)
   const reached = () => UNITS.slice(0, currentIndex() + 1).filter(p => !p.alpha);
 
@@ -86,6 +99,6 @@
     return ids.map(wordById).filter(Boolean);
   }
 
-  window.RafiqPath = { BATCH, GOAL, units, skipReading, steps, stepDone, unitDone, placed, currentIndex, next, reached,
+  window.RafiqPath = { BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
                        complete, place, markDay, doneToday, streak, wordsOf, unitData, wordById };
 })();

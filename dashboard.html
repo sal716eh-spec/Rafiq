@@ -69,7 +69,8 @@
 .unit .st{flex:0 0 32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;background:var(--paper-deep);color:var(--ink-soft)}
 .unit.done .st{background:var(--verdigris);color:#fff}
 .unit.now{border-color:var(--verdigris)} .unit.now .st{background:var(--gold);color:#fff}
-.unit.later{opacity:.62}
+.unit.later{opacity:.62;width:100%;text-align:left;font:inherit;cursor:pointer}
+.lockmsg{font-size:13px;color:var(--ink-soft);background:var(--paper-deep);border-radius:8px;padding:8px 12px;margin-top:-2px}
 .unit .nm{flex:1;min-width:0}.unit .nm b{display:block;font-size:15px}.unit .nm span{font-size:12px;color:var(--ink-soft)}
 .unit .ua{font-family:var(--ar);font-size:16px;color:var(--rubric);white-space:nowrap}
 .hero{padding:26px 0 0}
@@ -79,7 +80,9 @@
 .fx{display:flex;justify-content:space-between;gap:10px;align-items:baseline;border-top:1px dashed var(--rule);padding:6px 0;font-size:13px;color:var(--ink-soft)}
 .fx .fa{font-family:var(--ar);direction:rtl;font-size:18px;color:var(--ink)}
 .got{margin-top:8px;border:1px solid var(--rule);background:transparent;border-radius:8px;padding:7px 14px;color:var(--ink);cursor:pointer}
-.skip{display:block;text-align:center;margin-top:12px;font-size:13.5px;color:var(--ink-soft)}
+.skipbtn{display:block;width:100%;margin-top:10px;min-height:48px;border-radius:12px;border:1.5px solid var(--verdigris);
+  background:transparent;color:var(--verdigris);font:inherit;font-size:15.5px;font-weight:600;cursor:pointer}
+.skipbtn:active{transform:scale(.98)}
 .pickhead{font-size:16px;font-weight:700;margin:26px 0 4px}
 .picksub{font-size:13.5px;color:var(--ink-soft);margin:0 0 16px}
 .qgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
@@ -186,7 +189,7 @@ function paintHome(){
        <div class="u">${esc(n.unit.ar)}</div><div class="t">${esc(n.step.title)}</div>
        <div class="m">${esc(n.unit.en)} · about ${n.step.mins} minutes</div>
        <a class="cont" href="learn.html?u=${n.unit.n}&s=${n.step.key}">Continue</a>
-       ${n.unit.alpha?'<a class="skip" href="#" id="skipRead">I can already read Arabic — skip this</a>':''}</div>`;
+       ${n.unit.alpha?'<button type="button" class="skipbtn" id="skipRead">I can read Arabic — skip this</button>':''}</div>`;
   const stats=`<div class="stats"><div><b>🔥 ${s}</b>day streak</div>
      <div><b>${today} / ${RafiqPath.GOAL}</b>today's goal<div class="goal"><i style="width:${100*today/RafiqPath.GOAL}%"></i></div></div></div>`;
   const f = window.RafiqMistakes && RafiqMistakes.focus();
@@ -198,12 +201,19 @@ function paintHome(){
   const units=U.map((p,i)=>{
     const done=RafiqPath.unitDone(p), now=i===cur&&!done, later=i>cur;
     const st=RafiqPath.steps(p), k=st.filter(x=>RafiqPath.stepDone(p.n,x.key)).length;
-    const sub = done ? (RafiqPath.placed(p.n)?'Skipped — you already know this':'Done') : now ? `${k} of ${st.length} steps` : 'Coming up';
-    return `<a class="unit ${done?'done':now?'now':'later'}" href="learn.html?u=${p.n}">
-      <span class="st">${done?'✓':now?'▶':i}</span><span class="nm"><b>${p.alpha?'':i+'. '}${esc(p.en)}</b><span>${sub}</span></span>
-      <span class="ua">${esc(p.ar)}</span></a>`;
+    const sub = done ? (RafiqPath.placed(p.n)?'Skipped — you already know this':'Done') : now ? `${k} of ${st.length} steps` : 'Locked';
+    const inner=`<span class="st">${done?'✓':now?'▶':'🔒'}</span><span class="nm"><b>${p.alpha?'':i+'. '}${esc(p.en)}</b><span>${sub}</span></span>
+      <span class="ua">${esc(p.ar)}</span>`;
+    return later
+      ? `<button type="button" class="unit later" data-lock="${esc(U[cur].alpha?'the reading starter':'unit '+cur)}">${inner}</button>`
+      : `<a class="unit ${done?'done':'now'}" href="learn.html?u=${p.n}">${inner}</a>`;
   }).join('');
   el.innerHTML=card+stats+focus+review+`<div class="ph">Your path</div><div class="units">${units}</div>`;
+  el.querySelectorAll('[data-lock]').forEach(b=>b.onclick=()=>{
+    const m=el.querySelector('.lockmsg')||Object.assign(document.createElement('div'),{className:'lockmsg'});
+    m.textContent='🔒 Finish '+b.dataset.lock+' first — each unit builds on the one before.';
+    b.after(m);
+  });
   const g=el.querySelector('.got'); if(g) g.onclick=()=>{ RafiqMistakes.gotIt(g.dataset.k); paintHome(); };
   const sk=document.getElementById('skipRead');
   if(sk) sk.onclick=e=>{ e.preventDefault(); RafiqPath.skipReading(); paintHome(); };
@@ -225,6 +235,8 @@ function paintHome(){
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=3"></script>
+<script src="plan.js?v=2"></script>
+<script>RafiqPlan.requirePlan();</script>
 <script src="progress.js?v=1"></script>
 <script src="path.js?v=1"></script>
 <script src="mistakes.js?v=1"></script>

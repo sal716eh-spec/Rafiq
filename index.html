@@ -94,7 +94,7 @@ footer.land{border-top:1px solid var(--rule);padding:26px;text-align:center;colo
     said makes sense and what to fix.
   </p>
   <div class="cta">
-    <a class="btn" href="login.html">Start free</a>
+    <a class="btn" href="login.html">Start your free week</a>
     <a class="btn ghost" href="login.html">Sign in</a>
   </div>
 </header>
@@ -132,20 +132,18 @@ footer.land{border-top:1px solid var(--rule);padding:26px;text-align:center;colo
 </section>
 <section class="section" id="pricing">
   <h2>Pricing</h2>
-  <p>The whole course is free. Plus unlocks unlimited feedback on what you write and say.</p>
+  <p>Two plans, both with a 7-day free trial. Cancel any time.</p>
   <div class="plans">
-    <div class="plan"><div class="pn">Free</div><div class="pp">£0</div><div class="ps">&nbsp;</div>
+    <div class="plan"><div class="pn">Essentials</div><div class="pp">£6.99 <small>/ month</small></div>
+      <div class="ps">or £49.99 a year — save 40%</div>
       <ul><li>All 12 units and the reading starter</li><li>Audio, pictures and daily review</li>
-          <li>All practice drills</li><li>10 smart checks a day</li></ul></div>
-    <div class="plan best"><div class="pn">Plus · yearly</div><div class="pp">£34.99 <small>/ year</small></div>
-      <div class="ps">About £2.92 a month · 7-day free trial</div>
-      <ul><li>Everything in Free</li><li>Unlimited smart checking</li><li>Conversation partner</li>
+          <li>Every practice area — words, sentences, verbs, joining words</li><li>25 smart checks a day</li></ul></div>
+    <div class="plan best"><div class="pn">Complete · most popular</div><div class="pp">£11.99 <small>/ month</small></div>
+      <div class="ps">or £79.99 a year — save 44%</div>
+      <ul><li>Everything in Essentials</li><li>Unlimited smart checking</li><li>Conversation partner — reply in your own words</li>
           <li>Feedback on free speaking</li><li>Your personal mistake focus</li></ul></div>
-    <div class="plan"><div class="pn">Plus · monthly</div><div class="pp">£4.99 <small>/ month</small></div>
-      <div class="ps">Cancel any time</div>
-      <ul><li>Everything in Plus, paid monthly</li></ul></div>
   </div>
-  <div class="beta"><b>Free during the beta.</b> While Rafiq is in beta every account gets Plus at no cost.</div>
+  <div class="beta"><b>Free during the beta.</b> While Rafiq is in beta every account gets Complete at no cost — no card needed.</div>
 </section>
 <section class="section">
   <h2>Good to know</h2>
@@ -167,9 +165,12 @@ footer.land{border-top:1px solid var(--rule);padding:26px;text-align:center;colo
 <!-- already signed in? go straight to Home -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=5"></script>
+<script src="plan.js?v=2"></script>
 <script>
 (async ()=>{
   try{
+    // Someone sent here to choose a plan stays here; so does anyone without one.
+    if(location.hash==='#pricing' || !RafiqPlan.tier()) return;
     if(typeof sb!=='undefined' && sb){
       const { data } = await sb.auth.getSession();
       if(data && data.session) window.location.href='dashboard.html';

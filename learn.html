@@ -80,6 +80,7 @@ textarea.ar-in{width:100%;min-height:110px;font-family:var(--ar);font-size:21px;
 <script src="vocab-data.js?v=900"></script>
 <script src="drills-data.js?v=901"></script>
 <script src="path-data.js?v=1"></script>
+<script src="alphabet-data.js?v=1"></script>
 <script src="audio.js?v=900"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=3"></script>
@@ -187,6 +188,91 @@ function runGrammar(p, step){
   show();
 }
 
+/* Reading starter: meet each letter (shape, name, sound, forms, a word that
+   starts with it), then pick letters by sound. */
+const ZWJ='\u200d';
+function forms(l, joins){
+  return joins ? [l, l+ZWJ, ZWJ+l+ZWJ, ZWJ+l] : [l, ZWJ+l];
+}
+function runLetters(p, step){
+  const g=ALPHABET_GROUPS[step.group], L=g.letters, total=L.length*2;
+  let i=0;
+  const meet=()=>{
+    if(i>=L.length) return check(0);
+    setBar(i,total);
+    const [ch,name,sound,ex,exEn]=L[i], joins=!sound.includes('*');
+    const f=forms(ch,joins);
+    const labels=joins?['alone','start','middle','end']:['alone','end'];
+    const body=el(`<div><p class="kicker">${esc(g.title)} · ${i+1} of ${L.length}</p>
+      <div class="card"><div class="big" id="w" style="font-size:72px">${ch}</div>
+      <div class="mid" style="font-size:20px">${esc(name)}</div>
+      <div class="en" style="font-size:16px">${esc(sound.replace(' *',''))}</div>
+      <div style="display:flex;justify-content:center;gap:14px;margin-top:14px;direction:rtl">
+        ${f.map((x,k)=>`<div><div class="mid" style="cursor:default">${x}</div><div class="tr">${labels[k]}</div></div>`).join('')}</div>
+      ${joins?'':'<p class="tr">Doesn\'t join to the letter after it</p>'}
+      <div style="margin-top:12px;border-top:1px dashed var(--rule);padding-top:10px">
+        <div class="mid" id="x">${esc(ex)}</div><div class="tr">${esc(exEn)}</div></div></div></div>`);
+    const a=body.querySelector('#w'); a.onclick=()=>say(name,a);
+    const x=body.querySelector('#x'); x.onclick=()=>say(ex,x);
+    screen(body,[button(i<L.length-1?'Next letter':'Check yourself',()=>{i++;meet()})]);
+    say(name,a);
+  };
+  const order=shuffle(L);
+  const check=k=>{
+    if(k>=order.length) return finish(p, step);
+    setBar(L.length+k,total);
+    const t=order[k];
+    const body=el(`<div><p class="kicker">Which letter is this?</p>
+      <div class="card"><div class="en" style="margin:0">${esc(t[2].replace(' *','').split(' — ')[0])}</div>
+      <div class="tr">the first sound of the word for "${esc(t[4])}"</div></div><div class="opts" id="o"></div></div>`);
+    const next=button('Next',()=>check(k+1)); next.disabled=true;
+    shuffle(L).forEach(x=>{
+      const b=document.createElement('button'); b.className='opt'; b.type='button';
+      b.style.fontFamily='var(--ar)'; b.style.fontSize='28px'; b.textContent=x[0];
+      b.onclick=()=>{ if(!next.disabled) return;
+        b.classList.add(x===t?'right':'wrong');
+        if(x!==t) [...body.querySelectorAll('.opt')].find(o=>o.textContent===t[0]).classList.add('right');
+        say(t[1],null); next.disabled=false; };
+      body.querySelector('#o').appendChild(b);
+    });
+    screen(body,[next]);
+  };
+  meet();
+}
+function runVowels(p, step){
+  const V=VOWEL_MARKS, total=V.length+5;
+  let i=0;
+  const meet=()=>{
+    if(i>=V.length) return check(0);
+    setBar(i,total);
+    const [w,sound,what]=V[i];
+    const body=el(`<div><p class="kicker">The vowel marks · ${i+1} of ${V.length}</p>
+      <div class="card"><div class="big" style="font-size:80px;cursor:default">${w}</div>
+      <div class="en">"${esc(sound)}"</div><p style="color:var(--ink-soft);margin-top:10px">${esc(what)}</p></div>
+      <p class="kicker" style="margin-top:14px;text-align:center">Most books for learners — and this app — show every vowel</p></div>`);
+    screen(body,[button(i<V.length-1?'Next':'Check yourself',()=>{i++;meet()})]);
+  };
+  const order=shuffle(V).slice(0,5);
+  const check=k=>{
+    if(k>=order.length) return finish(p, step);
+    setBar(V.length+k,total);
+    const t=order[k];
+    const body=el(`<div><p class="kicker">Which one says "${esc(t[1])}"?</p><div class="opts" id="o"></div></div>`);
+    const next=button('Next',()=>check(k+1)); next.disabled=true;
+    shuffle(V.filter(x=>x!==t)).slice(0,3).concat([t]).sort(()=>Math.random()-.5).forEach(x=>{
+      const b=document.createElement('button'); b.className='opt'; b.type='button';
+      b.style.fontFamily='var(--ar)'; b.style.fontSize='30px'; b.textContent=x[0];
+      b.onclick=()=>{ if(!next.disabled) return;
+        b.classList.add(x===t?'right':'wrong');
+        if(x!==t) [...body.querySelectorAll('.opt')].find(o=>o.textContent===t[0]).classList.add('right');
+        next.disabled=false; };
+      body.querySelector('#o').appendChild(b);
+    });
+    screen(body,[next]);
+  };
+  meet();
+}
+
 function runPractise(p){
   location.href='session.html?unit='+p.n+'&n=10';
 }
@@ -247,11 +333,12 @@ function finish(p, step){
 (async function(){
   if(typeof requireLogin==='function') requireLogin();
   await Progress.init();
-  const p=PATH.find(x=>x.n===qs.get('u'))||RafiqPath.next().unit;
+  const p=RafiqPath.units().find(x=>x.n===qs.get('u'))||RafiqPath.next().unit;
   const steps=RafiqPath.steps(p);
   const step=steps.find(s=>s.key===qs.get('s'))||steps.find(s=>!RafiqPath.stepDone(p.n,s.key))||steps[0];
   document.title=step.title+' — Rafiq';
-  ({words:runWords,listen:runListen,grammar:runGrammar,practise:runPractise,speak:runSpeak})[step.kind](p,step);
+  ({words:runWords,listen:runListen,grammar:runGrammar,practise:runPractise,speak:runSpeak,
+    letters:runLetters,vowels:runVowels})[step.kind](p,step);
 })();
 </script>
 </body>

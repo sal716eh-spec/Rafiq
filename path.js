@@ -13,10 +13,20 @@
   const BATCH = 10;          // words met per step
   const GOAL  = 2;           // steps (or sessions) a day to meet the daily goal
 
+  /* Unit 0, the reading starter, comes first for everyone; readers skip it
+     with one tap or through placement. It exists only if alphabet-data.js is
+     loaded on the page. */
+  const ALPHA = typeof ALPHABET_GROUPS !== 'undefined'
+    ? [{n:'00', ar:'الْحُرُوفُ', en:'Reading Arabic', words:[], alpha:true}] : [];
+  const UNITS = ALPHA.concat(PATH);
+  const units = () => UNITS;
   const unitData = n => DATA.find(u => u.n === n);
   const wordById = (() => { const m = new Map(); VOCAB.forEach(w => m.set(w.id, w)); return id => m.get(id); })();
 
   function steps(p){
+    if(p.alpha) return ALPHABET_GROUPS.map((g,i) => ({key:'letters'+(i+1), kind:'letters', group:i,
+        title:g.title.replace(/^Letters \d+: /,'Letters: '), mins:5}))
+      .concat([{key:'vowels', kind:'vowels', title:'The vowel marks', mins:5}]);
     const nb = Math.ceil(p.words.length / BATCH), out = [];
     const words = i => ({key:'words'+(i+1), kind:'words', batch:i,
       title: nb > 1 ? `New words ${i+1} of ${nb}` : 'New words', mins: 5});
@@ -39,23 +49,25 @@
   /* The unit you're on: the first one not finished. Everything before it is
      done; everything after is "coming up" but still openable. */
   function currentIndex(){
-    const i = PATH.findIndex(p => !unitDone(p));
-    return i < 0 ? PATH.length - 1 : i;
+    const i = UNITS.findIndex(p => !unitDone(p));
+    return i < 0 ? UNITS.length - 1 : i;
   }
   function next(){
-    const i = currentIndex(), p = PATH[i];
+    const i = currentIndex(), p = UNITS[i];
     const s = steps(p).find(s => !stepDone(p.n, s.key)) || null;
-    return {unit:p, index:i, step:s, finishedAll: i === PATH.length-1 && unitDone(p)};
+    return {unit:p, index:i, step:s, finishedAll: i === UNITS.length-1 && unitDone(p)};
   }
-  const reached = () => PATH.slice(0, currentIndex() + 1);
+  // units whose material sessions may use (the reading starter has none)
+  const reached = () => UNITS.slice(0, currentIndex() + 1).filter(p => !p.alpha);
 
   function complete(n, key){
     Progress.touch(sid(n, key));
     markDay();
   }
-  function place(uptoIndex){          // placement: skip units before this one
-    PATH.slice(0, uptoIndex).forEach(p => { if(!unitDone(p)) Progress.touch(sid(p.n, 'placed')); });
+  function place(uptoIndex){          // placement: skip units before this one (index into units())
+    UNITS.slice(0, uptoIndex).forEach(p => { if(!unitDone(p)) Progress.touch(sid(p.n, 'placed')); });
   }
+  const skipReading = () => { if(ALPHA.length && !unitDone(ALPHA[0])) Progress.touch(sid('00','placed')); };
 
   const iso = d => d.toISOString().slice(0,10);
   function markDay(){ Progress.touch('s:' + iso(new Date())); }
@@ -72,6 +84,6 @@
     return ids.map(wordById).filter(Boolean);
   }
 
-  window.RafiqPath = { BATCH, GOAL, steps, stepDone, unitDone, placed, currentIndex, next, reached,
+  window.RafiqPath = { BATCH, GOAL, units, skipReading, steps, stepDone, unitDone, placed, currentIndex, next, reached,
                        complete, place, markDay, doneToday, streak, wordsOf, unitData, wordById };
 })();

@@ -98,7 +98,7 @@ textarea.ar-in{width:100%;min-height:110px;font-family:var(--ar);font-size:21px;
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=3"></script>
 <script src="progress.js?v=1"></script>
-<script src="path.js?v=20260922"></script>
+<script src="path.js?v=20260922b"></script>
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="judge.js?v=20260922"></script>
@@ -397,10 +397,12 @@ function finish(p, step){
   setBar(1,1);
   const n=RafiqPath.next();
   const sameUnit=n.step&&n.unit.n===p.n;
-  const s=RafiqPath.streak(), today=RafiqPath.doneToday();
-  const body=el(`<div class="done"><div class="tick">✓</div><h2>${esc(step.title)} — done</h2>
-    <p>${today>=RafiqPath.GOAL?'Daily goal reached. Anything more is a bonus.':'One more step and today\'s goal is done.'}</p>
-    <span class="streak">🔥 ${s}-day streak</span></div>`);
+  const s=RafiqPath.streak(), today=RafiqPath.doneToday(), sg=RafiqPath.streakGoal(s);
+  // the first step of the day that lands on a streak goal gets a celebration
+  const hit = sg.reached && today===1;
+  const body=el(`<div class="done"><div class="tick">${hit?'🎉':'✓'}</div><h2>${hit?`${s}-day streak!`:esc(step.title)+' — done'}</h2>
+    <p>${hit?esc(sg.reached.why):today>=RafiqPath.GOAL?'Daily goal reached. Anything more is a bonus.':'One more step and today\'s goal is done.'}</p>
+    <span class="streak">🔥 ${s}-day streak${sg.next?` · next goal ${sg.next.days} days`:''}</span></div>`);
   const btns=[];
   if(n.step) btns.push(button((sameUnit?'Next: ':'Next unit: ')+n.step.title,()=>{location.href='learn.html?u='+n.unit.n+'&s='+n.step.key}));
   btns.push(button('Back to home',()=>{location.href='dashboard.html'},!!n.step));

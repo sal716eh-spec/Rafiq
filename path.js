@@ -108,6 +108,26 @@
     return {days, steps, words};
   }
   function doneToday(){ const r = Progress.get('s:' + iso(new Date())); return r ? r.seen : 0; }
+  /* Streak goals. Each says what the research behind daily, spaced practice
+     suggests is happening by then — no invented percentages. Sources: the
+     spacing effect (Cepeda et al., 2006, review of 254 studies), the testing
+     effect (Roediger & Karpicke, 2006), habit formation (Lally et al., 2010). */
+  const STREAK_GOALS = [
+    {days:3,   why:'Your first words come back for review. Recalling a word after a gap makes it fade more slowly — the spacing effect, one of the most replicated findings in memory research.'},
+    {days:7,   why:'The words from your first day will have come back twice. Spreading practice over days beats cramming the same time into one sitting.'},
+    {days:14,  why:'Pulling a word from memory strengthens it more than re-reading it — the testing effect. Two weeks of daily recall adds up.'},
+    {days:30,  why:'Your earliest words are on long review gaps by now — a sign they\'re settling into long-term memory.'},
+    {days:66,  why:'66 days was the average time for a daily habit to start feeling automatic in a well-known habit study (Lally et al., 2010).'},
+    {days:100, why:'A hundred days of Arabic. By now it\'s simply part of your day.'},
+  ];
+  /* {next, left, from, why} for the goal you're working towards, and the goal
+     reached today if the streak has just hit one. */
+  function streakGoal(n){
+    const next = STREAK_GOALS.find(g => g.days > n) || null;
+    const prev = [...STREAK_GOALS].reverse().find(g => g.days <= n);
+    return { next, left: next ? next.days - n : 0, from: prev ? prev.days : 0,
+             reached: STREAK_GOALS.find(g => g.days === n) || null };
+  }
   function streak(){
     const d = new Date(); let n = 0;
     if(!Progress.hasSeen('s:' + iso(d))) d.setDate(d.getDate()-1);   // today not done yet: count from yesterday
@@ -120,6 +140,6 @@
     return ids.map(wordById).filter(Boolean);
   }
 
-  window.RafiqPath = { COMING, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
+  window.RafiqPath = { COMING, STREAK_GOALS, streakGoal, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
                        complete, place, markDay, wordMet, week, doneToday, streak, wordsOf, unitData, wordById };
 })();

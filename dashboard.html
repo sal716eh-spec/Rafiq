@@ -87,6 +87,9 @@
 .wrow{display:flex;gap:8px;margin:8px 0 4px}.wrow div{flex:1;font-size:12px;color:var(--ink-soft)}
 .wrow b{display:block;font-size:20px;color:var(--ink)}.wrow small{font-size:12px;color:var(--ink-soft);font-weight:400}
 .week p{font-size:13.5px;color:var(--ink-soft);margin:6px 0 0}.week p b{color:var(--ink)}
+.sgoal{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;margin:-12px 0 14px}
+.sgoal .sgt{display:flex;justify-content:space-between;font-size:13.5px;color:var(--ink-soft)}.sgoal .sgt b{color:var(--ink)}
+.sgoal .goal{margin:8px 0 6px}.sgoal p{font-size:13px;color:var(--ink-soft);margin:0;line-height:1.5}
 .frow{display:flex;gap:8px;margin-top:8px}
 .gopr{flex:1;text-align:center;text-decoration:none;background:var(--verdigris);color:#fff;border-radius:8px;padding:8px 14px;font-size:14px}
 .got{border:1px solid var(--rule);background:transparent;border-radius:8px;padding:7px 14px;color:var(--ink);cursor:pointer}
@@ -200,8 +203,13 @@ function paintHome(){
        <div class="m">${esc(n.unit.en)} · about ${n.step.mins} minutes</div>
        <a class="cont" href="learn.html?u=${n.unit.n}&s=${n.step.key}">Continue</a>
        ${n.unit.alpha?'<button type="button" class="skipbtn" id="skipRead">I can read Arabic — skip this</button>':''}</div>`;
+  const sg=RafiqPath.streakGoal(s);
   const stats=`<div class="stats"><div><b>🔥 ${s}</b>day streak</div>
-     <div><b>${today} / ${RafiqPath.GOAL}</b>today's goal<div class="goal"><i style="width:${100*today/RafiqPath.GOAL}%"></i></div></div></div>`;
+     <div><b>${today} / ${RafiqPath.GOAL}</b>today's goal<div class="goal"><i style="width:${100*today/RafiqPath.GOAL}%"></i></div></div></div>`+
+    (sg.next ? `<div class="sgoal"><div class="sgt"><span>Next goal: <b>${sg.next.days} days</b></span><span>${sg.left} to go</span></div>
+       <div class="goal"><i style="width:${Math.round(100*(s-sg.from)/(sg.next.days-sg.from))}%"></i></div>
+       <p>${esc(sg.next.why)}</p></div>` :
+     `<div class="sgoal"><div class="sgt"><span><b>${s} days</b> — every goal reached</span></div><p>Keep going: a few minutes a day is what keeps Arabic in long-term memory.</p></div>`);
   /* Your week: shown once there's anything to show. */
   const wk=RafiqPath.week();
   const cnt=window.RafiqMistakes?RafiqMistakes.counts():{};
@@ -261,7 +269,7 @@ function paintHome(){
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="progress.js?v=1"></script>
-<script src="path.js?v=20260922"></script>
+<script src="path.js?v=20260922b"></script>
 <script src="mistakes.js?v=20260922"></script>
 <script src="nav.js?v=20260922"></script>
 <script>

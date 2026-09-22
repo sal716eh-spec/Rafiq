@@ -12901,6 +12901,426 @@
   "chars": 3
  },
  {
+  "id": "1lnnvrj",
+  "text": "السَّلامُ عَلَيْكُمْ. أَعْطِنِي جَوازَ السَّفَرِ، مِنْ فَضْلِكَ.",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 64
+ },
+ {
+  "id": "1bwkp39",
+  "text": "وَعَلَيْكُمُ السَّلامُ. تَفَضَّلْ، هَذا جَوازِي.",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 48
+ },
+ {
+  "id": "tec03f",
+  "text": "مِنْ أَيْنَ أَنْتَ؟",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 19
+ },
+ {
+  "id": "1h2r0m4",
+  "text": "أَنا مِنْ بِرِيطانْيا.",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 22
+ },
+ {
+  "id": "1btx546",
+  "text": "لِماذا جِئْتَ إِلى هُنا؟",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 24
+ },
+ {
+  "id": "u3zf4p",
+  "text": "جِئْتُ لِزِيارَةِ أُسْرَتِي.",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 28
+ },
+ {
+  "id": "1ap3rpn",
+  "text": "كَمْ يَوْمًا تَبْقى هُنا؟",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 25
+ },
+ {
+  "id": "1i9y7jl",
+  "text": "سَأَبْقى أُسْبُوعَيْنِ.",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 23
+ },
+ {
+  "id": "3crj9o",
+  "text": "أَهْلًا وَسَهْلًا. أَتَمَنّى لَكَ زِيارَةً طَيِّبَةً.",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 53
+ },
+ {
+  "id": "2awise",
+  "text": "شُكْرًا جَزِيلًا.",
+  "bucket": "scene",
+  "unit": "airport",
+  "chars": 17
+ },
+ {
+  "id": "15ie4af",
+  "text": "تَفَضَّلْ، اجْلِسْ. ما بِكَ؟",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 28
+ },
+ {
+  "id": "bofqbx",
+  "text": "عِنْدِي صُداعٌ وَحَرارَةٌ.",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 26
+ },
+ {
+  "id": "7l93qr",
+  "text": "مُنْذُ مَتى؟",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 12
+ },
+ {
+  "id": "5xasnl",
+  "text": "مُنْذُ يَوْمَيْنِ.",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 18
+ },
+ {
+  "id": "11u349p",
+  "text": "هَلْ تَأْكُلُ جَيِّدًا؟",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 23
+ },
+ {
+  "id": "eq8d9f",
+  "text": "لا، لا آكُلُ كَثِيرًا.",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 22
+ },
+ {
+  "id": "175tyzw",
+  "text": "خُذْ هَذا الدَّواءَ ثَلاثَ مَرّاتٍ فِي الْيَوْمِ.",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 49
+ },
+ {
+  "id": "1286y7d",
+  "text": "طَيِّبٌ، شُكْرًا يا دُكْتُورُ.",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 30
+ },
+ {
+  "id": "1onqyos",
+  "text": "وَاشْرَبْ ماءً كَثِيرًا. سَلامَتُكَ!",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 36
+ },
+ {
+  "id": "hpeada",
+  "text": "اللهُ يُسَلِّمُكَ.",
+  "bucket": "scene",
+  "unit": "doctor",
+  "chars": 18
+ },
+ {
+  "id": "1bs49jt",
+  "text": "السَّلامُ عَلَيْكُمْ. هَلْ أَنْتَ جَدِيدٌ فِي الْمَسْجِدِ؟",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 58
+ },
+ {
+  "id": "r32wlv",
+  "text": "وَعَلَيْكُمُ السَّلامُ. نَعَمْ، أَنا جَدِيدٌ هُنا.",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 50
+ },
+ {
+  "id": "id7uhg",
+  "text": "أَهْلًا بِكَ! هَلْ تُرِيدُ أَنْ تَتَوَضَّأَ؟",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 44
+ },
+ {
+  "id": "8mpuwh",
+  "text": "نَعَمْ. أَيْنَ مَكانُ الْوُضُوءِ؟",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 33
+ },
+ {
+  "id": "16i5t9z",
+  "text": "هُناكَ، عَلَى الْيَسارِ.",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 24
+ },
+ {
+  "id": "14uas0a",
+  "text": "وَمَتى صَلاةُ الْعَصْرِ؟",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 24
+ },
+ {
+  "id": "sd0uh",
+  "text": "بَعْدَ عَشْرِ دَقائِقَ.",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 23
+ },
+ {
+  "id": "11nis2j",
+  "text": "جَزاكَ اللهُ خَيْرًا.",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 21
+ },
+ {
+  "id": "1dggm1i",
+  "text": "وَإِيّاكَ. بَعْدَ الصَّلاةِ عِنْدَنا دَرْسٌ، تَعالَ مَعَنا!",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 59
+ },
+ {
+  "id": "3kkkd5",
+  "text": "إِنْ شاءَ اللهُ.",
+  "bucket": "scene",
+  "unit": "masjid",
+  "chars": 16
+ },
+ {
+  "id": "130zecz",
+  "text": "أَهْلًا وَسَهْلًا. ماذا تُرِيدُ أَنْ تَأْكُلَ؟",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 46
+ },
+ {
+  "id": "w7fkl4",
+  "text": "أُرِيدُ دَجاجًا مَعَ أَرُزٍّ، مِنْ فَضْلِكَ.",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 44
+ },
+ {
+  "id": "1hj49eb",
+  "text": "وَماذا تَشْرَبُ؟",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 16
+ },
+ {
+  "id": "1h3irza",
+  "text": "أُرِيدُ عَصِيرَ بُرْتُقالٍ.",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 27
+ },
+ {
+  "id": "10epzc",
+  "text": "هَلْ تُرِيدُ سَلَطَةً أَيْضًا؟",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 30
+ },
+ {
+  "id": "a7rmn9",
+  "text": "نَعَمْ، سَلَطَةً صَغِيرَةً.",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 27
+ },
+ {
+  "id": "ibc93c",
+  "text": "تَفَضَّلْ. هَلِ الطَّعامُ جَيِّدٌ؟",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 34
+ },
+ {
+  "id": "1boqc82",
+  "text": "نَعَمْ، الطَّعامُ لَذِيذٌ جِدًّا.",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 33
+ },
+ {
+  "id": "1kdk89n",
+  "text": "الْحِسابُ خَمْسُونَ رِيالًا.",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 28
+ },
+ {
+  "id": "14e19k1",
+  "text": "تَفَضَّلْ. شُكْرًا لَكَ.",
+  "bucket": "scene",
+  "unit": "restaurant",
+  "chars": 24
+ },
+ {
+  "id": "uobbft",
+  "text": "السَّلامُ عَلَيْكُمْ. إِلى أَيْنَ؟",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 34
+ },
+ {
+  "id": "1xup08o",
+  "text": "وَعَلَيْكُمُ السَّلامُ. إِلى الْفُنْدُقِ، مِنْ فَضْلِكَ.",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 56
+ },
+ {
+  "id": "wm47h2",
+  "text": "أَيُّ فُنْدُقٍ؟",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 15
+ },
+ {
+  "id": "mfm5xk",
+  "text": "فُنْدُقُ النُّورِ، قَرِيبٌ مِنَ السُّوقِ.",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 41
+ },
+ {
+  "id": "e0t129",
+  "text": "طَيِّبٌ. هَلْ هَذِهِ أَوَّلُ زِيارَةٍ لَكَ؟",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 43
+ },
+ {
+  "id": "1hmx9sx",
+  "text": "نَعَمْ، هَذِهِ أَوَّلُ مَرَّةٍ.",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 31
+ },
+ {
+  "id": "b2hv03",
+  "text": "الْمَدِينَةُ جَمِيلَةٌ. وَصَلْنا!",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 33
+ },
+ {
+  "id": "1mr423r",
+  "text": "بِكَمْ، مِنْ فَضْلِكَ؟",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 22
+ },
+ {
+  "id": "ptxzrh",
+  "text": "ثَلاثُونَ رِيالًا.",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 18
+ },
+ {
+  "id": "aousdv",
+  "text": "تَفَضَّلْ. مَعَ السَّلامَةِ.",
+  "bucket": "scene",
+  "unit": "taxi",
+  "chars": 28
+ },
+ {
+  "id": "1vg95c9",
+  "text": "أَهْلًا وَسَهْلًا! تَفَضَّلْ، ادْخُلْ.",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 38
+ },
+ {
+  "id": "la4ufb",
+  "text": "شُكْرًا. بَيْتُكُمْ جَمِيلٌ.",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 28
+ },
+ {
+  "id": "1ipd864",
+  "text": "هَذا أَبِي، وَهَذِهِ أُمِّي.",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 28
+ },
+ {
+  "id": "1c40wze",
+  "text": "تَشَرَّفْتُ بِمَعْرِفَتِكُمْ.",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 29
+ },
+ {
+  "id": "roaist",
+  "text": "هَلْ تَشْرَبُ شايًا أَمْ قَهْوَةً؟",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 34
+ },
+ {
+  "id": "1i9o2sm",
+  "text": "أُرِيدُ شايًا، مِنْ فَضْلِكَ.",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 29
+ },
+ {
+  "id": "1zqgws",
+  "text": "كَيْفَ دِراسَتُكَ؟",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 18
+ },
+ {
+  "id": "9fvwfm",
+  "text": "جَيِّدَةٌ، الْحَمْدُ لِلَّهِ. أَدْرُسُ اللُّغَةَ الْعَرَبِيَّةَ.",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 64
+ },
+ {
+  "id": "1c2b6yv",
+  "text": "ما شاءَ اللهُ! كَلامُكَ جَمِيلٌ.",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 32
+ },
+ {
+  "id": "7cmice",
+  "text": "شُكْرًا، أَتَعَلَّمُ كُلَّ يَوْمٍ.",
+  "bucket": "scene",
+  "unit": "family",
+  "chars": 34
+ },
+ {
   "id": "3hbk3",
   "text": "وَ",
   "bucket": "connector",
@@ -13354,13 +13774,6 @@
   "bucket": "connector",
   "unit": "-",
   "chars": 11
- },
- {
-  "id": "tec03f",
-  "text": "مِنْ أَيْنَ أَنْتَ؟",
-  "bucket": "connector-ex",
-  "unit": "-",
-  "chars": 19
  },
  {
   "id": "fi6v3n",

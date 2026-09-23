@@ -1,0 +1,10 @@
+[
+  {"name":"clock","text":"Quiet antique wall clock ticking steadily in an empty room, dry and close, no other sounds","duration":10,"loop":true},
+  {"name":"pen-write","text":"Reed pen writing Arabic calligraphy on thick paper, close-up, crisp gentle scratching strokes, no other sounds","duration":4},
+  {"name":"pen-stroke","text":"One short stroke of a reed pen on thick paper, close-up, crisp","duration":1.2},
+  {"name":"page-turn","text":"A single soft page turn of an old paper book, close, gentle","duration":1.5},
+  {"name":"fountain","text":"Small stone courtyard fountain with gentle trickling water, calm and peaceful, soft distant birdsong at dawn, no music","duration":22,"loop":true},
+  {"name":"birds","text":"Sparse soft songbirds at dawn in a quiet walled garden, distant, peaceful, no music","duration":15,"loop":true},
+  {"name":"swell","text":"Gentle warm breeze through a sunlit courtyard with running water slowly growing a little fuller, peaceful, no music","duration":8},
+  {"name":"tap","text":"A soft single finger tap on a phone screen, close, subtle","duration":0.6}
+]

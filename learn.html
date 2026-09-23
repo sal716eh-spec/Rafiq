@@ -18,6 +18,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <style>
+.wnote{margin:10px auto 14px;max-width:340px;padding:10px 14px;border-radius:12px;background:var(--card);border:1px solid var(--rule);font-size:15px}
+.wnote.up{background:color-mix(in srgb,var(--gold) 16%,var(--card));border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);color:var(--ink)}
 body{background:var(--paper)}
 .lx{max-width:560px;margin:0 auto;padding:14px 16px calc(28px + env(safe-area-inset-bottom));min-height:100vh;min-height:100dvh;display:flex;flex-direction:column}
 .lhead{display:flex;align-items:center;gap:12px;margin-bottom:18px}
@@ -98,7 +100,7 @@ textarea.ar-in{width:100%;min-height:110px;font-family:var(--ar);font-size:21px;
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=3"></script>
 <script src="progress.js?v=1"></script>
-<script src="path.js?v=20260922b"></script>
+<script src="path.js?v=20260924"></script>
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="judge.js?v=20260922"></script>
@@ -145,7 +147,9 @@ function runWords(p, step){
   const order=shuffle(words);
   const check=k=>{
     if(k>=order.length){
-      words.forEach(w=>{ if(Progress.isNew('v:'+w.id)){ Progress.grade('v:'+w.id,'good'); RafiqPath.wordMet(); } });  // into daily review
+      // into daily review; the first time through, every word counts as met today
+      const first=!RafiqPath.stepDone(p.n, step.key);
+      words.forEach(w=>{ if(Progress.isNew('v:'+w.id)) Progress.grade('v:'+w.id,'good'); if(first) RafiqPath.wordMet(); });
       return finish(p, step);
     }
     setBar(words.length+k,total);
@@ -392,6 +396,16 @@ function runSpeak(p, step){
   show();
 }
 
+/* After a words step: today's new words, highlighted when it beats your
+   usual day or your best. */
+function wordsNote(step){
+  if(!step || step.kind!=='words') return '';
+  const r=RafiqPath.wordsReport(); if(!r.today) return '';
+  const msg = r.record ? `🏆 <b>${r.today} new words today</b> — your best day yet (was ${r.best})`
+    : r.aboveUsual ? `🌟 <b>${r.today} new words today</b> — more than your usual ${r.usual}`
+    : `<b>${r.today}</b> new word${r.today===1?'':'s'} today`;
+  return `<div class="wnote${r.record||r.aboveUsual?' up':''}">${msg}</div>`;
+}
 function finish(p, step){
   RafiqPath.complete(p.n, step.key);
   setBar(1,1);
@@ -402,6 +416,7 @@ function finish(p, step){
   const hit = sg.reached && today===1;
   const body=el(`<div class="done"><div class="tick">${hit?'🎉':'✓'}</div><h2>${hit?`${s}-day streak!`:esc(step.title)+' — done'}</h2>
     <p>${hit?esc(sg.reached.why):today>=RafiqPath.GOAL?'Daily goal reached. Anything more is a bonus.':'One more step and today\'s goal is done.'}</p>
+    ${wordsNote(step)}
     <span class="streak">🔥 ${s}-day streak${sg.next?` · next goal ${sg.next.days} days`:''}</span></div>`);
   const btns=[];
   if(n.step) btns.push(button((sameUnit?'Next: ':'Next unit: ')+n.step.title,()=>{location.href='learn.html?u='+n.unit.n+'&s='+n.step.key}));

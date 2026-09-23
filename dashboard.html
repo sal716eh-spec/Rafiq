@@ -63,6 +63,8 @@
 .goal{height:6px;background:var(--paper-deep);border-radius:3px;margin-top:6px;overflow:hidden}.goal i{display:block;height:100%;background:var(--gold)}
 .review{display:flex;align-items:center;justify-content:space-between;gap:10px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px 16px;margin-bottom:22px}
 .review b{color:var(--rubric)}
+.wbest{display:flex;gap:10px;align-items:center;text-decoration:none;margin:0 0 14px;padding:12px 16px;border-radius:12px;background:color-mix(in srgb,var(--gold) 16%,var(--card));border:1px solid color-mix(in srgb,var(--gold) 60%,transparent);color:var(--ink);font-size:15px}
+.wmore{display:inline-block;margin-top:8px;font-size:14px;color:var(--rubric);text-decoration:none}
 .ph{font-size:16px;font-weight:700;margin:6px 0 10px}
 .units{display:grid;gap:8px;margin-bottom:30px}
 .unit{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:12px 14px;text-decoration:none;color:var(--ink)}
@@ -193,7 +195,7 @@ function paintHome(){
   const U=RafiqPath.units();
   const n=RafiqPath.next(), cur=n.index, s=RafiqPath.streak(), today=Math.min(RafiqPath.doneToday(),RafiqPath.GOAL);
   const steps=RafiqPath.steps(n.unit), doneN=steps.filter(x=>RafiqPath.stepDone(n.unit.n,x.key)).length;
-  const due=Progress.dueIds().length;
+  const due=RafiqPath.reviewDue();
   const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const card = n.finishedAll
     ? `<div class="today-card"><div class="k">All units done</div><div class="t">Mabrook — you've finished the path 🎉</div>
@@ -215,7 +217,7 @@ function paintHome(){
   const cnt=window.RafiqMistakes?RafiqMistakes.counts():{};
   const slip=Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0];
   const week = wk.days ? `<div class="week"><div class="k">Your week</div>
-     <div class="wrow"><div><b>${wk.days}<small>/7</small></b>days active</div><div><b>${wk.steps}</b>steps &amp; sessions</div><div><b>${wk.words}</b>new words</div></div>
+     <div class="wrow"><div><b>${wk.days}<small>/7</small></b>days active</div><div><b>${wk.steps}</b>steps &amp; sessions</div><div><b>${wk.words}</b>new words</div></div><a class="wmore" href="progress.html">See all your progress →</a>
      <p>${wk.days>=5?'A brilliant week — this is how Arabic sticks.':wk.days>=3?'Good rhythm. A few minutes most days beats one long session.':'Every day you open Rafiq counts — try for a few minutes tomorrow.'}
      ${slip&&slip[1]?` Most common slip: <b>${esc(RafiqMistakes.HELP[slip[0]].title.toLowerCase())}</b>.`:''}</p></div>` : '';
   const f = window.RafiqMistakes && RafiqMistakes.focus();
@@ -224,7 +226,13 @@ function paintHome(){
      ${f.ex.map(x=>`<div class="fx"><span class="fa">${esc(x[0])}</span><span>${esc(x[1])}</span></div>`).join('')}
      <div class="frow"><a class="gopr" href="session.html?focus=weak">Practise it</a>
      <button class="got" type="button" data-k="${f.key}">Got it</button></div></div>` : '';
-  const review = due ? `<a class="review" href="session.html"><span><b>${due}</b> to review from earlier lessons</span><span>Review →</span></a>` : '';
+  const review = due ? `<a class="review" href="session.html"><span><b>${due}</b> to review from your lessons</span><span>Review →</span></a>`
+    : RafiqPath.hasLearned() ? `<a class="review" href="session.html"><span>Nothing due — a quick review keeps it fresh</span><span>Review →</span></a>` : '';
+  /* Today's new words, highlighted when it beats your usual day or your best. */
+  const wr=RafiqPath.wordsReport();
+  const wtoday = wr.today && (wr.record||wr.aboveUsual) ? `<a class="wbest" href="progress.html">${wr.record
+      ? `🏆 <span><b>${wr.today} new words today</b> — your best day yet</span>`
+      : `🌟 <span><b>${wr.today} new words today</b> — more than your usual ${wr.usual}</span>`}</a>` : '';
   const units=U.map((p,i)=>{
     const done=RafiqPath.unitDone(p), now=i===cur&&!done, later=i>cur;
     const st=RafiqPath.steps(p), k=st.filter(x=>RafiqPath.stepDone(p.n,x.key)).length;
@@ -239,7 +247,7 @@ function paintHome(){
     <p class="csub">New units are added regularly — Complete members get them first.</p>
     <div class="units">${RafiqPath.COMING.map(c=>`<div class="unit soon"><span class="st">✨</span>
       <span class="nm"><b>${esc(c.en)}</b><span>${esc(c.d)}</span></span><span class="ua">${esc(c.ar)}</span></div>`).join('')}</div>`;
-  el.innerHTML=card+stats+week+focus+review+`<div class="ph">Your path</div><div class="units">${units}</div>`+coming;
+  el.innerHTML=card+wtoday+stats+week+focus+review+`<div class="ph">Your path</div><div class="units">${units}</div>`+coming;
   el.querySelectorAll('[data-lock]').forEach(b=>b.onclick=()=>{
     const m=el.querySelector('.lockmsg')||Object.assign(document.createElement('div'),{className:'lockmsg'});
     m.textContent='🔒 Finish '+b.dataset.lock+' first — each unit builds on the one before.';
@@ -269,9 +277,9 @@ function paintHome(){
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="progress.js?v=1"></script>
-<script src="path.js?v=20260922b"></script>
+<script src="path.js?v=20260924"></script>
 <script src="mistakes.js?v=20260922"></script>
-<script src="nav.js?v=20260922"></script>
+<script src="nav.js?v=20260924"></script>
 <script>
 requireLogin();
 /* Never leave Home blank: show that it's loading, and if anything fails say

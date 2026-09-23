@@ -180,10 +180,10 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 <script src="audio.js?v=900"></script>
 <script src="path-data.js?v=20260922"></script>
 <script src="alphabet-data.js?v=20260922"></script>
-<script src="path.js?v=20260922b"></script>
+<script src="path.js?v=20260924"></script>
 <script src="mistakes.js?v=20260922"></script>
 <script src="item-tags.js?v=20260922"></script>
-<script src="nav.js?v=20260922"></script>
+<script src="nav.js?v=20260924"></script>
 <script>
 DATA.forEach(u=>Object.assign(u,EXTRA[u.n]||{}));
 const glue=(a,s)=>a+(s.startsWith('،')?'':' ')+s, joinAr=a=>a.reduce(glue);
@@ -205,40 +205,52 @@ function drillPool(){
     out.push({kind:'sentences',mode:'produce',id:u.n+'|produce|'+i,unit:u,d:{ar:line[1],en:line[2]}})));
   return out;
 }
+// a sentence exercise done: schedule it and count it for today
+function gradeDrill(id,q){ Progress.grade(id,q); RafiqPath.sentenceDone(); }
 function build(n){
-  const share = k => Math.max(1, Math.round(n*k));
-  // Only what the learner has reached on the path: new words arrive through
-  // lessons, so a session reviews words already met and drills from reached units.
-  const units = new Set(UNIT ? [UNIT] : RafiqPath.reached().map(p=>p.n));
-  const unitWords = UNIT ? new Set((PATH.find(p=>p.n===UNIT)||{words:[]}).words) : null;
+  return UNIT ? buildUnit(n) : buildReview(n);
+}
 
-  const met  = VOCAB.filter(w=>!Progress.isNew(ID.word(w)) && (!unitWords || unitWords.has(w.id)));
+/* A lesson's Practise step (?unit=NN): that unit's words and exercises. */
+function buildUnit(n){
+  const share = k => Math.max(1, Math.round(n*k));
+  const unitWords = new Set((PATH.find(p=>p.n===UNIT)||{words:[]}).words);
+  const met  = VOCAB.filter(w=>!Progress.isNew(ID.word(w)) && unitWords.has(w.id));
   const wDue = met.filter(w=>Progress.isDue(ID.word(w)));
   const words = shuffle(wDue).slice(0, share(0.35))
-    .concat(shuffle(met.filter(w=>!Progress.isDue(ID.word(w)))).slice(0, UNIT ? Math.max(0, share(0.35)-wDue.length) : 0))
+    .concat(shuffle(met.filter(w=>!Progress.isDue(ID.word(w)))).slice(0, Math.max(0, share(0.35)-wDue.length)))
     .map(w=>({kind:'words', mode:'word', w}));
-
-  const dp   = drillPool().filter(x=>units.has(x.unit.n));
+  const dp   = drillPool().filter(x=>x.unit.n===UNIT);
   const dDue = dp.filter(x=>Progress.isDue(ID.drill(x)));
-  const dNew = dp.filter(x=>Progress.isNew(ID.drill(x)));
+  // a normal Practise step tops up with new exercises; redoing a finished
+  // unit (?redo=1, from Practise) draws on all of the unit's exercises
+  const dMore = REDO ? dp.filter(x=>!Progress.isDue(ID.drill(x))) : dp.filter(x=>Progress.isNew(ID.drill(x)));
   const sentences = shuffle(dDue).slice(0, share(0.35))
-    .concat(shuffle(dNew).slice(0, Math.max(0, (UNIT ? n-words.length : share(0.35))-dDue.length)));
+    .concat(shuffle(dMore).slice(0, Math.max(0, n-words.length-Math.min(dDue.length, share(0.35)))));
+  return shuffle(words.concat(sentences)).slice(0,n);
+}
 
-  /* Verb patterns are scheduled per verb+tense; the pronoun is picked fresh
-     each time so you meet the pattern, not a memorised single form. */
-  const vPat=[];
-  VERBS.forEach(v=>['past','pr','fut'].forEach(t=>vPat.push({v,t})));
-  const verbs = shuffle(vPat).slice(0, UNIT ? 0 : share(0.15)).map(x=>{
-    const p=Math.floor(Math.random()*PRONOUNS.length);
-    const ans = x.t==='past' ? x.v.past[p] : x.t==='pr' ? x.v.pr[p] : 'سَ'+x.v.pr[p];
-    return {kind:'verbs', mode:'verb', v:x.v, p, t:x.t, ans};
-  });
-
-  // connectors: scheduled by the connector itself, so the same trap resurfaces
-  const links = shuffle(CONNECT_EX).slice(0, UNIT ? 0 : share(0.15))
-    .map(t=>({kind:'links', mode:'link', d:t}));
-
-  return shuffle(words.concat(sentences, verbs, links)).slice(0,n);
+/* Review (Home's "Review" and Practise's "Mixed review"): a random mix of
+   only what the learner has done on their path — words met in lessons and
+   sentence exercises already practised, from units reached. Nothing new,
+   and nothing from the Practise area. Due items come first, then the rest
+   of what's been learned tops it up. */
+function buildReview(n){
+  const sc = RafiqPath.reviewScope();
+  const words = VOCAB.filter(w=>sc.wordIds.has(w.id) && !Progress.isNew(ID.word(w)))
+    .map(w=>({kind:'words', mode:'word', w}));
+  const sentences = drillPool().filter(x=>sc.units.has(x.unit.n) && Progress.get(ID.drill(x)));
+  const idOf = it => it.w ? ID.word(it.w) : ID.drill(it);
+  // each kind: due first, then the rest, both in random order
+  const line = list => shuffle(list.filter(it=>Progress.isDue(idOf(it))))
+                        .concat(shuffle(list.filter(it=>!Progress.isDue(idOf(it)))));
+  const a = line(words), b = line(sentences), out = [];
+  // alternate so it's a real mix of words and sentences, not one then the other
+  while(out.length < n && (a.length || b.length)){
+    if(a.length) out.push(a.shift());
+    if(out.length < n && b.length) out.push(b.shift());
+  }
+  return shuffle(out);
 }
 
 /* ── shared bits ── */
@@ -285,6 +297,7 @@ function answerRow(target,check){
 const LEN=(()=>{const v=parseInt(new URLSearchParams(location.search).get('n'),10);return [8,10,12,20].includes(v)?v:12})();
 /* ?unit=NN: the Practise step of a lesson — only that unit's material. */
 const UNIT=new URLSearchParams(location.search).get('unit');
+const REDO=!!UNIT && new URLSearchParams(location.search).get('redo')==='1';
 /* ?focus=weak: the weak-spots review (Complete) — exercises for the learner's
    repeat mistake types (tags in item-tags.js) plus items they recently missed. */
 const WEAK=new URLSearchParams(location.search).get('focus')==='weak';
@@ -305,7 +318,7 @@ let Q=[], pos=0, tally={again:0,good:0,easy:0};
 let kindWrong={words:0,sentences:0,verbs:0,links:0};
 const panel=document.getElementById('panel');
 // Ending early: a lesson step isn't done until its items are; a free session still counts what was done.
-document.getElementById('quit').onclick=()=>{ if(UNIT||pos===0){location.href='dashboard.html';return} pos=Q.length;render(); };
+document.getElementById('quit').onclick=()=>{ if(UNIT||pos===0){location.href=REDO?'practise.html':'dashboard.html';return} pos=Q.length;render(); };
 
 /* Verbs and joining words are practice, not scheduled review — so they get a
    plain "next" rather than a rating that would go nowhere. */
@@ -372,6 +385,14 @@ function finish(){
   document.getElementById('count').textContent=Q.length+' / '+Q.length;
   document.getElementById('bar').style.width='100%';
   const n=tally.again+tally.good+tally.easy;
+  if(REDO){
+    RafiqPath.markDay();
+    panel.innerHTML=`<div class="done"><div class="big">أَحْسَنْت</div><h2>Unit practice — done</h2>
+      <p>${n} item${n===1?'':'s'} practised.</p>${focusHTML()}
+      <div class="nextrow"><a class="primary" href="session.html?unit=${UNIT}&redo=1">Another round</a>
+      <a href="practise.html">Back to Practise</a></div></div>`;
+    return;
+  }
   if(UNIT){
     RafiqPath.complete(UNIT,'practise');
     const nx=RafiqPath.next();
@@ -457,7 +478,7 @@ function vDrill(it){
         if(!ok)ob.children[d.a].classList.add('right');
         draw(d.o[d.a]);why.style.display='block';if(tr.textContent)tr.style.display='block';
         say(d.q.replace('___',d.o[d.a]),q);
-        c.appendChild(rateRow(q2=>Progress.grade(ID.drill(it),q2),it.kind))};
+        c.appendChild(rateRow(q2=>gradeDrill(ID.drill(it),q2),it.kind))};
       ob.appendChild(b)});
     c.appendChild(ob);c.appendChild(why);c.appendChild(tr);
   } else if(it.mode==='fix'){
@@ -471,7 +492,7 @@ function vDrill(it){
     const w=document.createElement('div');w.className='why';w.textContent=d.w;box.appendChild(w);
     if(window.RAFIQ_TR){const tr=RAFIQ_TR.trOf(d.good);if(tr){const trEl=document.createElement('div');trEl.className='tr';trEl.textContent=tr;box.appendChild(trEl);}}
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.good,g);
-      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q),it.kind))};
+      c.appendChild(rateRow(q=>gradeDrill(ID.drill(it),q),it.kind))};
     c.appendChild(btn);c.appendChild(box);
   } else if(it.mode==='transform'){
     c.appendChild(taskBar(d.task[1],d.task[0]));
@@ -483,7 +504,7 @@ function vDrill(it){
     const g=document.createElement('div');g.className='good';g.textContent=d.ans;box.appendChild(tappable(g,d.ans));
     if(window.RAFIQ_TR){const trT=RAFIQ_TR.trOf(d.ans);if(trT){const trEl=document.createElement('div');trEl.className='tr';trEl.textContent=trT;box.appendChild(trEl);}}
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.ans,g);
-      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q),it.kind))};
+      c.appendChild(rateRow(q=>gradeDrill(ID.drill(it),q),it.kind))};
     c.appendChild(btn);c.appendChild(box);
   } else if(it.mode==='build'){
     c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
@@ -494,7 +515,7 @@ function vDrill(it){
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=target;box.appendChild(tappable(g,target));
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(target,g);
-      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q),it.kind))};
+      c.appendChild(rateRow(q=>gradeDrill(ID.drill(it),q),it.kind))};
     c.appendChild(btn);c.appendChild(box);
   } else {                                   // produce
     c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
@@ -504,12 +525,13 @@ function vDrill(it){
     const box=document.createElement('div');box.style.display='none';
     const g=document.createElement('div');g.className='good';g.textContent=d.ar;box.appendChild(tappable(g,d.ar));
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.ar,g);
-      c.appendChild(rateRow(q=>Progress.grade(ID.drill(it),q),it.kind))};
+      c.appendChild(rateRow(q=>gradeDrill(ID.drill(it),q),it.kind))};
     c.appendChild(btn);c.appendChild(box);
   }
   panel.appendChild(c);
 }
 Progress.init().then(()=>{
+  if(REDO && !RafiqPath.unitDone(RafiqPath.units().find(p=>p.n===UNIT)||{n:'',words:[]})){ location.href='practise.html'; return; }
   if(UNIT && !RafiqPath.unitOpen(UNIT)){ location.href='dashboard.html'; return; }   // locked unit
   if(WEAK && !RafiqPlan.isComplete()){
     panel.innerHTML=`<div class="done"><div class="big">🎯</div><h2>Weak-spots review</h2>
@@ -526,7 +548,7 @@ Progress.init().then(()=>{
   }
   if(!Q.length){
     panel.innerHTML=`<div class="done"><div class="big">لا شَيْءَ بَعْدُ</div><h2>Nothing to review yet</h2>
-      <p>Start your first lesson — what you learn there comes back here to review.</p>
+      <p>Review only uses what you've learned on your path. Do your first lesson and it'll be waiting here.</p>
       <div class="nextrow"><a class="primary" href="dashboard.html">Go to your lessons</a></div></div>`;
     document.getElementById('count').textContent='';
     return;

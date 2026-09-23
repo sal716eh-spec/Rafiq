@@ -1,14 +1,15 @@
-/* nav.js — the same three places on every page: Home (your path), Practise
-   (words, sentences, verbs, joining words) and Settings. Rewrites the page's
+/* nav.js — the same four places on every page: Home (your path), Practise
+   (scenes, verbs, joining words, your words), Progress and Settings. Rewrites the page's
    own .navlinks (desktop) and .tabbar (phone) so they can't drift apart. */
 (function(){
   const page = (location.pathname.split('/').pop() || 'dashboard.html').replace(/\?.*/, '');
   const TAB = {'dashboard.html':'home','learn.html':'home','session.html':'home',
                'practise.html':'practise','vocab.html':'practise','drills.html':'practise',
-               'verbs.html':'practise','connectors.html':'practise','settings.html':'settings'};
+               'verbs.html':'practise','connectors.html':'practise','progress.html':'progress','settings.html':'settings'};
   const on = TAB[page] || 'home';
   const ITEMS = [['home','dashboard.html','الرَّئِيسَة','Home'],
                  ['practise','practise.html','تَدْرِيب','Practise'],
+                 ['progress','progress.html','التَّقَدُّم','Progress'],
                  ['settings','settings.html','إِعْدادات','Settings']];
   function draw(){
     const links = document.querySelector('.navlinks');

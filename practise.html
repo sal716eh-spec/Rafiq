@@ -106,7 +106,7 @@
   <section class="hero">
     <div class="greet">تَدْرِيب</div>
     <h1>Practise</h1>
-    <p>Extra practice on anything you've met, whenever you like. Your lessons are on Home.</p>
+    <p>Go beyond your lessons: real conversations, verbs, joining words, and extra rounds of units you've finished. Your lessons and daily review are on Home.</p>
   </section>
   <div id="picker"></div>
 </main>
@@ -134,49 +134,44 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
   if(typeof Progress!=='undefined') await Progress.init();
   const el=document.getElementById('picker');
   if(!el) return;
-  const dr=read('bay_drills_progress_v1'), vc=read('bay_vocab_progress_v1');
-  let drDue=0, drKnown=0;
-  if(dr&&dr.items) Object.values(dr.items).forEach(r=>{if(r.due<=iso)drDue++;if(r.box>=3)drKnown++});
-  let vcDue=0, vcNew=0;
-  const vTotal=(typeof VOCAB!=='undefined')?VOCAB.length:0;
-  if(vc) Object.values(vc).forEach(r=>{if(!r||!r.box){vcNew++;return}if(r.due!=null&&r.due<=dayNow)vcDue++});
-  else vcNew=vTotal;
-
+  const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const met=window.RafiqPath?RafiqPath.metWords():new Set();
+  const wDue=[...met].filter(id=>Progress.isDue('v:'+id)).length;
   const cards=[
-    {href:'vocab.html', ar:'مُفْرَدات', t:'Words',
-     d:'Daily spaced-repetition review of 779 core words.',
-     m: vcDue? `<b>${vcDue}</b> due today` : `${vTotal-vcNew} started of ${vTotal}`},
-    {href:'drills.html', ar:'جُمَل', t:'Sentences',
-     d:'Twelve drills across units 1\u201312 \u2014 dialogue, ladders, gap-fill, production.',
-     m: drDue? `<b>${drDue}</b> due today` : `${drKnown} known of 672`},
-    {href:'verbs.html?tab=drill', ar:'أَفْعال', t:'Practise your tenses',
-     d:'Past, present and future across 21 verbs \u2014 table, drill, then in a sentence.',
+    {href:'verbs.html?tab=drill', ar:'أَفْعال', t:'Verbs',
+     d:'Past, present and future of 21 common verbs \u2014 table, drill, then in a sentence.',
      m:'21 verbs \u00b7 18 forms each'},
     {href:'connectors.html?tab=ex', ar:'رَوابِط', t:'Joining words',
-     d:'\u062B\u064F\u0645\u0651 \u00b7 \u0644\u0623\u0646\u0651 \u00b7 \u0644\u0643\u0646\u0651 \u2014 plus question and opinion openers.',
-     m:'53 connectors \u00b7 24 exercises'}
+     d:'\u062B\u064F\u0645\u0651 \u00b7 \u0644\u0623\u0646\u0651 \u00b7 \u0644\u0643\u0646\u0651 \u2014 link ideas, ask questions, give opinions.',
+     m:'53 joining words \u00b7 24 exercises'},
+    {href:'vocab.html', ar:'مُفْرَدات', t:'Your words',
+     d:'Flashcards and a quick test on the words you\u2019ve met in your lessons, plus the full word list.',
+     m: met.size ? (wDue?`<b>${wDue}</b> due \u00b7 `:'')+`${met.size} words met` : 'Words from your lessons show up here'}
   ];
-  const total=drDue+vcDue;
+  const done=window.RafiqPath?RafiqPath.units().filter(p=>!p.alpha && RafiqPath.unitDone(p)):[];
+  const redo = done.length
+    ? `<div class="qgrid">${done.map(p=>`<a class="qcard" href="session.html?unit=${p.n}&redo=1">
+        <div class="qa">${esc(p.ar)}</div><div class="qt">Unit ${+p.n}: ${esc(p.en)}</div>
+        <div class="qm">${RafiqPath.placed(p.n)?'Skipped at sign-up \u2014 check yourself':'Words and sentences \u00b7 about 8 minutes'}</div></a>`).join('')}</div>`
+    : `<p class="picksub">Units you finish on your path will appear here for extra rounds.</p>`;
   el.innerHTML =
-    `<a class="bigcta" href="session.html">
-       <div><div class="bc-t">Mixed review</div>
-       <div class="bc-d">A quick mix of everything you've reached so far</div></div>
-       <span class="bc-go">Start →</span></a>
-     <div class="pickhead" id="scenes">Real-life scenes <span class="cx">Complete</span></div>
-     <p class="picksub">Short conversations for real situations — you reply in your own words.</p>
+    `<div class="pickhead" id="scenes">Real-life scenes <span class="cx">Complete</span></div>
+     <p class="picksub">Short conversations for real situations \u2014 you reply in your own words.</p>
      <div class="qgrid">${SCENES.map(x=>`<a class="qcard" href="learn.html?scene=${x.id}">
        <div class="qa">${x.pic} ${x.ar}</div><div class="qt">${x.en}</div><div class="qd">${x.d}</div>
-       <div class="qm">${seen('x:'+x.id)?'<b>✓</b> done — try it again':'5 replies · about 5 minutes'}</div></a>`).join('')}</div>
+       <div class="qm">${seen('x:'+x.id)?'<b>\u2713</b> done \u2014 try it again':'5 replies \u00b7 about 5 minutes'}</div></a>`).join('')}</div>
      <a class="bigcta" href="session.html?focus=weak" style="margin-top:14px">
-       <div><div class="bc-t">🎯 Weak-spots review <span class="cx">Complete</span></div>
+       <div><div class="bc-t">\ud83c\udfaf Weak-spots review <span class="cx">Complete</span></div>
        <div class="bc-d">Exercises picked for the mistakes you keep making</div></div>
-       <span class="bc-go">Start →</span></a>
-     <div class="pickhead">Or pick one area</div>
+       <span class="bc-go">Start \u2192</span></a>
+     <div class="pickhead">Beyond the lessons</div>
      <div class="qgrid">` +
     cards.map(c=>`<a class="qcard" href="${c.href}">
        <div class="qa">${c.ar}</div><div class="qt">${c.t}</div>
        <div class="qd">${c.d}</div><div class="qm">${c.m}</div></a>`).join('') +
-    `</div>`;
+    `</div>
+     <div class="pickhead">Redo a unit</div>
+     <p class="picksub">Extra rounds on units you\u2019ve finished \u2014 a fresh mix each time.</p>` + redo;
 })();
 
 
@@ -199,8 +194,12 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
 <script src="auth.js?v=3"></script>
 <script src="plan.js?v=20260922"></script>
 <script src="progress.js?v=1"></script>
+<script src="drills-data.js?v=20260922"></script>
+<script src="path-data.js?v=20260922"></script>
+<script src="alphabet-data.js?v=20260922"></script>
+<script src="path.js?v=20260924"></script>
 <script>RafiqPlan.requirePlan();</script>
-<script src="nav.js?v=20260922"></script>
+<script src="nav.js?v=20260924"></script>
 <script>
 requireLogin();
 </script>

@@ -33,7 +33,7 @@ Draft voice: Kokoro af_heart (local, free). To swap for ElevenLabs, render the s
 
 ## Tone
 - Preset: polished, with a story arc (problem → question → answer → how → promise)
-- Format: landscape 1920x1080 · Duration: 59.5s
+- Format: landscape 1920x1080 · Duration: 61.9s
 
 ## Storyboard (seconds)
 | # | Scene | Window | VO |
@@ -51,5 +51,10 @@ Draft voice: Kokoro af_heart (local, free). To swap for ElevenLabs, render the s
 
 Review days follow the app's real word schedule (gaps of 1, 2, 4, 8 days). No personal data: learner and neighbour are fictional; lines are the app's own content.
 
-## Audio
-Music: vol-12 bed, low under the voice (~0.16), up at the end, fade out. SFX: soft click on Continue and Send, soft bong on ✓, soft impact under both logo moments. Native Arabic clips from the app's own audio (the new native voice).
+## Audio (no music)
+No music, by choice for an Islamic learning platform. Instead:
+- Cold open (0–3s): the app's native Arabic voice says كِتاب, مَدِينَة, صَدِيق as each card appears; the narrator starts after.
+- Soft room tone throughout (filtered brown noise, about -40 dB): non-musical, just enough that pauses aren't dead silence.
+- Quiet paper sounds as cards slide in; soft clicks on Continue and Send; a soft chime on ✓ and a soft thud under the logo.
+- The background glow breathes with the voices (RMS of the narration and Arabic clips) instead of music.
+Everything after the cold open is 2.4s later than the storyboard table above; total 61.9s.

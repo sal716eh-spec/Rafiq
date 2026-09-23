@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script>
+(function(){
+  if (location.hostname === 'sal716eh-spec.github.io') {
+    var path = location.pathname.replace(/^\/Rafiq/, '') || '/';
+    location.replace('https://rafiq-arabic.com' + path + location.search + location.hash);
+  }
+})();
+</script>
+<script src="theme.js?v=2"></script>
+<title>Progress — Rafiq</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Karla:wght@400;500;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="site.css?v=901">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#F1ECE0">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#1B1815">
+<meta name="color-scheme" content="light dark">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<style>
+.hero{padding:40px 0 6px;text-align:center}
+.hero .greet{font-family:var(--ar);direction:rtl;font-size:clamp(26px,6vw,36px);font-weight:600;line-height:1.7;margin:0 0 10px;padding:4px 0}
+.hero h1{font-size:clamp(21px,4.4vw,26px);font-weight:700}
+.hero p{color:var(--ink-soft);font-size:14.5px;margin:8px auto 0;max-width:52ch}
+.acctbar{max-width:1000px;margin:34px auto 0;padding:16px 30px 0;border-top:1px solid var(--rule);display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+@media (max-width:860px){ .acctbar{padding:14px 16px 0;margin-top:26px} .acctbar .btn{min-height:44px} }
+@media (min-width:861px){ .acctbar{display:none} }
+.sec{font-size:16px;font-weight:700;margin:28px 0 10px}
+.box{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px 18px}
+.best{display:flex;gap:10px;align-items:center;margin:18px 0 0;padding:12px 16px;border-radius:12px;font-size:15px;
+  background:color-mix(in srgb,var(--gold) 16%,var(--card));border:1px solid color-mix(in srgb,var(--gold) 60%,transparent)}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:18px}
+.tiles>div{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:14px 14px 12px}
+.tiles b{display:block;font-size:26px;line-height:1.15;font-variant-numeric:tabular-nums}
+.tiles span{font-size:12.5px;color:var(--ink-soft)}
+.tiles small{display:block;font-size:11.5px;color:var(--ink-soft);margin-top:4px}
+@media (max-width:640px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+table.per{width:100%;border-collapse:collapse;font-size:14.5px}
+.per th,.per td{padding:9px 6px;text-align:right;border-bottom:1px solid var(--rule);font-variant-numeric:tabular-nums}
+.per th:first-child,.per td:first-child{text-align:left}
+.per thead th{font-family:var(--ut);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);font-weight:400}
+.per tr:last-child td{border-bottom:0}
+.per td b{font-weight:700}
+.chart{display:flex;align-items:flex-end;gap:2px;height:140px;position:relative;margin-top:26px;border-bottom:1px solid var(--rule)}
+.chart .col{flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;cursor:default;position:relative;touch-action:manipulation}
+.chart .bar{width:min(70%,22px);background:var(--verdigris);border-radius:4px 4px 0 0;min-height:0}
+.chart .col.today .bar{background:var(--gold)}
+.chart .col:hover .bar,.chart .col.sel .bar{filter:brightness(1.12)}
+.chart .v{position:absolute;font-size:11.5px;color:var(--ink);font-variant-numeric:tabular-nums;transform:translateY(-18px)}
+.chart .usual{position:absolute;left:0;right:0;border-top:1px dashed var(--ink-soft);opacity:.7;pointer-events:none}
+.chart .usual span{position:absolute;left:0;top:-18px;font-size:11px;color:var(--ink-soft);background:var(--card);padding:0 4px}
+.days{display:flex;gap:2px;margin-top:6px}
+.days span{flex:1;text-align:center;font-family:var(--ut);font-size:10px;color:var(--ink-soft)}
+.readout{font-size:13.5px;color:var(--ink-soft);margin-top:10px;min-height:1.4em}
+.readout b{color:var(--ink)}
+.cal{display:grid;grid-auto-flow:column;grid-template-rows:repeat(7,1fr);gap:3px;width:max-content;max-width:100%}
+.cal i{width:15px;height:15px;border-radius:3px;background:color-mix(in srgb,var(--ink) 10%,var(--card));display:block}
+.cal i.l1{background:color-mix(in srgb,var(--verdigris) 35%,var(--card))}
+.cal i.l2{background:color-mix(in srgb,var(--verdigris) 65%,var(--card))}
+.cal i.l3{background:var(--verdigris)}
+.cal i.now{outline:2px solid var(--ink);outline-offset:1px}
+.leg{display:flex;align-items:center;gap:4px;font-size:11.5px;color:var(--ink-soft);margin-top:10px}
+.leg i{width:12px;height:12px;border-radius:3px;display:inline-block}
+.urow{display:grid;grid-template-columns:minmax(0,1fr) 110px 52px;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--rule);font-size:14.5px}
+.urow:last-child{border-bottom:0}
+.urow .ub{height:6px;border-radius:3px;background:color-mix(in srgb,var(--ink) 10%,var(--card));overflow:hidden}
+.urow .ub i{display:block;height:100%;background:var(--verdigris);border-radius:3px}
+.urow .un{text-align:right;font-family:var(--ut);font-size:11.5px;color:var(--ink-soft)}
+.note{font-size:12.5px;color:var(--ink-soft);margin-top:10px}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <a class="brand" href="dashboard.html"><span class="bmark"></span>رَفِيق</a>
+  <div class="navlinks">
+    <a class="active" href="dashboard.html">Dashboard</a>
+    <a href="vocab.html">Words</a>
+    <a href="drills.html">Sentences</a><a href="verbs.html">Verbs</a><a href="connectors.html">Connectors</a>
+    <a href="settings.html">Settings</a>
+    <a href="login.html" class="logout-link" onclick="logout();return false;">Log out</a>
+  </div>
+</nav>
+<main class="wrap">
+  <section class="hero">
+    <div class="greet">التَّقَدُّمُ</div>
+    <h1>Your progress</h1>
+    <p>What you've learned and how you're doing, day by day.</p>
+  </section>
+  <div id="prog"><p class="note" style="text-align:center">Loading…</p></div>
+</main>
+<div class="acctbar">
+  <span class="label" id="whoami">Account</span>
+  <button class="btn logout-link" type="button">Sign out</button>
+</div>
+
+<nav class="tabbar" aria-label="Sections">
+  <a class="on" href="dashboard.html"><span class="ti">الرَّئِيسَة</span>Home</a>
+  <a href="vocab.html"><span class="ti">مُفْرَدات</span>Words</a>
+  <a href="drills.html"><span class="ti">جُمَل</span>Sentences</a>
+  <a href="verbs.html"><span class="ti">أَفْعال</span>Verbs</a>
+  <a href="connectors.html"><span class="ti">رَوابِط</span>Links</a>
+  <a href="settings.html"><span class="ti">إِعْدادات</span>Settings</a>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js?v=3"></script>
+<script src="plan.js?v=20260922"></script>
+<script src="progress.js?v=1"></script>
+<script src="vocab-data.js?v=20260922"></script>
+<script src="drills-data.js?v=20260922"></script>
+<script src="path-data.js?v=20260922"></script>
+<script src="alphabet-data.js?v=20260922"></script>
+<script src="path.js?v=20260924"></script>
+<script>RafiqPlan.requirePlan();</script>
+<script src="nav.js?v=20260924"></script>
+<script>
+requireLogin();
+(async function(){
+  const el=document.getElementById('prog');
+  try{
+    await Progress.init();
+    paint(el);
+  }catch(e){ el.innerHTML='<p class="note" style="text-align:center">Couldn\'t load your progress — try again in a moment.</p>'; console.error(e); }
+})();
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const plural=(n,w)=>n+' '+w+(n===1?'':'s');
+function paint(el){
+  const P=RafiqPath, U=P.units().filter(p=>!p.alpha);
+  const met=P.metWords().size, sentences=Progress.seenCount('d:');
+  const unitsDone=U.filter(p=>P.unitDone(p)).length;
+  const s=P.streak(), best=P.bestStreak(), wr=P.wordsReport();
+  const d1=P.period(1), d7=P.period(7), d30=P.period(30);
+
+  const banner = wr.record ? `<div class="best">🏆 <span><b>${wr.today} new words today</b> — your best day yet (was ${wr.best}).</span></div>`
+    : wr.aboveUsual ? `<div class="best">🌟 <span><b>${wr.today} new words today</b> — more than your usual ${wr.usual}. Keep it up!</span></div>` : '';
+
+  const tiles=`<div class="tiles">
+    <div><b>${met}</b><span>words learned</span><small>met in your lessons</small></div>
+    <div><b>${sentences}</b><span>sentences practised</span><small>different exercises</small></div>
+    <div><b>${unitsDone}<small style="display:inline;font-size:14px"> / ${U.length}</small></b><span>units done</span><small>${unitsDone===U.length?'the whole path':'on your path'}</small></div>
+    <div><b>🔥 ${s}</b><span>day streak</span><small>best: ${plural(best,'day')}</small></div></div>`;
+
+  const row=(label,k)=>`<tr><td>${label}</td><td><b>${d1[k]}</b></td><td>${d7[k]}</td><td>${d30[k]}</td></tr>`;
+  const table=`<div class="sec">Today, this week, this month</div><div class="box"><table class="per">
+    <thead><tr><th></th><th>Today</th><th>7 days</th><th>30 days</th></tr></thead><tbody>
+    ${row('New words','words')}${row('Sentence exercises','sentences')}${row('Steps &amp; sessions','steps')}
+    <tr><td>Days active</td><td><b>${d1.days?'✓':'—'}</b></td><td>${d7.days} of 7</td><td>${d30.days} of 30</td></tr></tbody></table></div>`;
+
+  // new words per day, last 14 days — one series, today in gold, your usual as a dashed line
+  const days=P.wordsByDay(14), max=Math.max(10, ...days.map(d=>d.words), wr.usual||0);
+  const peak=Math.max(...days.map(d=>d.words));
+  const dn=d=>new Date(d+'T12:00:00').toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'short'});
+  const bars=days.map((d,i)=>{ const last=i===days.length-1;
+    const lab = d.words && (last || d.words===peak) ? `<span class="v" style="bottom:${100*d.words/max}%">${d.words}</span>` : '';
+    return `<div class="col${last?' today':''}" data-i="${i}" title="${dn(d.day)}: ${plural(d.words,'new word')}">${lab}<div class="bar" style="height:${100*d.words/max}%"></div></div>`; }).join('');
+  const usual = wr.usual ? `<div class="usual" style="bottom:${100*wr.usual/max}%"><span>usual ${wr.usual}</span></div>` : '';
+  const labels=days.map((d,i)=>`<span>${i===days.length-1?'today':new Date(d.day+'T12:00:00').toLocaleDateString('en-GB',{weekday:'narrow'})}</span>`).join('');
+  const chart=`<div class="sec">New words, last 14 days</div><div class="box">
+    <div class="chart" id="chart">${usual}${bars}</div><div class="days">${labels}</div>
+    <div class="readout" id="readout">${Math.max(wr.best,wr.today)?`Best day: <b>${plural(Math.max(wr.best,wr.today),'new word')}</b>`+(wr.usual?` · usual day: <b>${wr.usual}</b>`:''):'Tap a bar to see that day.'}</div></div>`;
+
+  // activity, last 12 weeks: one square per day, darker = more steps
+  const cells=[], start=new Date(); start.setDate(start.getDate()-(7*11+((start.getDay()+6)%7)));
+  for(let d=new Date(start); d<=new Date(); d.setDate(d.getDate()+1)){
+    const k=d.toISOString().slice(0,10), r=Progress.get('s:'+k), n=r&&r.seen||0, today=k===new Date().toISOString().slice(0,10);
+    cells.push(`<i class="${n>=4?'l3':n>=2?'l2':n?'l1':''}${today?' now':''}" title="${dn(k)}: ${n?plural(n,'step')+' or session'+(n===1?'':'s'):'no practice'}"></i>`);
+  }
+  const cal=`<div class="sec">Your practice days</div><div class="box"><div class="cal">${cells.join('')}</div>
+    <div class="leg">Less <i style="background:color-mix(in srgb,var(--ink) 10%,var(--card))"></i><i class="l1" style="background:color-mix(in srgb,var(--verdigris) 35%,var(--card))"></i><i style="background:color-mix(in srgb,var(--verdigris) 65%,var(--card))"></i><i style="background:var(--verdigris)"></i> More</div>
+    <p class="note">Each square is a day (Monday at the top), for the last 12 weeks. ${plural(d30.days,'day')} active in the last 30.</p></div>`;
+
+  const units=`<div class="sec">Your path</div><div class="box">${U.map(p=>{
+    const st=P.steps(p), k=P.placed(p.n)?st.length:st.filter(x=>P.stepDone(p.n,x.key)).length;
+    return `<div class="urow"><span>${+p.n}. ${esc(p.en)}</span><span class="ub"><i style="width:${100*k/st.length}%"></i></span>
+      <span class="un">${P.placed(p.n)?'skipped':k+'/'+st.length}</span></div>`; }).join('')}</div>`;
+
+  el.innerHTML=banner+tiles+table+chart+cal+units;
+  // tap or hover a bar: show that day under the chart
+  const ro=document.getElementById('readout');
+  el.querySelectorAll('#chart .col').forEach(c=>{
+    const show=()=>{ el.querySelectorAll('#chart .col.sel').forEach(x=>x.classList.remove('sel')); c.classList.add('sel');
+      const d=days[+c.dataset.i]; ro.innerHTML=`<b>${dn(d.day)}</b>: ${plural(d.words,'new word')}`+(d.active&&!d.words?' (practised, no new words)':''); };
+    c.addEventListener('mouseenter',show); c.addEventListener('click',show);
+  });
+}
+</script>
+</body>
+</html>

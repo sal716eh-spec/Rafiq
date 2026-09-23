@@ -32,7 +32,7 @@
 <link rel="stylesheet" href="site.css?v=901">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=2"></script>
-<script src="nav.js?v=20260922"></script>
+<script src="nav.js?v=20260924"></script>
 <script src="progress.js?v=1"></script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2317262B'/%3E%3Ctext x='32' y='46' font-size='40' text-anchor='middle' fill='%23F1ECE0' font-family='serif'%3E%D8%B1%3C/text%3E%3Ccircle cx='46' cy='19' r='4' fill='%23B4322A'/%3E%3C/svg%3E">
 <link rel="manifest" href="manifest.json">
@@ -175,7 +175,7 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
 </nav>
 <main class="wrap">
   <div class="headrow" style="display:block">
-    <div class="head"><h1>Vocabulary</h1></div>
+    <div class="head"><h1>Your words</h1></div>
     
   </div>
   <div class="tabs">
@@ -214,7 +214,7 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
       <h2>All done for today</h2>
       <p id="doneMsg">You've reviewed every word due today.</p>
       <div class="next">
-        <a class="primary" href="drills.html">Practise speaking →</a>
+        <a class="primary" href="practise.html">More practice →</a>
         <a href="#" onclick="showTab('list');return false;">Browse the word list</a>
       </div>
     </div>
@@ -264,6 +264,10 @@ td.tr{font-family:var(--ut);font-size:11px;color:var(--ink-soft);width:20%}
 </main>
 
 <script src="vocab-data.js?v=20260922"></script>
+<script src="drills-data.js?v=20260922"></script>
+<script src="path-data.js?v=20260922"></script>
+<script src="alphabet-data.js?v=20260922"></script>
+<script src="path.js?v=20260924"></script>
 <script src="audio.js?v=900"></script>
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
@@ -285,6 +289,9 @@ const today = () => Math.floor(Date.now()/DAY);
 let cloudOn = false;
 
 // --- local fallback (also used before cloud loads / when logged out) ---
+// words met in lessons on the path (filled once progress has loaded)
+let metSet = new Set();
+const onPath = w => metSet.has(w.id);
 function loadProgressLocal(){
   try { return JSON.parse(localStorage.getItem(STORE_KEY)) || {}; }
   catch(_){ return {}; }
@@ -343,8 +350,12 @@ async function mergeFromShared(){
       changed=true;
     }
   });
-  if(changed){ saveProgress(progress); startTest(); renderList(); }
+  if(changed) saveProgress(progress);
+  // this page practises only the words met in lessons on the path
+  if(window.RafiqPath) metSet = RafiqPath.metWords();
+  startTest(); renderList();
 }
+
 mergeFromShared();
 let queue = [];
 let current = null;
@@ -480,12 +491,12 @@ function buildQueue(){
   const t = today();
   const cap = dailyCap();   // the ramp: today's TOTAL ceiling (5..30)
   // 1) new words go in FIRST — up to the pace, but never more than the ceiling.
-  const freshAll = VOCAB.filter(w => progress[w.id].box===0);
-  const fresh = freshAll.slice(0, Math.min(newMax(), cap));
+  // new words come from lessons, not from here
+  const fresh = [];
   // 2) reviews fill the REMAINING room under the ceiling, deterministically
   //    shuffled for today so the set/order stay identical on reload.
   const room = Math.max(0, cap - fresh.length);
-  const due = VOCAB.filter(w => progress[w.id].box>0 && progress[w.id].due <= t);
+  const due = VOCAB.filter(w => onPath(w) && progress[w.id].box>0 && progress[w.id].due <= t);
   const reviews = seededShuffle(due, t).slice(0, room);
   // reviews shown first (priority), then the day's new words
   queue = reviews.concat(fresh);
@@ -533,14 +544,9 @@ function startTest(){
   else { showPractiseDone(false); }
 }
 
-// Build a gentle top-up set: 2 new + 3 already-seen for review.
+// A top-up set: 5 more of the words you've met in your lessons.
 function buildTopUp(){
-  const seen = VOCAB.filter(w => progress[w.id] && progress[w.id].box>0);
-  const fresh = VOCAB.filter(w => !progress[w.id] || progress[w.id].box===0);
-  qShuffle(seen); qShuffle(fresh);
-  const pick = [...fresh.slice(0,2), ...seen.slice(0,3)];
-  qShuffle(pick);
-  return pick;
+  return qShuffle(VOCAB.filter(onPath)).slice(0,5);
 }
 
 function showPractiseDone(justFinished){
@@ -553,11 +559,17 @@ function showPractiseDone(justFinished){
     dailyStatus.practise_done_date = todayISO();
     if(cloudOn && typeof cloudMarkPractiseDone==='function') cloudMarkPractiseDone(todayISO());
   }
-  const hasTopUp = VOCAB.some(w=>true); // always can top up
+  if(!metSet.size){
+    done.innerHTML='<div class="ar">لا شَيْءَ بَعْدُ</div><h2>No words yet</h2>'+
+      '<p>Words you meet in your lessons show up here for extra practice.</p>'+
+      '<div class="next"><a class="primary" href="dashboard.html">Go to your lessons</a>'+
+      '<a href="#" onclick="showTab(\'list\');return false;">Browse the word list</a></div>';
+    return;
+  }
   done.innerHTML =
     '<div class="ar">أَحْسَنْت</div>'+
     '<h2>'+(isDoneToday(dailyStatus.practise_done_date)?'Practise done for today':'All caught up')+'</h2>'+
-    '<p>You\u2019ve finished everything due. Keep the momentum going with a few more \u2014 a mix of new words and review.</p>'+
+    '<p>You\u2019ve finished everything due. Keep going with a few more of the words you\u2019ve met in your lessons.</p>'+
     '<div class="next">'+
       '<a class="primary" href="#" onclick="startTopUp();return false;">Keep practising \u2014 next 5</a>'+
       '<a href="#" onclick="showTab(\'quiz\');return false;">Take the daily test</a>'+

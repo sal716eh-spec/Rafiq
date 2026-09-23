@@ -89,8 +89,16 @@
      (verbs, joining words) and nothing they haven't seen yet. */
   function reviewScope(){
     const units = reached();
-    const wordIds = new Set(units.flatMap(p => p.words));
-    return { units: new Set(units.map(p => p.n)), wordIds };
+    return { units: new Set(units.map(p => p.n)), wordIds: metWords() };
+  }
+  /* Words met on the path: every word in a finished "New words" step. Words
+     practised only in the Practise area don't count, nor do units skipped by
+     placement. */
+  function metWords(){
+    const out = new Set();
+    UNITS.forEach(p => { if(p.alpha) return;
+      steps(p).forEach(s => { if(s.kind==='words' && stepDone(p.n, s.key)) wordsOf(p, s.batch).forEach(w => out.add(w.id)); }); });
+    return out;
   }
   const inScope = (id, sc) => id.startsWith('v:') ? sc.wordIds.has(+id.slice(2))
                             : id.startsWith('d:') ? sc.units.has(id.slice(2, 4)) : false;
@@ -123,6 +131,36 @@
       if(w && w.seen) words+=w.seen;
     }
     return {days, steps, words};
+  }
+  /* Daily counts, one row per day: 'w:<date>' new words met on the path,
+     'e:<date>' sentence exercises done, 's:<date>' steps and sessions. */
+  const dayKey = k => { const d=new Date(); d.setDate(d.getDate()-k); return iso(d); };
+  const countOn = (pre, day) => { const r=Progress.get(pre+day); return r && r.seen || 0; };
+  function sentenceDone(){ Progress.touch('e:' + iso(new Date())); }
+  /* Totals for the last `days` days (1 = today): words, sentences, steps, days active. */
+  function period(days){
+    const t={words:0, sentences:0, steps:0, days:0};
+    for(let k=0;k<days;k++){ const d=dayKey(k);
+      t.words+=countOn('w:',d); t.sentences+=countOn('e:',d);
+      const st=countOn('s:',d); t.steps+=st; if(st) t.days++; }
+    return t;
+  }
+  /* New words per day for the last `days` days, oldest first. */
+  const wordsByDay = days => Array.from({length:days}, (_,i) => { const d=dayKey(days-1-i); return {day:d, words:countOn('w:',d), active:countOn('s:',d)>0}; });
+  /* Today's new words against your usual: the median of the days in the last
+     four weeks you met any (needs 3 such days), and your best day this year. */
+  function wordsReport(){
+    const today=countOn('w:', dayKey(0));
+    const recent=[]; for(let k=1;k<=28;k++){ const n=countOn('w:',dayKey(k)); if(n) recent.push(n); }
+    recent.sort((a,b)=>a-b);
+    const usual = recent.length>=3 ? recent[Math.floor(recent.length/2)] : null;
+    let best=0; for(let k=1;k<=365;k++) best=Math.max(best, countOn('w:',dayKey(k)));
+    return { today, usual, best, aboveUsual: usual!=null && today>usual, record: best>=10 && today>best };
+  }
+  function bestStreak(){
+    let best=0, run=0;
+    for(let k=400;k>=0;k--){ if(countOn('s:',dayKey(k))){ run++; best=Math.max(best,run); } else if(k>0) run=0; }
+    return Math.max(best, streak());
   }
   function doneToday(){ const r = Progress.get('s:' + iso(new Date())); return r ? r.seen : 0; }
   /* Streak goals. Each says what the research behind daily, spaced practice
@@ -157,6 +195,6 @@
     return ids.map(wordById).filter(Boolean);
   }
 
-  window.RafiqPath = { reviewScope, reviewDue, hasLearned, COMING, STREAK_GOALS, streakGoal, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
+  window.RafiqPath = { reviewScope, metWords, sentenceDone, period, wordsByDay, wordsReport, bestStreak, reviewDue, hasLearned, COMING, STREAK_GOALS, streakGoal, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
                        complete, place, markDay, wordMet, week, doneToday, streak, wordsOf, unitData, wordById };
 })();

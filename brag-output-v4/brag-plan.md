@@ -51,10 +51,11 @@ Draft voice: Kokoro af_heart (local, free). To swap for ElevenLabs, render the s
 
 Review days follow the app's real word schedule (gaps of 1, 2, 4, 8 days). No personal data: learner and neighbour are fictional; lines are the app's own content.
 
-## Audio (no music)
-No music, by choice for an Islamic learning platform. Instead:
-- Cold open (0–3s): the app's native Arabic voice says كِتاب, مَدِينَة, صَدِيق as each card appears; the narrator starts after.
-- Soft room tone throughout (filtered brown noise, about -40 dB): non-musical, just enough that pauses aren't dead silence.
-- Quiet paper sounds as cards slide in; soft clicks on Continue and Send; a soft chime on ✓ and a soft thud under the logo.
-- The background glow breathes with the voices (RMS of the narration and Arabic clips) instead of music.
-Everything after the cold open is 2.4s later than the storyboard table above; total 61.9s.
+## Audio (v4: no music, natural sounds)
+Background chosen with TypeSafe (typesafe/bg.py): layered natural sounds scored highest for engagement (2.93/3) and fit (2.86/3), with halal 0.81 and respectful 0.93; Quran recitation as background was rejected as disrespectful (0.14) and a nasheed with lyrics as divisive (0.41).
+- Problem section: a quiet clock ticks while the words blur away.
+- From "Meet Rafiq": a small courtyard fountain and dawn birdsong carry the rest of the film.
+- Reed pen as the letters and the word are written and on each "✓ remembered"; a page turn between scenes; soft taps on Continue and Send.
+- A gentle breeze-and-water swell under "Words that come back until they stay".
+- All sounds generated with ElevenLabs text to sound (tools/sfx-prompts.json, tools/sfx-redo.json; "Generate sound effects" action).
+- Voices: every clip loudness-matched to -16 LUFS. The native Arabic clips had been 8-14 dB quieter than the narrator in v1-v3; in v4 they sit within 1-2 dB of it. Background sits about 18 dB under the voices; whole film -15 LUFS.

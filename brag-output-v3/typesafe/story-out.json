@@ -1,0 +1,1234 @@
+{
+ "hook|k1|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.49,
+    "confidence": 0.49,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.06,
+     "2": 0.36,
+     "3": 0.57
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.61
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.17
+   }
+  },
+  "usage": {
+   "input_tokens": 909,
+   "output_tokens": 50
+  }
+ },
+ "hook|k1|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.94,
+    "confidence": 0.54,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.02,
+     "1": 0.22,
+     "2": 0.56,
+     "3": 0.2
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 817,
+   "output_tokens": 18
+  }
+ },
+ "hook|k1|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.62,
+    "confidence": 0.62,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.05,
+     "2": 0.27,
+     "3": 0.67
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 817,
+   "output_tokens": 18
+  }
+ },
+ "hook|k1|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.13,
+    "confidence": 0.51,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.02,
+     "1": 0.14,
+     "2": 0.53,
+     "3": 0.31
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 807,
+   "output_tokens": 18
+  }
+ },
+ "hook|k2|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.68,
+    "confidence": 0.68,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.03,
+     "2": 0.25,
+     "3": 0.72
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.63
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.25
+   }
+  },
+  "usage": {
+   "input_tokens": 913,
+   "output_tokens": 50
+  }
+ },
+ "hook|k2|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.46,
+    "confidence": 0.46,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.06,
+     "2": 0.39,
+     "3": 0.54
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 821,
+   "output_tokens": 18
+  }
+ },
+ "hook|k2|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.7,
+    "confidence": 0.7,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.02,
+     "2": 0.24,
+     "3": 0.74
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 821,
+   "output_tokens": 18
+  }
+ },
+ "hook|k2|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.21,
+    "confidence": 0.44,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.02,
+     "1": 0.12,
+     "2": 0.48,
+     "3": 0.38
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 811,
+   "output_tokens": 18
+  }
+ },
+ "hook|k3|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.25,
+    "confidence": 0.44,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.02,
+     "1": 0.12,
+     "2": 0.45,
+     "3": 0.41
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.37
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.18
+   }
+  },
+  "usage": {
+   "input_tokens": 905,
+   "output_tokens": 50
+  }
+ },
+ "hook|k3|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.87,
+    "confidence": 0.43,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.07,
+     "1": 0.21,
+     "2": 0.5,
+     "3": 0.22
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 813,
+   "output_tokens": 18
+  }
+ },
+ "hook|k3|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.33,
+    "confidence": 0.33,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.02,
+     "1": 0.11,
+     "2": 0.4,
+     "3": 0.47
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 813,
+   "output_tokens": 18
+  }
+ },
+ "hook|k3|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.53,
+    "confidence": 0.31,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.1,
+     "1": 0.37,
+     "2": 0.42,
+     "3": 0.11
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 803,
+   "output_tokens": 18
+  }
+ },
+ "hook|k4|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.3,
+    "confidence": 0.46,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.1,
+     "2": 0.47000000000000003,
+     "3": 0.42
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.68
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.16
+   }
+  },
+  "usage": {
+   "input_tokens": 905,
+   "output_tokens": 50
+  }
+ },
+ "hook|k4|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.81,
+    "confidence": 0.4,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.07,
+     "1": 0.26,
+     "2": 0.46,
+     "3": 0.21
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 813,
+   "output_tokens": 18
+  }
+ },
+ "hook|k4|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.38,
+    "confidence": 0.38,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.02,
+     "1": 0.11,
+     "2": 0.36,
+     "3": 0.51
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 813,
+   "output_tokens": 18
+  }
+ },
+ "hook|k4|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 0.93,
+    "confidence": 0.36,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.35,
+     "1": 0.42,
+     "2": 0.18,
+     "3": 0.05
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 803,
+   "output_tokens": 18
+  }
+ },
+ "hook|k5|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.6,
+    "confidence": 0.6,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.03,
+     "2": 0.33,
+     "3": 0.64
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.65
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.15
+   }
+  },
+  "usage": {
+   "input_tokens": 907,
+   "output_tokens": 50
+  }
+ },
+ "hook|k5|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.39,
+    "confidence": 0.39,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.08,
+     "2": 0.45,
+     "3": 0.47
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 815,
+   "output_tokens": 18
+  }
+ },
+ "hook|k5|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.51,
+    "confidence": 0.51,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.05,
+     "2": 0.38,
+     "3": 0.57
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 815,
+   "output_tokens": 18
+  }
+ },
+ "hook|k5|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.59,
+    "confidence": 0.59,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.05,
+     "2": 0.3,
+     "3": 0.65
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 805,
+   "output_tokens": 18
+  }
+ },
+ "hook|k6|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.36,
+    "confidence": 0.46,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.08,
+     "2": 0.47000000000000003,
+     "3": 0.45
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.59
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.39
+   }
+  },
+  "usage": {
+   "input_tokens": 906,
+   "output_tokens": 50
+  }
+ },
+ "hook|k6|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.22,
+    "confidence": 0.53,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.12,
+     "2": 0.53,
+     "3": 0.35
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 814,
+   "output_tokens": 18
+  }
+ },
+ "hook|k6|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.13,
+    "confidence": 0.59,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.12,
+     "2": 0.6,
+     "3": 0.27
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 814,
+   "output_tokens": 18
+  }
+ },
+ "hook|k6|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.5,
+    "confidence": 0.5,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.05,
+     "2": 0.39,
+     "3": 0.56
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 804,
+   "output_tokens": 18
+  }
+ },
+ "srs|s1|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.42,
+    "confidence": 0.42,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.07,
+     "2": 0.43,
+     "3": 0.5
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.83
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.78
+   }
+  },
+  "usage": {
+   "input_tokens": 909,
+   "output_tokens": 50
+  }
+ },
+ "srs|s1|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.94,
+    "confidence": 0.55,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.02,
+     "1": 0.22,
+     "2": 0.56,
+     "3": 0.2
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 817,
+   "output_tokens": 18
+  }
+ },
+ "srs|s1|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.86,
+    "confidence": 0.86,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.01,
+     "2": 0.12,
+     "3": 0.87
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 817,
+   "output_tokens": 18
+  }
+ },
+ "srs|s1|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.07,
+    "confidence": 0.5,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.2,
+     "2": 0.51,
+     "3": 0.28
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 807,
+   "output_tokens": 18
+  }
+ },
+ "srs|s2|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.07,
+    "confidence": 0.64,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.14,
+     "2": 0.65,
+     "3": 0.21
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.85
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.83
+   }
+  },
+  "usage": {
+   "input_tokens": 917,
+   "output_tokens": 50
+  }
+ },
+ "srs|s2|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.75,
+    "confidence": 0.6,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.3,
+     "2": 0.61,
+     "3": 0.08
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 825,
+   "output_tokens": 18
+  }
+ },
+ "srs|s2|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.68,
+    "confidence": 0.68,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.03,
+     "2": 0.26,
+     "3": 0.71
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 825,
+   "output_tokens": 18
+  }
+ },
+ "srs|s2|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.91,
+    "confidence": 0.55,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.25,
+     "2": 0.56,
+     "3": 0.18
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 815,
+   "output_tokens": 18
+  }
+ },
+ "srs|s3|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.21,
+    "confidence": 0.55,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.11,
+     "2": 0.55,
+     "3": 0.33
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.91
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.87
+   }
+  },
+  "usage": {
+   "input_tokens": 912,
+   "output_tokens": 50
+  }
+ },
+ "srs|s3|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.99,
+    "confidence": 0.57,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.19,
+     "2": 0.59,
+     "3": 0.21
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 820,
+   "output_tokens": 18
+  }
+ },
+ "srs|s3|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.73,
+    "confidence": 0.73,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.02,
+     "2": 0.23,
+     "3": 0.75
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 820,
+   "output_tokens": 18
+  }
+ },
+ "srs|s3|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.92,
+    "confidence": 0.57,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.24,
+     "2": 0.57,
+     "3": 0.18
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 810,
+   "output_tokens": 18
+  }
+ },
+ "srs|s4|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.85,
+    "confidence": 0.63,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.25,
+     "2": 0.64,
+     "3": 0.11
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.82
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.81
+   }
+  },
+  "usage": {
+   "input_tokens": 906,
+   "output_tokens": 50
+  }
+ },
+ "srs|s4|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.6,
+    "confidence": 0.49,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.02,
+     "1": 0.42,
+     "2": 0.5,
+     "3": 0.06
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 814,
+   "output_tokens": 18
+  }
+ },
+ "srs|s4|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.5,
+    "confidence": 0.5,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.04,
+     "2": 0.42,
+     "3": 0.54
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 814,
+   "output_tokens": 18
+  }
+ },
+ "srs|s4|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.52,
+    "confidence": 0.46,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.49,
+     "2": 0.46,
+     "3": 0.04
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 804,
+   "output_tokens": 18
+  }
+ },
+ "srs|s5|quran": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.87,
+    "confidence": 0.65,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.23,
+     "2": 0.66,
+     "3": 0.11
+    }
+   },
+   "true": {
+    "type": "noul",
+    "noul": 0.58
+   },
+   "clear": {
+    "type": "noul",
+    "noul": 0.75
+   }
+  },
+  "usage": {
+   "input_tokens": 906,
+   "output_tokens": 50
+  }
+ },
+ "srs|s5|heritage": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.67,
+    "confidence": 0.56,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.37,
+     "2": 0.5599999999999999,
+     "3": 0.06
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 814,
+   "output_tokens": 18
+  }
+ },
+ "srs|s5|forgot": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 2.57,
+    "confidence": 0.57,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.0,
+     "1": 0.02,
+     "2": 0.38,
+     "3": 0.6
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 814,
+   "output_tokens": 18
+  }
+ },
+ "srs|s5|beginner": {
+  "model": "jev-1.13.0",
+  "answers": {
+   "appeal": {
+    "type": "score",
+    "score": 1.6,
+    "confidence": 0.52,
+    "legend": {
+     "0": "Not at all: irrelevant, off-putting or not believable to them",
+     "1": "A little",
+     "2": "Clearly: it speaks to their situation",
+     "3": "Strongly: they'd feel it was made for them"
+    },
+    "probabilities": {
+     "0": 0.01,
+     "1": 0.43,
+     "2": 0.52,
+     "3": 0.04
+    }
+   }
+  },
+  "usage": {
+   "input_tokens": 804,
+   "output_tokens": 18
+  }
+ }
+}

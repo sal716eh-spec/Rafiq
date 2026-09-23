@@ -80,6 +80,26 @@
 .steps div{counter-increment:s;background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:12px 14px 12px 46px;position:relative;font-size:14px;color:var(--ink-soft)}
 .steps div::before{content:counter(s);position:absolute;left:14px;top:12px;width:22px;height:22px;border-radius:50%;background:var(--verdigris);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
 .steps b{color:var(--ink)}
+/* the one-minute film: a poster with a floating glass play control; press shows feedback instantly */
+.film{max-width:960px;margin:6px auto 0;padding:0 20px}
+.film-frame{position:relative;aspect-ratio:16/9;border-radius:22px;overflow:hidden;background:var(--paper-deep);
+  box-shadow:0 2px 8px rgba(23,38,43,.08),0 28px 60px -24px rgba(23,38,43,.38)}
+.film-frame video{display:block;width:100%;height:100%;object-fit:cover;background:var(--paper-deep)}
+.film-play{position:absolute;left:18px;bottom:18px;display:flex;align-items:center;gap:12px;padding:8px 20px 8px 8px;border-radius:999px;
+  border:1px solid color-mix(in srgb,#fff 45%,transparent);background:color-mix(in srgb,var(--card) 72%,transparent);
+  -webkit-backdrop-filter:blur(18px) saturate(160%);backdrop-filter:blur(18px) saturate(160%);color:var(--ink);font:inherit;cursor:pointer;
+  box-shadow:0 8px 24px -10px rgba(23,38,43,.45);transition:transform 100ms ease-out,opacity 220ms ease,filter 220ms ease;
+  -webkit-tap-highlight-color:transparent;touch-action:manipulation}
+.film-play:active{transform:scale(.97)}
+.film-play .fp-icon{width:44px;height:44px;border-radius:50%;background:var(--verdigris);display:grid;place-items:center;flex:0 0 auto}
+.film-play .fp-icon::before{content:"";margin-left:4px;border-style:solid;border-width:9px 0 9px 14px;border-color:transparent transparent transparent #fff}
+.film-play .fp-text{display:flex;flex-direction:column;align-items:flex-start;font-size:15.5px;font-weight:700;letter-spacing:-.005em;line-height:1.2}
+.film-play small{font-size:12.5px;font-weight:500;color:var(--ink-soft);letter-spacing:.01em;margin-top:2px}
+.film.playing .film-play{opacity:0;transform:scale(.94);filter:blur(4px);pointer-events:none}
+@media (hover:hover) and (pointer:fine){.film-play:hover{background:color-mix(in srgb,var(--card) 86%,transparent)}}
+@media (max-width:600px){.film{padding:0 14px}.film-frame{border-radius:16px}.film-play{left:10px;bottom:10px;gap:9px;padding:5px 14px 5px 5px}.film-play .fp-icon{width:34px;height:34px}.film-play .fp-icon::before{border-width:7px 0 7px 11px;margin-left:3px}.film-play .fp-text{font-size:13.5px}.film-play small{display:none}}
+@media (prefers-reduced-motion:reduce){.film-play,.film.playing .film-play{transition:opacity 200ms ease;transform:none;filter:none}}
+@media (prefers-reduced-transparency:reduce){.film-play{background:var(--card);-webkit-backdrop-filter:none;backdrop-filter:none}}
 footer.land{border-top:1px solid var(--rule);padding:26px;text-align:center;color:var(--ink-soft);font-size:12.5px;line-height:1.7}
 </style>
 </head>
@@ -103,6 +123,29 @@ footer.land{border-top:1px solid var(--rule);padding:26px;text-align:center;colo
     <a class="btn ghost" href="login.html">Sign in</a>
   </div>
 </header>
+<section class="film" id="film-section" aria-label="Rafiq in one minute">
+  <div class="film-frame">
+    <video id="film" preload="none" playsinline poster="media/rafiq-intro.jpg">
+      <source src="media/rafiq-intro.mp4" type="video/mp4">
+      <track kind="captions" src="media/rafiq-intro.en.vtt" srclang="en" label="English">
+    </video>
+    <button class="film-play" id="film-play" type="button" aria-label="Play Rafiq in one minute, with sound">
+      <span class="fp-icon" aria-hidden="true"></span>
+      <span class="fp-text">Watch Rafiq in a minute<small>1 min · sound on</small></span>
+    </button>
+  </div>
+</section>
+<script>
+(function(){
+  const sec=document.getElementById('film-section'), v=document.getElementById('film'), b=document.getElementById('film-play');
+  if(!v||!b) return;
+  // controls appear once it's playing; the play pill returns when it ends
+  b.addEventListener('click',()=>{ v.controls=true; sec.classList.add('playing'); const p=v.play(); if(p&&p.catch) p.catch(()=>{}); });
+  v.addEventListener('play',()=>sec.classList.add('playing'));
+  v.addEventListener('ended',()=>{ sec.classList.remove('playing'); v.controls=false; v.load();
+    b.querySelector('.fp-text').firstChild.textContent='Watch again'; });
+})();
+</script>
 <div class="stats">
   <div class="stat"><b>12</b><span>units, plus a reading starter</span></div>
   <div class="stat"><b>779</b><span>words with audio</span></div>

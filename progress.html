@@ -151,7 +151,8 @@ function paint(el){
   const table=`<div class="sec">Today, this week, this month</div><div class="box"><table class="per">
     <thead><tr><th></th><th>Today</th><th>7 days</th><th>30 days</th></tr></thead><tbody>
     ${row('New words','words')}${row('Sentence exercises','sentences')}${row('Steps &amp; sessions','steps')}
-    <tr><td>Days active</td><td><b>${d1.days?'✓':'—'}</b></td><td>${d7.days} of 7</td><td>${d30.days} of 30</td></tr></tbody></table></div>`;
+    <tr><td>Days active</td><td><b>${d1.days?'✓':'—'}</b></td><td>${d7.days} of 7</td><td>${d30.days} of 30</td></tr></tbody></table>
+    ${d30.words<met?`<p class="note">Daily counts started on 23 September, so words you met before then are in your total of ${met} but not in these columns.</p>`:''}</div>`;
 
   // new words per day, last 14 days — one series, today in gold, your usual as a dashed line
   const days=P.wordsByDay(14), max=Math.max(10, ...days.map(d=>d.words), wr.usual||0);

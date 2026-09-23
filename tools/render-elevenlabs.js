@@ -13,6 +13,8 @@ const has=f=>process.argv.includes(f);
 
 const VOICE=arg('--voice'), MODEL=arg('--model','eleven_multilingual_v2');
 const ONLY=(arg('--only','')||'').split(',').filter(Boolean);
+// --ids <file>: only these clips (one id per line), in the file's order
+const IDS=arg('--ids') ? fs.readFileSync(path.join(root,arg('--ids')),'utf8').split('\n').map(l=>l.trim()).filter(l=>l && !l.startsWith('#')) : null;
 const rawLimit=arg('--limit','0');
 const LIMIT=Number.isFinite(parseInt(rawLimit,10))?parseInt(rawLimit,10):0;   // blank or junk = no limit
 const DRY=has('--dry'), STRIP=has('--strip'), FORCE=has('--force');   // --force re-records clips that already exist (e.g. a new voice)
@@ -33,6 +35,7 @@ async function main(){
   let items=JSON.parse(fs.readFileSync(path.join(root,'audio-manifest.json'),'utf8'));
   // --only also sets the order: buckets listed first are rendered first
   if(ONLY.length) items=items.filter(i=>ONLY.includes(i.bucket)).sort((a,b)=>ONLY.indexOf(a.bucket)-ONLY.indexOf(b.bucket));
+  if(IDS){ const at=new Map(IDS.map((id,i)=>[id,i])); items=items.filter(i=>at.has(i.id)).sort((a,b)=>at.get(a.id)-at.get(b.id)); }
   fs.mkdirSync(outDir,{recursive:true});
   const todo=FORCE?items:items.filter(i=>!fs.existsSync(path.join(outDir,i.id+'.mp3')));
   const done=items.length-todo.length;

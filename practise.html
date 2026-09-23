@@ -76,6 +76,21 @@
 .bigcta .bc-t{font-size:17px;font-weight:600}
 .bigcta .bc-d{font-size:13px;opacity:.72;margin-top:3px}
 .bigcta .bc-go{background:var(--verdigris);color:#fff;border-radius:5px;padding:11px 20px;font-size:14.5px;white-space:nowrap}
+.plist{display:grid;gap:12px;margin-top:22px}
+.prow{display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--ink);background:var(--card);border:1px solid var(--rule);
+  border-radius:12px;padding:16px 16px 16px 14px;transition:transform var(--press,120ms) var(--ease-out,ease-out),border-color .15s;touch-action:manipulation}
+.prow:active{transform:scale(.985)}
+.prow .pi{font-size:26px;width:40px;text-align:center;flex:0 0 auto}
+.prow .pt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.prow .pt>b{font-size:16.5px}
+.prow .pd{font-size:13px;color:var(--ink-soft);line-height:1.4}
+.prow .pm{font-family:var(--ut);font-size:10.5px;color:var(--ink-soft);margin-top:4px}
+.prow .pm b{color:var(--rubric)}
+.prow .pgo{font-size:26px;color:var(--verdigris);flex:0 0 auto}
+.prow:first-child{border-color:var(--verdigris)}
+.pback{display:inline-block;margin:26px 0 6px;color:var(--verdigris);text-decoration:none;font-size:15px;padding:6px 0}
+.ph1{font-size:clamp(21px,4.4vw,26px);font-weight:700;margin:4px 0 6px}
+.pintro{color:var(--ink-soft);font-size:14.5px;margin:0 0 18px;max-width:60ch}
 @media (max-width:860px){ .qgrid{grid-template-columns:minmax(0,1fr)} .bigcta{flex-direction:column;align-items:stretch}
   .bigcta .bc-go{text-align:center} }
 .stat{font-family:var(--ut);font-size:11px;letter-spacing:.08em;color:var(--ink-soft);margin-top:10px;padding-top:10px;border-top:1px solid var(--rule)}
@@ -88,6 +103,7 @@
 
 .tile:hover{transform:translateY(-2px);border-color:var(--verdigris)}
 .qcard:hover{border-color:var(--verdigris);transform:translateY(-1px)}
+.prow:hover{border-color:var(--verdigris)}
 }
 </style>
 </head>
@@ -106,7 +122,7 @@
   <section class="hero">
     <div class="greet">تَدْرِيب</div>
     <h1>Practise</h1>
-    <p>Go beyond your lessons: real conversations, verbs, joining words, and extra rounds of units you've finished. Your lessons and daily review are on Home.</p>
+    <p>Extra practice alongside your lessons. Your lessons and daily review are on Home.</p>
   </section>
   <div id="picker"></div>
 </main>
@@ -154,24 +170,55 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
         <div class="qa">${esc(p.ar)}</div><div class="qt">Unit ${+p.n}: ${esc(p.en)}</div>
         <div class="qm">${RafiqPath.placed(p.n)?'Skipped at sign-up \u2014 check yourself':'Words and sentences \u00b7 about 8 minutes'}</div></a>`).join('')}</div>`
     : `<p class="picksub">Units you finish on your path will appear here for extra rounds.</p>`;
-  el.innerHTML =
-    `<div class="pickhead" id="scenes">Real-life scenes <span class="cx">Complete</span></div>
-     <p class="picksub">Short conversations for real situations \u2014 you reply in your own words.</p>
-     <div class="qgrid">${SCENES.map(x=>`<a class="qcard" href="learn.html?scene=${x.id}">
-       <div class="qa">${x.pic} ${x.ar}</div><div class="qt">${x.en}</div><div class="qd">${x.d}</div>
-       <div class="qm">${seen('x:'+x.id)?'<b>\u2713</b> done \u2014 try it again':'5 replies \u00b7 about 5 minutes'}</div></a>`).join('')}</div>
-     <a class="bigcta" href="session.html?focus=weak" style="margin-top:14px">
-       <div><div class="bc-t">\ud83c\udfaf Weak-spots review <span class="cx">Complete</span></div>
-       <div class="bc-d">Exercises picked for the mistakes you keep making</div></div>
-       <span class="bc-go">Start \u2192</span></a>
-     <div class="pickhead">Beyond the lessons</div>
-     <div class="qgrid">` +
-    cards.map(c=>`<a class="qcard" href="${c.href}">
-       <div class="qa">${c.ar}</div><div class="qt">${c.t}</div>
-       <div class="qd">${c.d}</div><div class="qm">${c.m}</div></a>`).join('') +
-    `</div>
-     <div class="pickhead">Redo a unit</div>
-     <p class="picksub">Extra rounds on units you\u2019ve finished \u2014 a fresh mix each time.</p>` + redo;
+  const scDone=SCENES.filter(x=>seen('x:'+x.id)).length;
+  /* One button per kind of practice; each opens its own view (#beyond,
+     #scenes, #redo) so the page stays short. */
+  const SECTIONS={
+    beyond:{icon:'📚', t:'Beyond the lessons', cx:'',
+      d:'Verbs, joining words and flashcards of your words',
+      m: met.size&&wDue ? `3 areas · <b>${wDue}</b> words due` : '3 areas',
+      intro:'Practise the building blocks the lessons only touch on: verb forms, the words that join ideas together, and flashcards of every word you’ve met.',
+      body:()=>`<div class="qgrid">`+cards.map(c=>`<a class="qcard" href="${c.href}">
+        <div class="qa">${c.ar}</div><div class="qt">${c.t}</div>
+        <div class="qd">${c.d}</div><div class="qm">${c.m}</div></a>`).join('')+`</div>`},
+    scenes:{icon:'🌍', t:'Real-life scenes', cx:'Complete',
+      d:'The airport, the doctor, the masjid, a restaurant, a taxi and a family visit',
+      m:`${SCENES.length} scenes`+(scDone?` · <b>${scDone}</b> done`:'')+' · about 5 minutes each',
+      intro:'Short conversations for situations you’ll really meet. The other person speaks first and you reply in your own words — any reply that fits is fine, and you’ll get feedback on the Arabic.',
+      body:()=>`<div class="qgrid">${SCENES.map(x=>`<a class="qcard" href="learn.html?scene=${x.id}">
+        <div class="qa">${x.pic} ${x.ar}</div><div class="qt">${x.en}</div><div class="qd">${x.d}</div>
+        <div class="qm">${seen('x:'+x.id)?'<b>✓</b> done — try it again':'5 replies · about 5 minutes'}</div></a>`).join('')}</div>`},
+    redo:{icon:'🔁', t:'Redo a unit', cx:'',
+      d:'Extra rounds on units you’ve finished',
+      m: done.length ? `${done.length} unit${done.length===1?'':'s'} ready` : 'Finish a unit to unlock it',
+      intro:'A fresh mix of a finished unit’s words and sentences each time — good before moving on, or to refresh an older unit.',
+      body:()=>redo}
+  };
+  const row=(href,x)=>`<a class="prow" href="${href}"><span class="pi">${x.icon}</span>
+      <span class="pt"><b>${x.t}${x.cx?` <span class="cx">${x.cx}</span>`:''}</b><span class="pd">${x.d}</span><span class="pm">${x.m}</span></span>
+      <span class="pgo">›</span></a>`;
+  const hero=document.querySelector('.hero');
+  let fromMenu=false;
+  function paint(){
+    const k=location.hash.slice(1), sec=SECTIONS[k];
+    if(hero) hero.style.display = sec ? 'none' : '';
+    if(sec){
+      el.innerHTML=`<a class="pback" href="#">‹ Practise</a>
+        <h1 class="ph1">${sec.icon} ${sec.t}${sec.cx?` <span class="cx">${sec.cx}</span>`:''}</h1>
+        <p class="pintro">${sec.intro}</p>`+sec.body();
+      // back to the menu: undo the step we took from it, or replace this view if we landed here directly
+      el.querySelector('.pback').onclick=e=>{ e.preventDefault();
+        if(fromMenu){ history.back(); } else { history.replaceState(null,'',location.pathname); paint(); } };
+      scrollTo(0,0); return;
+    }
+    el.innerHTML=`<div class="plist">`+
+      row('session.html?focus=weak',{icon:'🎯', t:'Weak-spots review', cx:'Complete',
+        d:'Exercises picked for the mistakes you keep making', m:'About 5 minutes'})+
+      row('#beyond',SECTIONS.beyond)+row('#scenes',SECTIONS.scenes)+row('#redo',SECTIONS.redo)+`</div>`;
+    el.querySelectorAll('.prow[href^="#"]').forEach(a=>a.addEventListener('click',()=>{ fromMenu=true; }));
+  }
+  addEventListener('hashchange',paint);
+  paint();
 })();
 
 

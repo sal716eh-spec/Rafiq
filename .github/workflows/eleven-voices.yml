@@ -1,0 +1,47 @@
+name: ElevenLabs voices
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "list | search | add | speak"
+        required: true
+        default: "list"
+      args:
+        description: "search: query|lang|gender · add: owner_id|voice_id|name · speak: lines.json|out-dir|force(yes/no)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  voices:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+          CMD: ${{ inputs.command }}
+          ARGS: ${{ inputs.args }}
+        run: |
+          IFS='|' read -r A1 A2 A3 <<< "$ARGS"
+          if [ "$CMD" = "speak" ]; then
+            F=""; if [ "$A3" = "yes" ]; then F="--force"; fi
+            node tools/tts-lines.js "$A1" "$A2" $F
+          else
+            node tools/voices.js "$CMD" "$A1" "$A2" "$A3"
+          fi
+      - name: Commit spoken lines
+        if: ${{ inputs.command == 'speak' }}
+        run: |
+          IFS='|' read -r A1 A2 A3 <<< "${{ inputs.args }}"
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "$A2"
+          if git diff --staged --quiet; then echo "Nothing new."; else
+            git commit -m "Speak lines with ElevenLabs"; git pull --rebase --autostash; git push; fi

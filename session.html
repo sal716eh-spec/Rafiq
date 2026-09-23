@@ -180,7 +180,7 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 <script src="audio.js?v=900"></script>
 <script src="path-data.js?v=20260922"></script>
 <script src="alphabet-data.js?v=20260922"></script>
-<script src="path.js?v=20260922b"></script>
+<script src="path.js?v=20260923"></script>
 <script src="mistakes.js?v=20260922"></script>
 <script src="item-tags.js?v=20260922"></script>
 <script src="nav.js?v=20260922"></script>
@@ -206,39 +206,47 @@ function drillPool(){
   return out;
 }
 function build(n){
-  const share = k => Math.max(1, Math.round(n*k));
-  // Only what the learner has reached on the path: new words arrive through
-  // lessons, so a session reviews words already met and drills from reached units.
-  const units = new Set(UNIT ? [UNIT] : RafiqPath.reached().map(p=>p.n));
-  const unitWords = UNIT ? new Set((PATH.find(p=>p.n===UNIT)||{words:[]}).words) : null;
+  return UNIT ? buildUnit(n) : buildReview(n);
+}
 
-  const met  = VOCAB.filter(w=>!Progress.isNew(ID.word(w)) && (!unitWords || unitWords.has(w.id)));
+/* A lesson's Practise step (?unit=NN): that unit's words and exercises. */
+function buildUnit(n){
+  const share = k => Math.max(1, Math.round(n*k));
+  const unitWords = new Set((PATH.find(p=>p.n===UNIT)||{words:[]}).words);
+  const met  = VOCAB.filter(w=>!Progress.isNew(ID.word(w)) && unitWords.has(w.id));
   const wDue = met.filter(w=>Progress.isDue(ID.word(w)));
   const words = shuffle(wDue).slice(0, share(0.35))
-    .concat(shuffle(met.filter(w=>!Progress.isDue(ID.word(w)))).slice(0, UNIT ? Math.max(0, share(0.35)-wDue.length) : 0))
+    .concat(shuffle(met.filter(w=>!Progress.isDue(ID.word(w)))).slice(0, Math.max(0, share(0.35)-wDue.length)))
     .map(w=>({kind:'words', mode:'word', w}));
-
-  const dp   = drillPool().filter(x=>units.has(x.unit.n));
+  const dp   = drillPool().filter(x=>x.unit.n===UNIT);
   const dDue = dp.filter(x=>Progress.isDue(ID.drill(x)));
   const dNew = dp.filter(x=>Progress.isNew(ID.drill(x)));
   const sentences = shuffle(dDue).slice(0, share(0.35))
-    .concat(shuffle(dNew).slice(0, Math.max(0, (UNIT ? n-words.length : share(0.35))-dDue.length)));
+    .concat(shuffle(dNew).slice(0, Math.max(0, n-words.length-dDue.length)));
+  return shuffle(words.concat(sentences)).slice(0,n);
+}
 
-  /* Verb patterns are scheduled per verb+tense; the pronoun is picked fresh
-     each time so you meet the pattern, not a memorised single form. */
-  const vPat=[];
-  VERBS.forEach(v=>['past','pr','fut'].forEach(t=>vPat.push({v,t})));
-  const verbs = shuffle(vPat).slice(0, UNIT ? 0 : share(0.15)).map(x=>{
-    const p=Math.floor(Math.random()*PRONOUNS.length);
-    const ans = x.t==='past' ? x.v.past[p] : x.t==='pr' ? x.v.pr[p] : 'سَ'+x.v.pr[p];
-    return {kind:'verbs', mode:'verb', v:x.v, p, t:x.t, ans};
-  });
-
-  // connectors: scheduled by the connector itself, so the same trap resurfaces
-  const links = shuffle(CONNECT_EX).slice(0, UNIT ? 0 : share(0.15))
-    .map(t=>({kind:'links', mode:'link', d:t}));
-
-  return shuffle(words.concat(sentences, verbs, links)).slice(0,n);
+/* Review (Home's "Review" and Practise's "Mixed review"): a random mix of
+   only what the learner has done on their path — words met in lessons and
+   sentence exercises already practised, from units reached. Nothing new,
+   and nothing from the Practise area. Due items come first, then the rest
+   of what's been learned tops it up. */
+function buildReview(n){
+  const sc = RafiqPath.reviewScope();
+  const words = VOCAB.filter(w=>sc.wordIds.has(w.id) && !Progress.isNew(ID.word(w)))
+    .map(w=>({kind:'words', mode:'word', w}));
+  const sentences = drillPool().filter(x=>sc.units.has(x.unit.n) && Progress.get(ID.drill(x)));
+  const idOf = it => it.w ? ID.word(it.w) : ID.drill(it);
+  // each kind: due first, then the rest, both in random order
+  const line = list => shuffle(list.filter(it=>Progress.isDue(idOf(it))))
+                        .concat(shuffle(list.filter(it=>!Progress.isDue(idOf(it)))));
+  const a = line(words), b = line(sentences), out = [];
+  // alternate so it's a real mix of words and sentences, not one then the other
+  while(out.length < n && (a.length || b.length)){
+    if(a.length) out.push(a.shift());
+    if(out.length < n && b.length) out.push(b.shift());
+  }
+  return shuffle(out);
 }
 
 /* ── shared bits ── */
@@ -526,7 +534,7 @@ Progress.init().then(()=>{
   }
   if(!Q.length){
     panel.innerHTML=`<div class="done"><div class="big">لا شَيْءَ بَعْدُ</div><h2>Nothing to review yet</h2>
-      <p>Start your first lesson — what you learn there comes back here to review.</p>
+      <p>Review only uses what you've learned on your path. Do your first lesson and it'll be waiting here.</p>
       <div class="nextrow"><a class="primary" href="dashboard.html">Go to your lessons</a></div></div>`;
     document.getElementById('count').textContent='';
     return;

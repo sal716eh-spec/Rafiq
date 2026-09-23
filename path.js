@@ -83,6 +83,23 @@
   // units whose material sessions may use (the reading starter has none)
   const reached = () => UNITS.slice(0, currentIndex() + 1).filter(p => !p.alpha);
 
+  /* What review may draw on: only what the learner has actually done on the
+     path — words they've met in lessons (from units reached) and sentence
+     exercises they've already practised there. Nothing from the Practise area
+     (verbs, joining words) and nothing they haven't seen yet. */
+  function reviewScope(){
+    const units = reached();
+    const wordIds = new Set(units.flatMap(p => p.words));
+    return { units: new Set(units.map(p => p.n)), wordIds };
+  }
+  const inScope = (id, sc) => id.startsWith('v:') ? sc.wordIds.has(+id.slice(2))
+                            : id.startsWith('d:') ? sc.units.has(id.slice(2, 4)) : false;
+  /* Items in scope that are due for review today (for the Home nudge). */
+  function reviewDue(){ const sc = reviewScope(); return Progress.dueIds().filter(id => inScope(id, sc)).length; }
+  /* Anything learned at all (so review isn't offered before the first lesson). */
+  function hasLearned(){ const sc = reviewScope();
+    return VOCAB.some(w => sc.wordIds.has(w.id) && !Progress.isNew('v:' + w.id)); }
+
   function complete(n, key){
     Progress.touch(sid(n, key));
     markDay();
@@ -140,6 +157,6 @@
     return ids.map(wordById).filter(Boolean);
   }
 
-  window.RafiqPath = { COMING, STREAK_GOALS, streakGoal, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
+  window.RafiqPath = { reviewScope, reviewDue, hasLearned, COMING, STREAK_GOALS, streakGoal, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
                        complete, place, markDay, wordMet, week, doneToday, streak, wordsOf, unitData, wordById };
 })();

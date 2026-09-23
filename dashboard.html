@@ -193,7 +193,7 @@ function paintHome(){
   const U=RafiqPath.units();
   const n=RafiqPath.next(), cur=n.index, s=RafiqPath.streak(), today=Math.min(RafiqPath.doneToday(),RafiqPath.GOAL);
   const steps=RafiqPath.steps(n.unit), doneN=steps.filter(x=>RafiqPath.stepDone(n.unit.n,x.key)).length;
-  const due=Progress.dueIds().length;
+  const due=RafiqPath.reviewDue();
   const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
   const card = n.finishedAll
     ? `<div class="today-card"><div class="k">All units done</div><div class="t">Mabrook — you've finished the path 🎉</div>
@@ -224,7 +224,7 @@ function paintHome(){
      ${f.ex.map(x=>`<div class="fx"><span class="fa">${esc(x[0])}</span><span>${esc(x[1])}</span></div>`).join('')}
      <div class="frow"><a class="gopr" href="session.html?focus=weak">Practise it</a>
      <button class="got" type="button" data-k="${f.key}">Got it</button></div></div>` : '';
-  const review = due ? `<a class="review" href="session.html"><span><b>${due}</b> to review from earlier lessons</span><span>Review →</span></a>` : '';
+  const review = due ? `<a class="review" href="session.html"><span><b>${due}</b> to review from your lessons</span><span>Review →</span></a>` : '';
   const units=U.map((p,i)=>{
     const done=RafiqPath.unitDone(p), now=i===cur&&!done, later=i>cur;
     const st=RafiqPath.steps(p), k=st.filter(x=>RafiqPath.stepDone(p.n,x.key)).length;
@@ -269,7 +269,7 @@ function paintHome(){
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="progress.js?v=1"></script>
-<script src="path.js?v=20260922b"></script>
+<script src="path.js?v=20260923"></script>
 <script src="mistakes.js?v=20260922"></script>
 <script src="nav.js?v=20260922"></script>
 <script>

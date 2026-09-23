@@ -36,7 +36,7 @@
   const todayISO = () => new Date().toISOString().slice(0,10);
   const addDays  = n => { const d=new Date(); d.setDate(d.getDate()+n); return d.toISOString().slice(0,10); };
 
-  let mem   = {};        // id -> {box, due, seen}
+  let mem   = {};        // id -> {box, due, seen, at}  (at: when it was last saved)
   let dirty = new Set();
   let ready = false;
   let timer = null;
@@ -50,12 +50,14 @@
     if(typeof sb!=='undefined' && sb){
       const uid = await currentUserId();
       if(uid){
-        const { data, error } = await sb.from('item_progress')
-          .select('item_id, box, due, seen').eq('user_id', uid);
+        let { data, error } = await sb.from('item_progress')
+          .select('item_id, box, due, seen, updated_at').eq('user_id', uid);
+        if(error)                                    // older table without the timestamp
+          ({ data, error } = await sb.from('item_progress').select('item_id, box, due, seen').eq('user_id', uid));
         if(error){ console.warn('[progress] load failed:', error.message); }
         else{
           mem = {};
-          (data||[]).forEach(r => { mem[r.item_id] = {box:r.box, due:r.due, seen:r.seen}; });
+          (data||[]).forEach(r => { mem[r.item_id] = {box:r.box, due:r.due, seen:r.seen, at:r.updated_at||null}; });
           writeLS(MIRROR, mem);
         }
         await flushQueue(uid);                      // anything written while offline
@@ -93,12 +95,15 @@
   function touch(id){
     const r = mem[id] || {box:0, due:null, seen:0};
     r.seen = (r.seen||0)+1;
+    r.at = new Date().toISOString();
     mem[id]=r;
     writeLS(MIRROR, mem);
     dirty.add(id);
     schedule();
     return r;
   }
+  /* Ids with any activity, optionally only those starting with a prefix. */
+  const ids = prefix => Object.keys(mem).filter(id => (!prefix || id.startsWith(prefix)) && mem[id].seen>0);
   const seenCount = prefix =>
     Object.keys(mem).filter(id => (!prefix || id.startsWith(prefix)) && mem[id].seen>0).length;
   const hasSeen = id => !!(mem[id] && mem[id].seen>0);
@@ -111,6 +116,7 @@
     else                       r.box = Math.min(g.length-1, Math.max(1,r.box)+1);
     r.due  = addDays(g[r.box]);
     r.seen = (r.seen||0)+1;
+    r.at   = new Date().toISOString();
     mem[id]=r;
     writeLS(MIRROR, mem);
     dirty.add(id);
@@ -194,6 +200,6 @@
   window.addEventListener('pagehide', ()=>{ flush(); });
   document.addEventListener('visibilitychange', ()=>{ if(document.hidden) flush(); });
 
-  window.Progress = { init, get, isDue, isNew, dueIds, stats, grade, touch, hasSeen, seenCount,
+  window.Progress = { init, get, isDue, isNew, dueIds, stats, grade, touch, hasSeen, seenCount, ids,
                       flush, todayISO, ns, GAPS };
 })();

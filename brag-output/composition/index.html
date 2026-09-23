@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Rafiq — brag</title>
+    <script src="assets/lib/gsap.min.js"></script>
+    <script src="assets/audio-data.js"></script>
+    <style>
+      @font-face { font-family: "Plex Arabic"; src: url("assets/fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2") format("woff2"); font-weight: 500; }
+      @font-face { font-family: "Plex Arabic"; src: url("assets/fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2") format("woff2"); font-weight: 600; }
+      @font-face { font-family: "Plex Arabic"; src: url("assets/fonts/ibm-plex-sans-arabic-arabic-700-normal.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "Karla"; src: url("assets/fonts/karla-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Karla"; src: url("assets/fonts/karla-latin-500-normal.woff2") format("woff2"); font-weight: 500; }
+      @font-face { font-family: "Karla"; src: url("assets/fonts/karla-latin-700-normal.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2"); font-weight: 500; }
+
+      :root {
+        --paper: #f1ece0; --paper-deep: #e4dcc9; --card: #f7f3ea;
+        --ink: #17262b; --ink-soft: #5c6e70;
+        --rubric: #b4322a; --verdigris: #2e7263; --gold: #a8842c;
+        --ar: "Plex Arabic", "Karla", sans-serif;
+        --la: "Karla", sans-serif;
+        --ut: "JetBrains Mono", monospace;
+      }
+      body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--la); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--paper); }
+
+      /* persistent background layer */
+      .bg { position: absolute; inset: 0; pointer-events: none; }
+      #glow { position: absolute; width: 1500px; height: 1500px; left: 210px; top: -210px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(168,132,44,0.26) 0%, rgba(168,132,44,0.08) 42%, rgba(241,236,224,0) 70%); }
+      /* a decorative letter drawn on a canvas, so it never counts as on-screen text */
+      #ghost { position: absolute; right: 0; bottom: 0; width: 1000px; height: 1000px; }
+      .frame-rule { position: absolute; left: 110px; right: 110px; height: 3px; background: var(--ink); opacity: 0.14; }
+      #rule-top { top: 70px; } #rule-bot { bottom: 70px; }
+      .meta { position: absolute; top: 34px; font-family: var(--ut); font-size: 20px; letter-spacing: 0.14em; color: var(--ink-soft); }
+      #meta-l { left: 110px; } #meta-r { right: 110px; }
+
+      .clip { position: absolute; inset: 0; }
+      .inner { position: absolute; inset: 0; box-sizing: border-box; padding: 140px 150px; }
+
+      /* scene 1 */
+      #s1 .inner { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+      #word { font-family: var(--ar); font-weight: 700; font-size: 330px; line-height: 1.5; direction: rtl; color: var(--ink); padding: 0 40px; }
+      #word-rule { width: 520px; height: 4px; background: var(--rubric); margin-top: -10px; }
+      #s1-label { font-family: var(--ut); font-size: 24px; letter-spacing: 0.22em; color: var(--ink-soft); margin-top: 38px; }
+      #s1-head { font-size: 64px; font-weight: 700; margin-top: 26px; letter-spacing: -0.01em; }
+
+      /* shared caption */
+      .caption { position: absolute; left: 150px; bottom: 118px; font-size: 40px; font-weight: 500; color: var(--ink); max-width: 1300px; }
+      .caption b { color: var(--rubric); font-weight: 700; }
+      .kicker { font-family: var(--ut); font-size: 22px; letter-spacing: 0.14em; color: var(--ink-soft); text-transform: uppercase; }
+
+      /* scene 2 */
+      #s2 .inner { display: grid; grid-template-columns: 700px 1fr; gap: 110px; align-items: center; padding-bottom: 240px; }
+      .card { background: var(--card); border: 3px solid rgba(23,38,43,0.14); border-radius: 28px; box-shadow: 0 30px 60px rgba(23,38,43,0.10); }
+      #wcard { padding: 56px 60px 60px; text-align: center; }
+      #wcard .kicker { text-align: left; }
+      #w-ar { font-family: var(--ar); font-weight: 700; font-size: 190px; line-height: 1.55; direction: rtl; margin-top: 18px; }
+      #w-tr { font-size: 40px; color: var(--ink-soft); font-style: italic; }
+      #w-en { font-size: 54px; font-weight: 700; margin-top: 10px; }
+      #quiz h3 { margin: 0 0 30px; font-size: 56px; font-weight: 700; }
+      .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+      .opt { position: relative; display: flex; align-items: center; justify-content: space-between; height: 118px; box-sizing: border-box;
+        padding: 0 40px; font-size: 42px; font-weight: 500; background: var(--card); border: 3px solid rgba(23,38,43,0.18); border-radius: 22px; }
+      .opt .tick { font-size: 44px; font-weight: 700; color: #fff; opacity: 0; }
+      #opt-fill { position: absolute; inset: -3px; border-radius: 22px; background: var(--verdigris); opacity: 0; }
+      #opt-friend span { position: relative; }
+
+      /* scene 3 */
+      #s3 .inner { display: flex; justify-content: center; padding-top: 120px; padding-bottom: 230px; }
+      #chat { width: 1180px; padding: 44px 54px 46px; display: flex; flex-direction: column; gap: 26px; }
+      .bubble { max-width: 860px; padding: 22px 34px 24px; border-radius: 26px; }
+      .bubble .a { font-family: var(--ar); font-weight: 600; font-size: 50px; line-height: 1.75; direction: rtl; text-align: right; }
+      .bubble .e { font-size: 28px; color: var(--ink-soft); margin-top: 2px; }
+      #b-them { align-self: flex-start; background: #ece5d4; border-bottom-left-radius: 8px; }
+      #b-me { align-self: flex-end; background: var(--ink); color: var(--paper); border-bottom-right-radius: 8px; }
+      #b-me .a { color: var(--paper); }
+      #inbox { display: flex; align-items: center; gap: 22px; border-top: 3px solid rgba(23,38,43,0.10); padding-top: 26px; }
+      #input { flex: 1; height: 96px; box-sizing: border-box; border: 3px solid rgba(23,38,43,0.22); border-radius: 20px; background: #fffdf8;
+        font-family: var(--ar); font-weight: 600; font-size: 44px; line-height: 90px; direction: rtl; text-align: right; padding: 0 30px; overflow: hidden; white-space: nowrap; }
+      #send { width: 190px; height: 96px; border-radius: 20px; background: var(--verdigris); color: #fff; font-size: 36px; font-weight: 700;
+        display: flex; align-items: center; justify-content: center; }
+      #note { align-self: flex-end; font-size: 40px; font-weight: 700; color: var(--verdigris); }
+
+      /* scene 4 */
+      #s4 .inner { display: flex; flex-direction: column; justify-content: center; align-items: center; }
+      #hero-ar { font-family: var(--ar); font-weight: 600; font-size: 104px; line-height: 1.7; direction: rtl; }
+      #hero-ar span { color: var(--rubric); }
+      #brand { display: flex; align-items: center; gap: 34px; margin-top: 40px; }
+      #tile { position: relative; width: 150px; height: 150px; border-radius: 34px; background: var(--ink); display: flex; align-items: center; justify-content: center; }
+      #tile .r { font-family: var(--ar); font-weight: 700; font-size: 104px; color: var(--paper); line-height: 1; margin-top: -8px; }
+      #tile .dot { position: absolute; width: 22px; height: 22px; border-radius: 50%; background: var(--rubric); right: 30px; top: 28px; }
+      #brand-name { font-size: 118px; font-weight: 700; letter-spacing: -0.02em; }
+      #url { font-family: var(--ut); font-size: 30px; letter-spacing: 0.1em; color: var(--ink-soft); margin-top: 34px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1920" data-height="1080" data-duration="20.5">
+      <div class="bg" id="bg">
+        <div id="glow"></div>
+        <canvas id="ghost" width="1000" height="1000"></canvas>
+        <div class="frame-rule" id="rule-top"></div>
+        <div class="frame-rule" id="rule-bot"></div>
+        <div class="meta" id="meta-l">RAFIQ · MODERN STANDARD ARABIC</div>
+        <div class="meta" id="meta-r">RAFIQ-ARABIC.COM</div>
+      </div>
+
+      <section id="s1" class="clip" data-start="0" data-duration="4.4" data-track-index="1">
+        <div class="inner">
+          <div id="word">رَفِيق</div>
+          <div id="word-rule"></div>
+          <div id="s1-label">RAFIQ · YOUR ARABIC COMPANION</div>
+          <div id="s1-head">Learn to read, understand and speak Arabic</div>
+        </div>
+      </section>
+
+      <section id="s2" class="clip" data-start="4.0" data-duration="5.6" data-track-index="2">
+        <div class="inner">
+          <div id="wcard" class="card">
+            <div class="kicker">Unit 1 · New words</div>
+            <div id="w-ar">صَدِيق</div>
+            <div id="w-tr">ṣadīq</div>
+            <div id="w-en">friend</div>
+          </div>
+          <div id="quiz">
+            <h3>What does this mean?</h3>
+            <div class="opts">
+              <div class="opt" id="opt-friend"><div id="opt-fill"></div><span id="friend-label">friend</span><span class="tick" id="tick">✓</span></div>
+              <div class="opt" id="opt-2">school</div>
+              <div class="opt" id="opt-3">mother</div>
+              <div class="opt" id="opt-4">teacher</div>
+            </div>
+          </div>
+          <div class="caption" id="cap2">Every word fully vowelled — <b>and checked straight away.</b></div>
+        </div>
+      </section>
+
+      <section id="s3" class="clip" data-start="9.2" data-duration="6.2" data-track-index="3">
+        <div class="inner">
+          <div id="chat" class="card">
+            <div class="kicker">Have the conversation · Unit 1</div>
+            <div class="bubble" id="b-them">
+              <div class="a">السَّلامُ عَلَيْكُمْ. أَنا جارُكَ الْجَدِيدُ.</div>
+              <div class="e">Peace be upon you. I'm your new neighbour.</div>
+            </div>
+            <div class="bubble" id="b-me"><div class="a">وَعَلَيْكُمُ السَّلامُ، أَهْلًا وَسَهْلًا!</div></div>
+            <div id="note">✓ Good reply.</div>
+            <div id="inbox"><div id="input"><span id="typed"></span></div><div id="send">Send</div></div>
+          </div>
+          <div class="caption" id="cap3">Reply in your own words. <b>Rafiq tells you if it fits.</b></div>
+        </div>
+      </section>
+
+      <section id="s4" class="clip" data-start="15.0" data-duration="5.5" data-track-index="4">
+        <div class="inner">
+          <div id="hero-ar">رَفِيقُكَ فِي تَعَلُّمِ <span>الْعَرَبِيَّةِ</span></div>
+          <div id="brand"><div id="tile"><span class="r">ر</span><span class="dot"></span></div><div id="brand-name">Rafiq</div></div>
+          <div id="url">rafiq-arabic.com</div>
+        </div>
+      </section>
+
+      <audio id="bed" src="assets/music/rafiq-bed.mp3" data-start="0" data-duration="20.5" data-track-index="10" data-volume="0.32"
+        data-automation='{"version":1,"lanes":[{"target":"volume","points":[{"t":0,"v":0},{"t":1,"v":1},{"t":18.6,"v":1},{"t":20.4,"v":0}]}]}'></audio>
+      <audio id="sfx-ok1" src="assets/sfx/bong_001.ogg" data-start="8.74" data-duration="0.12" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="sfx-send" src="assets/sfx/click_003.ogg" data-start="12.45" data-duration="0.01" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="sfx-ok2" src="assets/sfx/bong_001.ogg" data-start="13.11" data-duration="0.12" data-track-index="13" data-volume="0.55"></audio>
+      <audio id="sfx-logo" src="assets/sfx/impactSoft_medium_002.ogg" data-start="17.47" data-duration="0.14" data-track-index="14" data-volume="0.6"></audio>
+    </div>
+
+    <script>
+      // build once the Arabic font is ready (the ghost letter is drawn with it)
+      document.fonts.load('700 800px "Plex Arabic"', "ع").then(() => {
+      const g = document.getElementById("ghost").getContext("2d");
+      g.fillStyle = "#e4dcc9"; g.font = '700 800px "Plex Arabic"'; g.textAlign = "center"; g.textBaseline = "alphabetic";
+      g.fillText("ع", 560, 900);
+      const tl = gsap.timeline({ paused: true });
+      const XF = 0.7; // polished crossfade
+
+      // ambient: ghost letter drifts, glow breathes (audio-reactive below)
+      tl.fromTo("#ghost", { x: 0, y: 0, rotation: -2 }, { x: -120, y: -40, rotation: 2, duration: 20.5, ease: "none" }, 0);
+      tl.fromTo(".frame-rule", { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "power3.inOut" }, 0.1);
+      tl.fromTo(".meta", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 0.6);
+
+      // Scene 1 — the word writes itself right to left
+      tl.fromTo("#word", { clipPath: "inset(0% 0% 0% 100%)", y: 24 }, { clipPath: "inset(0% 0% 0% 0%)", y: 0, duration: 1.4, ease: "power2.inOut" }, 0.15);
+      tl.fromTo("#word-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.8, ease: "power3.out" }, 1.0);
+      tl.fromTo("#s1-label", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 1.3);
+      tl.fromTo("#s1-head", { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out" }, 1.8);
+      tl.to("#s1 .inner", { opacity: 0, duration: XF, ease: "sine.inOut" }, 4.4 - XF);
+
+      // Scene 2 — meet a word, then check it
+      tl.fromTo("#s2 .inner", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, 4.0);
+      tl.fromTo("#wcard", { y: 40, scale: 0.97 }, { y: 0, scale: 1, duration: 0.9, ease: "power3.out" }, 4.0);
+      tl.fromTo("#w-ar", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 4.45);
+      tl.fromTo(["#w-tr", "#w-en"], { opacity: 0 }, { opacity: 1, duration: 0.5, stagger: 0.25 }, 4.9);
+      tl.fromTo("#quiz h3", { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, 5.4);
+      // beat-grid: answers at 6.00, 6.56, 7.09, 7.64 (short labels, then all held until 9s)
+      ["#opt-friend", "#opt-2", "#opt-3", "#opt-4"].forEach((sel, i) => {
+        tl.fromTo(sel, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "back.out(1.4)" }, [6.0, 6.56, 7.09, 7.64][i]);
+      });
+      // beat-locked: 8.74s — "friend" chosen and confirmed
+      tl.to("#opt-friend", { scale: 0.96, duration: 0.12, ease: "power2.in" }, 8.52);
+      tl.to("#opt-friend", { scale: 1, duration: 0.3, ease: "back.out(2)" }, 8.64);
+      tl.to("#opt-fill", { opacity: 1, duration: 0.25 }, 8.66);
+      tl.to("#friend-label", { color: "#ffffff", duration: 0.25 }, 8.66);
+      tl.to("#tick", { opacity: 1, duration: 0.25 }, 8.74);
+      tl.to(["#opt-2", "#opt-3", "#opt-4"], { opacity: 0.45, duration: 0.4 }, 8.74);
+      tl.fromTo("#cap2", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 5.0);
+      tl.to("#s2 .inner", { opacity: 0, duration: XF, ease: "sine.inOut" }, 9.6 - XF);
+
+      // Scene 3 — reply in your own words
+      tl.fromTo("#s3 .inner", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, 9.2);
+      tl.fromTo("#chat", { y: 40 }, { y: 0, duration: 0.9, ease: "power3.out" }, 9.2);
+      tl.fromTo("#b-them", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, 9.6);
+      // typed reply, one letter (with its vowel marks) at a time
+      const reply = "وَعَلَيْكُمُ السَّلامُ، أَهْلًا وَسَهْلًا!";
+      const parts = reply.match(/.[ً-ْٰ]*/gu);
+      const typing = { n: 0 };
+      const input = document.getElementById("typed");
+      tl.fromTo(typing, { n: 0 }, { n: parts.length, duration: 1.6, ease: "none",
+        onUpdate: () => { input.textContent = parts.slice(0, Math.round(typing.n)).join(""); } }, 10.7);
+      tl.to("#send", { scale: 0.93, duration: 0.1, ease: "power2.in" }, 12.4);
+      tl.to("#send", { scale: 1, duration: 0.25, ease: "back.out(2)" }, 12.5);
+      tl.fromTo("#b-me", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, 12.55);
+      tl.to("#typed", { opacity: 0, duration: 0.15 }, 12.55);
+      // beat-locked: 13.11s — ✓ Good reply.
+      tl.fromTo("#note", { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, 13.05);
+      tl.fromTo("#cap3", { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.6, ease: "power2.out" }, 9.8);
+      tl.to("#s3 .inner", { opacity: 0, duration: XF, ease: "sine.inOut" }, 15.4 - XF);
+
+      // Scene 4 — Rafiq
+      tl.fromTo("#s4 .inner", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, 15.0);
+      tl.fromTo("#hero-ar", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 15.3);
+      // beat-locked: 17.47s — logo lands
+      tl.fromTo("#tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, 17.3);
+      tl.fromTo("#brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, 17.42);
+      tl.fromTo("#url", { opacity: 0 }, { opacity: 1, duration: 0.6 }, 18.1);
+
+      // audio-reactive: music RMS gently swells the warm glow and the logo tile's shadow
+      const A = window.AUDIO_DATA, glow = document.getElementById("glow"), tile = document.getElementById("tile");
+      const frames = Math.min(A.rms.length, Math.floor(20.5 * A.fps));
+      for (let f = 0; f < frames; f++) {
+        tl.call((r) => {
+          glow.style.transform = "scale(" + (0.94 + 0.12 * r).toFixed(4) + ")";
+          glow.style.opacity = (0.7 + 0.3 * r).toFixed(3);
+          tile.style.boxShadow = "0 " + (18 + 18 * r).toFixed(1) + "px " + (40 + 30 * r).toFixed(1) + "px rgba(23,38,43," + (0.16 + 0.14 * r).toFixed(3) + ")";
+        }, [A.rms[f]], f / A.fps);
+      }
+
+      window.__timelines["main"] = tl;
+      });
+    </script>
+  </body>
+</html>

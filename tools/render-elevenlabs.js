@@ -15,7 +15,7 @@ const VOICE=arg('--voice'), MODEL=arg('--model','eleven_multilingual_v2');
 const ONLY=(arg('--only','')||'').split(',').filter(Boolean);
 const rawLimit=arg('--limit','0');
 const LIMIT=Number.isFinite(parseInt(rawLimit,10))?parseInt(rawLimit,10):0;   // blank or junk = no limit
-const DRY=has('--dry'), STRIP=has('--strip');
+const DRY=has('--dry'), STRIP=has('--strip'), FORCE=has('--force');   // --force re-records clips that already exist (e.g. a new voice)
 const outDir=path.join(root,'audio');
 
 const stripTashkeel=s=>s.replace(/[\u064B-\u0652\u0670\u0640]/g,'');
@@ -31,9 +31,10 @@ async function main(){
   if(has('--list-voices')){ if(!KEY){console.error('Set ELEVENLABS_API_KEY first.');process.exit(1);} return listVoices(); }
 
   let items=JSON.parse(fs.readFileSync(path.join(root,'audio-manifest.json'),'utf8'));
-  if(ONLY.length) items=items.filter(i=>ONLY.includes(i.bucket));
+  // --only also sets the order: buckets listed first are rendered first
+  if(ONLY.length) items=items.filter(i=>ONLY.includes(i.bucket)).sort((a,b)=>ONLY.indexOf(a.bucket)-ONLY.indexOf(b.bucket));
   fs.mkdirSync(outDir,{recursive:true});
-  const todo=items.filter(i=>!fs.existsSync(path.join(outDir,i.id+'.mp3')));
+  const todo=FORCE?items:items.filter(i=>!fs.existsSync(path.join(outDir,i.id+'.mp3')));
   const done=items.length-todo.length;
   const batch=LIMIT?todo.slice(0,LIMIT):todo;
   const chars=batch.reduce((a,b)=>a+b.chars,0);
@@ -56,7 +57,7 @@ async function main(){
       });
       if(!r.ok){
         const msg=await r.text();
-        if(r.status===429){console.error('\nRate limited or out of credits. Progress saved — rerun later.');break;}
+        if(r.status===429 || /quota_exceeded/.test(msg)){console.error('\nRate limited or out of credits. Progress saved — rerun later.');break;}
         console.error('  x '+it.id+' '+r.status+' '+msg.slice(0,120));fail++;continue;
       }
       fs.writeFileSync(path.join(outDir,it.id+'.mp3'),Buffer.from(await r.arrayBuffer()));

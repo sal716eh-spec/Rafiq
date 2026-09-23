@@ -18,6 +18,10 @@ on:
         description: "Remove vowel marks before sending? (yes/no)"
         required: false
         default: "no"
+      rerecord:
+        description: "Re-record clips that already exist, e.g. for a new voice? (yes/no)"
+        required: false
+        default: "no"
       model:
         description: "ElevenLabs model"
         required: false
@@ -47,6 +51,7 @@ jobs:
           if [ -n "${{ inputs.buckets }}" ]; then ARGS="$ARGS --only ${{ inputs.buckets }}"; fi
           if [ "${{ inputs.limit }}" != "0" ]; then ARGS="$ARGS --limit ${{ inputs.limit }}"; fi
           if [ "${{ inputs.strip }}" = "yes" ]; then ARGS="$ARGS --strip"; fi
+          if [ "${{ inputs.rerecord }}" = "yes" ]; then ARGS="$ARGS --force"; fi
           node tools/render-elevenlabs.js $ARGS
 
       - name: Commit the audio

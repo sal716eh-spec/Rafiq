@@ -109,7 +109,8 @@
     return VOCAB.some(w => sc.wordIds.has(w.id) && !Progress.isNew('v:' + w.id)); }
 
   function complete(n, key){
-    Progress.touch(sid(n, key));
+    // a step keeps the date it was first finished; revisiting it only counts the day
+    if(!stepDone(n, key)) Progress.touch(sid(n, key));
     markDay();
   }
   function place(uptoIndex){          // placement: skip units before this one (index into units())
@@ -132,29 +133,47 @@
     }
     return {days, steps, words};
   }
-  /* Daily counts, one row per day: 'w:<date>' new words met on the path,
-     'e:<date>' sentence exercises done, 's:<date>' steps and sessions. */
+  /* Daily counts. Two sources, and each day takes the larger:
+     - counters, one row per day: 'w:<date>' new words met, 'e:<date>'
+       sentence exercises done ('s:<date>' is steps and sessions);
+     - when things were saved: a finished "New words" step adds its words on
+       the day it was finished, and a sentence exercise counts on the day it
+       was last practised. This covers everything done before the counters
+       existed. */
   const dayKey = k => { const d=new Date(); d.setDate(d.getDate()-k); return iso(d); };
   const countOn = (pre, day) => { const r=Progress.get(pre+day); return r && r.seen || 0; };
+  const dayOf = at => at ? iso(new Date(at)) : null;
+  function savedByDay(){
+    const words={}, sentences={};
+    UNITS.forEach(p => { if(p.alpha) return;
+      steps(p).forEach(s => { if(s.kind!=='words') return;
+        const r=Progress.get(sid(p.n, s.key)), d=r && r.seen && dayOf(r.at);
+        if(d) words[d]=(words[d]||0)+wordsOf(p, s.batch).length; }); });
+    Progress.ids('d:').forEach(id => { const d=dayOf(Progress.get(id).at); if(d) sentences[d]=(sentences[d]||0)+1; });
+    return {words, sentences};
+  }
+  const wordsOn = (day, sv) => Math.max(countOn('w:',day), sv.words[day]||0);
+  const sentencesOn = (day, sv) => Math.max(countOn('e:',day), sv.sentences[day]||0);
   function sentenceDone(){ Progress.touch('e:' + iso(new Date())); }
   /* Totals for the last `days` days (1 = today): words, sentences, steps, days active. */
   function period(days){
-    const t={words:0, sentences:0, steps:0, days:0};
+    const sv=savedByDay(), t={words:0, sentences:0, steps:0, days:0};
     for(let k=0;k<days;k++){ const d=dayKey(k);
-      t.words+=countOn('w:',d); t.sentences+=countOn('e:',d);
+      t.words+=wordsOn(d,sv); t.sentences+=sentencesOn(d,sv);
       const st=countOn('s:',d); t.steps+=st; if(st) t.days++; }
     return t;
   }
   /* New words per day for the last `days` days, oldest first. */
-  const wordsByDay = days => Array.from({length:days}, (_,i) => { const d=dayKey(days-1-i); return {day:d, words:countOn('w:',d), active:countOn('s:',d)>0}; });
+  const wordsByDay = days => { const sv=savedByDay();
+    return Array.from({length:days}, (_,i) => { const d=dayKey(days-1-i); return {day:d, words:wordsOn(d,sv), active:countOn('s:',d)>0}; }); };
   /* Today's new words against your usual: the median of the days in the last
      four weeks you met any (needs 3 such days), and your best day this year. */
   function wordsReport(){
-    const today=countOn('w:', dayKey(0));
-    const recent=[]; for(let k=1;k<=28;k++){ const n=countOn('w:',dayKey(k)); if(n) recent.push(n); }
+    const sv=savedByDay(), today=wordsOn(dayKey(0),sv);
+    const recent=[]; for(let k=1;k<=28;k++){ const n=wordsOn(dayKey(k),sv); if(n) recent.push(n); }
     recent.sort((a,b)=>a-b);
     const usual = recent.length>=3 ? recent[Math.floor(recent.length/2)] : null;
-    let best=0; for(let k=1;k<=365;k++) best=Math.max(best, countOn('w:',dayKey(k)));
+    let best=0; for(let k=1;k<=365;k++) best=Math.max(best, wordsOn(dayKey(k),sv));
     return { today, usual, best, aboveUsual: usual!=null && today>usual, record: best>=10 && today>best };
   }
   function bestStreak(){

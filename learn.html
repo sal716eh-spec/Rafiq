@@ -104,6 +104,7 @@ textarea.ar-in{width:100%;min-height:110px;font-family:var(--ar);font-size:21px;
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="judge.js?v=20260922"></script>
+<script src="sounds.js?v=1"></script>
 <script src="arkb.js?v=2" defer></script>
 <script>
 DATA.forEach(u=>Object.assign(u,(typeof EXTRA!=='undefined'&&EXTRA[u.n])||{}));
@@ -162,7 +163,7 @@ function runWords(p, step){
     shuffle(pool).forEach(x=>{
       const b=document.createElement('button'); b.className='opt'; b.type='button'; b.textContent=x.en.split('/')[0];
       b.onclick=()=>{ if(!next.disabled) return;
-        b.classList.add(x===w?'right':'wrong');
+        b.classList.add(x===w?'right':'wrong'); window.RafiqSound&&RafiqSound.answer(x===w);
         if(x!==w) [...body.querySelectorAll('.opt')].find(o=>o.textContent===w.en.split('/')[0]).classList.add('right');
         say(w.ar,a); next.disabled=false; };
       body.querySelector('#o').appendChild(b);
@@ -249,7 +250,7 @@ function runLetters(p, step){
       const b=document.createElement('button'); b.className='opt'; b.type='button';
       b.style.fontFamily='var(--ar)'; b.style.fontSize='28px'; b.textContent=x[0];
       b.onclick=()=>{ if(!next.disabled) return;
-        b.classList.add(x===t?'right':'wrong');
+        b.classList.add(x===t?'right':'wrong'); window.RafiqSound&&RafiqSound.answer(x===t);
         if(x!==t) [...body.querySelectorAll('.opt')].find(o=>o.textContent===t[0]).classList.add('right');
         say(t[1],null); next.disabled=false; };
       body.querySelector('#o').appendChild(b);
@@ -282,7 +283,7 @@ function runVowels(p, step){
       const b=document.createElement('button'); b.className='opt'; b.type='button';
       b.style.fontFamily='var(--ar)'; b.style.fontSize='30px'; b.textContent=x[0];
       b.onclick=()=>{ if(!next.disabled) return;
-        b.classList.add(x===t?'right':'wrong');
+        b.classList.add(x===t?'right':'wrong'); window.RafiqSound&&RafiqSound.answer(x===t);
         if(x!==t) [...body.querySelectorAll('.opt')].find(o=>o.textContent===t[0]).classList.add('right');
         next.disabled=false; };
       body.querySelector('#o').appendChild(b);
@@ -342,12 +343,14 @@ function runChat(p, step, opts){
     wait.remove();
     if(!v){ add('note','','Couldn\'t check just now. One way to reply: '+sug[1]+' — '+sug[2]); screen(body,[next]); return; }
     if(!v.fits){
+      window.RafiqSound&&RafiqSound.answer(false);
       const n=add('note no','',"That doesn't quite answer what they said. Try again, or here's one way:");
       const s=add('them',sug[1],sug[2]); s.onclick=()=>say(sug[1],s);
       ta.classList.remove('hide'); ta.value='';
       screen(body,[send,button('Carry on',()=>{t++;turn()},true)]);
       return;
     }
+    window.RafiqSound&&RafiqSound.answer(true);
     add('note '+(v.grammar==='slip'?'no':'ok'),'',
       v.grammar==='ok'?'✓ Good reply.' : v.grammar==='slip'?'✓ Good reply — but check this: '+v.why : '✓ That works.');
     screen(body,[next]);
@@ -385,6 +388,7 @@ function runSpeak(p, step){
       out.innerHTML='<div class="verdict">Checking…</div>';
       RafiqJudge.prompt(tEn,exAr,ta.value).then(v=>{
         if(!v){ out.innerHTML='<div class="verdict">Couldn\'t check just now — compare with the example.</div>'; return; }
+        if(v.done!==1) window.RafiqSound&&RafiqSound.answer(v.done===2);
         out.innerHTML=`<div class="verdict ${v.done===2?'ok':v.done===0?'no':''}">${DONE[v.done]}</div>`+
           `<div class="verdict ${v.grammarOk?'ok':'no'}">${v.grammarOk?'Grammar: no mistakes spotted ✓':'Grammar: check this — '+esc(v.why)}</div>`;
       });

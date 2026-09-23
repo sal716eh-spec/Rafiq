@@ -1175,7 +1175,7 @@ function answerRow(target,onScore,check){
     check(txt).then(v=>{
       if(mine!==seq)return;
       if(!v){line.textContent=matched;return}
-      line.className='verdict '+(v.verdict==='right'?'ok':v.verdict==='wrong'?'no':'');
+      line.className='verdict '+(v.verdict==='right'?'ok':v.verdict==='wrong'?'no':'');if(v.verdict!=='close')window.RafiqSound&&RafiqSound.answer(v.verdict==='right');
       line.textContent=v.verdict==='right'?'Correct ✓ — the highlight only shows how close you were to this wording.':
                        v.verdict==='close'?'Nearly — compare carefully with the model answer.':
                        'Not quite. '+v.why;
@@ -1228,7 +1228,7 @@ const RENDER={
         if(c.dataset.done)return;
         c.dataset.done='1';
         const ok=i===t.a;
-        b.classList.add(ok?'right':'wrong');
+        b.classList.add(ok?'right':'wrong');window.RafiqSound&&RafiqSound.answer(ok);
         if(!ok)opts.children[t.a].classList.add('right');
         draw(t.o[t.a]);why.style.display='block';if(tr.textContent)tr.style.display='block';
         const full=t.q.replace('___',t.o[t.a]);
@@ -1286,13 +1286,13 @@ const RENDER={
       if(placed.length<t.parts.length){verdict.className='verdict no';verdict.textContent='Place every piece first.';return}
       const text=joinAr(t.parts);
       if(placed.join('|')===t.parts.join('|')){
-        drop.classList.add('right');drop.classList.remove('wrong');
+        drop.classList.add('right');drop.classList.remove('wrong');window.RafiqSound&&RafiqSound.answer(true);
         verdict.className='verdict ok';verdict.textContent='Correct — now say it aloud twice.';
         say(text,null);
         if(!c.dataset.done){c.dataset.done='1';c.appendChild(rateRow(it.id))}
       }else{
         const notYet=()=>{
-          drop.classList.add('wrong');drop.classList.remove('right');
+          drop.classList.add('wrong');drop.classList.remove('right');window.RafiqSound&&RafiqSound.answer(false);
           verdict.className='verdict no';verdict.textContent='Not yet. Look for the word that has to come first.';
         };
         if(!(window.RafiqJudge&&RafiqJudge.on)){notYet();return}
@@ -1302,7 +1302,7 @@ const RENDER={
         RafiqJudge.build(t.en,text,joinAr(placed)).then(ok=>{
           if(placed.join('|')!==mine)return;              // tiles moved while we waited
           if(!ok){notYet();return}
-          drop.classList.add('right');drop.classList.remove('wrong');
+          drop.classList.add('right');drop.classList.remove('wrong');window.RafiqSound&&RafiqSound.answer(true);
           verdict.className='verdict ok';
           verdict.textContent='That order works too ✓ Another way to say it: '+text;
           say(joinAr(placed),null);
@@ -1899,6 +1899,7 @@ backUnitsEl.addEventListener('click', showPicker);
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=1"></script>
 <script src="nav.js?v=20260924"></script>
+<script src="sounds.js?v=1"></script>
 <script src="progress.js?v=20260924"></script>
 <script src="translations.js?v=1"></script>
 <script src="arkb.js?v=2" defer></script>

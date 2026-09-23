@@ -23,6 +23,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="auth.js?v=5"></script>
 <script src="nav.js?v=20260924"></script>
+<script src="sounds.js?v=1"></script>
 <style>
 main.wrap{max-width:680px}
 .head{padding:30px 0 6px}
@@ -99,6 +100,13 @@ main.wrap{max-width:680px}
       <span>
         <select id="voiceSel"><option value="">Default</option></select>
         <span class="saved" id="voiceSaved">Saved</span>
+      </span>
+    </div>
+    <div class="row">
+      <div class="rl"><div class="rt">Answer sounds</div><div class="rs">A soft wooden tick when you're right, a gentle thud when you're not.</div></div>
+      <span>
+        <select id="soundSel"><option value="on">On</option><option value="off">Off</option></select>
+        <span class="saved" id="soundSaved">Saved</span>
       </span>
     </div>
     <div class="row">
@@ -263,6 +271,13 @@ function wireProfileField(inputId, savedId, key, evt){
     flash(savedId);
   });
 }
+(function(){
+  const sel=document.getElementById('soundSel'); if(!sel) return;
+  try{ sel.value=localStorage.getItem('rafiq_sounds')==='off'?'off':'on'; }catch(_){}
+  sel.addEventListener('change',()=>{ try{ localStorage.setItem('rafiq_sounds', sel.value); }catch(_){}
+    const f=document.getElementById('soundSaved'); f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),1400);
+    if(sel.value==='on' && window.RafiqSound) RafiqSound.answer(true); });
+})();
 (function(){
   const sel=document.getElementById('goalSel');
   try{ const g=localStorage.getItem('rafiq_goal'); if(g) sel.value=g; }catch(_){}

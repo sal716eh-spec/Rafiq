@@ -184,6 +184,7 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 <script src="mistakes.js?v=20260922"></script>
 <script src="item-tags.js?v=20260922"></script>
 <script src="nav.js?v=20260924"></script>
+<script src="sounds.js?v=1"></script>
 <script>
 DATA.forEach(u=>Object.assign(u,EXTRA[u.n]||{}));
 const glue=(a,s)=>a+(s.startsWith('،')?'':' ')+s, joinAr=a=>a.reduce(glue);
@@ -285,7 +286,7 @@ function answerRow(target,check){
     check(t).then(v=>{
       if(mine!==seq)return;
       if(!v){line.textContent=score+'% matched';return}
-      line.className='score '+(v.verdict==='right'?'v-ok':v.verdict==='wrong'?'v-no':'');
+      line.className='score '+(v.verdict==='right'?'v-ok':v.verdict==='wrong'?'v-no':'');if(v.verdict!=='close')window.RafiqSound&&RafiqSound.answer(v.verdict==='right');
       line.textContent=v.verdict==='right'?'Correct ✓':
                        v.verdict==='close'?'Nearly — compare carefully with the model answer.':
                        'Not quite. '+v.why;
@@ -451,7 +452,7 @@ function vLink(it){
   if(window.RAFIQ_TR) tr.textContent=RAFIQ_TR.trOf(t.q.replace('___',t.o[t.a]))||'';
   t.o.forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;
     b.onclick=()=>{if(c.dataset.done)return;c.dataset.done='1';
-      const ok=j===t.a;b.classList.add(ok?'right':'wrong');
+      const ok=j===t.a;b.classList.add(ok?'right':'wrong');window.RafiqSound&&RafiqSound.answer(ok);
       if(!ok)ob.children[t.a].classList.add('right');
       if(!ok)kindWrong.links++;
       draw(t.o[t.a]);why.style.display='block';if(tr.textContent)tr.style.display='block';
@@ -474,7 +475,7 @@ function vDrill(it){
     if(window.RAFIQ_TR) tr.textContent=RAFIQ_TR.trOf(d.q.replace('___',d.o[d.a]))||'';
     d.o.forEach((o,j)=>{const b=document.createElement('button');b.className='opt';b.textContent=o;
       b.onclick=()=>{if(c.dataset.done)return;c.dataset.done='1';
-        const ok=j===d.a;b.classList.add(ok?'right':'wrong');
+        const ok=j===d.a;b.classList.add(ok?'right':'wrong');window.RafiqSound&&RafiqSound.answer(ok);
         if(!ok)ob.children[d.a].classList.add('right');
         draw(d.o[d.a]);why.style.display='block';if(tr.textContent)tr.style.display='block';
         say(d.q.replace('___',d.o[d.a]),q);

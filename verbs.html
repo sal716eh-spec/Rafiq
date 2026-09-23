@@ -325,7 +325,7 @@ function vSent(v){
     const why=document.createElement('div');why.className='why';why.style.display='none';
     opts.forEach(o=>{const b=document.createElement('button');b.className='opt';b.type='button';b.textContent=o;
       b.onclick=()=>{if(c.dataset.done)return;c.dataset.done='1';
-        const ok=o===right;b.classList.add(ok?'right':'wrong');
+        const ok=o===right;b.classList.add(ok?'right':'wrong');window.RafiqSound&&RafiqSound.answer(ok);
         if(!ok)[...ob.children].find(x=>x.textContent===right).classList.add('right');
         draw(right);why.style.display='block';
         const tn=it.t==='past'?'past':it.t==='pr'?'present':'future';
@@ -344,4 +344,5 @@ render();
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="nav.js?v=20260924"></script>
+<script src="sounds.js?v=1"></script>
 <script>requireLogin();</script>

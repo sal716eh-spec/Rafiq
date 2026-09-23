@@ -1,0 +1,48 @@
+name: Generate sound effects
+
+on:
+  workflow_dispatch:
+    inputs:
+      prompts:
+        description: "JSON list of sounds to generate"
+        required: true
+        default: "tools/sfx-prompts.json"
+      out:
+        description: "Folder to save them in"
+        required: true
+        default: "brag-output-v4/composition/assets/sfx-gen"
+      force:
+        description: "Regenerate sounds that already exist? (yes/no)"
+        required: false
+        default: "no"
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Generate
+        env:
+          ELEVENLABS_API_KEY: ${{ secrets.ELEVENLABS_API_KEY }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.force }}" = "yes" ]; then ARGS="--force"; fi
+          node tools/generate-sfx.js "${{ inputs.prompts }}" "${{ inputs.out }}" $ARGS
+      - name: Commit the sounds
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${{ inputs.out }}"
+          if git diff --staged --quiet; then
+            echo "Nothing new to commit."
+          else
+            git commit -m "Generate sound effects"
+            git pull --rebase --autostash
+            git push
+          fi

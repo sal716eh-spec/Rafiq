@@ -48,3 +48,32 @@ print("\nplacement      find  fit   signal  total")
 for o in P:
     a=lambda q:sum(rp[(o,l)][q]["score"] for l in L)/len(L)
     print(f"{o:13}  {a('find'):.2f}  {a('fit'):.2f}  {a('signal'):.2f}    {a('find')+a('fit')+a('signal'):.2f}")
+
+# How does the Home card work, and what is inside a salah lesson?
+PATHDESC=(" The main course works like this: Home shows one Continue button; each unit is a run of 5-10 minute steps (meet 10 words, hear the conversation, "
+ "how it works, practise, have the conversation...) opened in order; finished steps can be revisited; review of learned items is a separate Review button. "
+ "The salah track would cover the prayer in order in about 10 parts: takbir, opening supplication, Al-Fatiha (2-3 parts), ruku, rising, sujud, tashahhud, "
+ "salawat, taslim; then the short surahs.")
+E={"straight":"Tapping the Home card's Continue goes straight into the next salah step, exactly like the main path. Nothing else.",
+   "hub":"Tapping the card opens a Salah page with four sections the learner chooses between: Learn (explanations), Practise (exercises), Test (graded quiz), and Your salah map.",
+   "hybrid":"The card has a Continue button that goes straight into the next salah step (like the main path). Tapping the card itself opens a Salah overview: the prayer in order, each part marked done / next / locked, a 'Your salah' map with understood words lit up, and a Review button; any finished part can be reopened."}
+QE={"simple":{"type":"score","instructions":"`app``path` Learner: `learner`. How the salah track is entered: `option`. How simple is it to know what to do next?","criteria":["Confusing","OK","Simple","Effortless"]},
+    "learn":{"type":"score","instructions":"`app``path` Learner: `learner`. Entry design: `option`. How well does it lead to real understanding of the prayer (not just skipping around)?","criteria":["Poorly","OK","Well","Very well"]},
+    "return":{"type":"score","instructions":"`app``path` Learner: `learner`. Entry design: `option`. How likely are they to come back to it day after day?","criteria":["Unlikely","Maybe","Likely","Very likely"]},
+    "consistent":{"type":"score","instructions":"`app``path` Entry design: `option`. How consistent is it with how the rest of the app works (so nothing new to learn)?","criteria":["Inconsistent","Somewhat","Consistent","Identical pattern"]}}
+S={"words_first":"Each part: (1) Listen: hear the phrase recited, see it with its meaning; (2) Word by word: each word with meaning, root and a word you know from the course with the same root; (3) Check: match words to meanings; (4) Put it together: rebuild the phrase's meaning / order the words; (5) Follow along: hear it again with each word lit up as it is said. Review later with spaced repetition.",
+   "explain_first":"Each part: (1) Explanation: a short paragraph on what this part of the prayer is and why it is said; (2) Word by word with meanings; (3) A graded quiz at the end.",
+   "cards_only":"Each part: a set of flashcards of the words (Arabic on the front, meaning on the back), rated by the learner, then reviewed with spaced repetition."}
+QS={"understand":{"type":"score","instructions":"`app` Learner: `learner`. Lesson design for one part of the prayer: `option`. How well will they understand what they say in that part of salah afterwards, and still know it a month later?","criteria":["Poorly","OK","Well","Very well"]},
+    "feel":{"type":"score","instructions":"`app` Learner: `learner`. Lesson design: `option`. How engaging and meaningful does it feel?","criteria":["Dull","OK","Good","Moving"]}}
+with ThreadPoolExecutor(8) as ex:
+    re_=dict(ex.map(lambda j:(j,ask({"app":APP,"path":PATHDESC,"learner":L[j[1]],"option":E[j[0]]},QE)["answers"]),[(o,l) for o in E for l in L]))
+    rs=dict(ex.map(lambda j:(j,ask({"app":APP,"learner":L[j[1]],"option":S[j[0]]},QS)["answers"]),[(o,l) for o in S for l in L]))
+print("\nentry     simple learn return consistent total")
+for o in E:
+    a=lambda q:sum(re_[(o,l)][q]["score"] for l in L)/len(L)
+    print(f"{o:9} {a('simple'):.2f}   {a('learn'):.2f}  {a('return'):.2f}   {a('consistent'):.2f}       {sum(a(q) for q in QE):.2f}")
+print("\nlesson         understand feel")
+for o in S:
+    a=lambda q:sum(rs[(o,l)][q]["score"] for l in L)/len(L)
+    print(f"{o:13}  {a('understand'):.2f}       {a('feel'):.2f}")

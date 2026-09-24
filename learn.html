@@ -62,6 +62,7 @@ textarea.ar-in{width:100%;min-height:110px;font-family:var(--ar);font-size:21px;
 .bub{max-width:86%;padding:10px 14px;border-radius:16px;line-height:1.6}
 .bub .a{font-family:var(--ar);direction:rtl;font-size:20px;line-height:1.8}
 .bub .e{font-size:13px;color:var(--ink-soft)}
+.bub.goal,.bub.note.goal{font-size:14.5px;color:var(--ink-soft);border-style:solid}
 .bub.them{align-self:flex-start;background:var(--card);border:1px solid var(--rule);border-bottom-left-radius:4px;cursor:pointer}
 .bub.me{align-self:flex-end;background:var(--verdigris);color:#fff;border-bottom-right-radius:4px}
 .bub.me .e{color:rgba(255,255,255,.85)}
@@ -103,7 +104,7 @@ textarea.ar-in{width:100%;min-height:110px;font-family:var(--ar);font-size:21px;
 <script src="path.js?v=20260925"></script>
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
-<script src="judge.js?v=20260922"></script>
+<script src="judge.js?v=20260925"></script>
 <script src="sounds.js?v=1"></script>
 <script src="arkb.js?v=2" defer></script>
 <script>
@@ -323,11 +324,16 @@ function runChat(p, step, opts){
   const add=(cls,ar,en)=>{ const b=el(`<div class="bub ${cls}">${ar?`<div class="a">${esc(ar)}</div>`:''}${en?`<div class="e">${esc(en)}</div>`:''}</div>`);
     chat.appendChild(b); b.scrollIntoView({block:'nearest'}); return b; };
   const send=button(judge?'Send':'Show a suggested reply',()=>reply());
-  const hint=button('Hint',()=>{ add('note','',"Say something like: "+turns[t][1][2]); },true);
+  // the Arabic for this turn's goal, if they want it
+  const hint=button('Show the Arabic',()=>{ const s=add('them hintb',turns[t][1][1],''); s.onclick=()=>say(turns[t][1][1],s); },true);
+  const earlier=[];   // what the learner has said so far (the partner's later lines may refer to it)
+  const useSuggested=()=>button('Use this reply',()=>{ const s=turns[t][1]; add('me',s[1],''); earlier.push(s[1]); t++; turn(); },true);
   const next=button('Continue',()=>{ t++; turn(); });
   function them(){
     const [a]=turns[t]; setBar(t,turns.length);
     const b=add('them',a[1],a[2]); b.onclick=()=>say(a[1],b); say(a[1],b);
+    // what to get across — the wording is theirs, so the partner's next line still makes sense
+    if(judge) add('note goal','','Your turn — in your own words: “'+turns[t][1][2]+'”');
     ta.value=''; ta.classList.remove('hide');
     screen(body,[send,hint]);
   }
@@ -339,7 +345,8 @@ function runChat(p, step, opts){
     add('me',said,'');
     ta.classList.add('hide');
     const wait=add('note','','Checking…');
-    const v=await RafiqJudge.reply(a[1],a[2],sug[1],said,situation);
+    const nx=turns[t+1] ? turns[t+1][0] : null;
+    const v=await RafiqJudge.reply(a[1],a[2],sug[1],said,situation, nx&&nx[1], nx&&nx[2], earlier);
     wait.remove();
     if(!v){ add('note','','Couldn\'t check just now. One way to reply: '+sug[1]+' — '+sug[2]); screen(body,[next]); return; }
     if(!v.fits){
@@ -347,9 +354,19 @@ function runChat(p, step, opts){
       const n=add('note no','',"That doesn't quite answer what they said. Try again, or here's one way:");
       const s=add('them',sug[1],sug[2]); s.onclick=()=>say(sug[1],s);
       ta.classList.remove('hide'); ta.value='';
-      screen(body,[send,button('Carry on',()=>{t++;turn()},true)]);
+      screen(body,[send,useSuggested()]);
       return;
     }
+    if(!v.follows){
+      // a sensible reply, but the other speaker's next line was written for something else:
+      // don't let the conversation stop making sense — ask for the missing part instead
+      add('note','',"Good Arabic! But their next line assumes you said “"+sug[2]+"” — add that and send again, or use this reply:");
+      const s=add('them',sug[1],''); s.onclick=()=>say(sug[1],s);
+      ta.classList.remove('hide'); ta.value=said;
+      screen(body,[send,useSuggested()]);
+      return;
+    }
+    earlier.push(said);
     window.RafiqSound&&RafiqSound.answer(true);
     add('note '+(v.grammar==='slip'?'no':'ok'),'',
       v.grammar==='ok'?'✓ Good reply.' : v.grammar==='slip'?'✓ Good reply — but check this: '+v.why : '✓ That works.');

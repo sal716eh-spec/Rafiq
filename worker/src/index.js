@@ -134,6 +134,27 @@ const REWRITE_Q = {
 // Conversation partner: the learner replies in their own words to the other
 // speaker's line. With the situation in the state: 46/47 labelled replies and
 // all 90 suggested replies judged a fit (tools/typesafe-exp/round3b.py).
+/* Asked only when the other speaker has a next line: that line was written as
+   an answer to `expected_reply`, so check the learner's own reply still gives it
+   what it responds to (measured: at 0.6 it let none of 9 non-following replies
+   through on 24 labelled cases; tools/typesafe-exp/follows.py). */
+const FOLLOWS_Q = {
+  type: 'noul',
+  instructions: {
+    task: "In a beginner's Arabic conversation (`situation`), the other person's next line `next_line` (`next_line_english`) " +
+          'was written as a reply to the expected learner line `expected_reply`. The learner actually said `learner_reply` ' +
+          '(earlier they said: `learner_earlier`). Does the learner\'s actual reply give `next_line` everything it responds to?',
+    yes_if: ['it asks the same question (in any wording), or gives the same kind of answer with their own details',
+             'what next_line reacts to is present in the actual reply, even if other details differ'],
+    no_if: ['next_line answers a question the learner did not ask',
+            "next_line reacts to something the learner didn't say, or said the opposite of",
+            'next_line asks for something the learner has already told them',
+            "next_line uses a name that isn't the learner's (check what they said earlier)",
+            'the learner asked a question that next_line ignores'],
+  },
+  criteria: { true: 'Next line still fits', false: 'Next line no longer fits' },
+};
+
 const REPLY_Q = {
   fits: {
     type: 'noul',
@@ -252,6 +273,13 @@ export default {
                 previous_line: b.previous, previous_line_english: b.previous_en,
                 suggested_reply: b.suggested, learner_reply: b.answer };
       questions = REPLY_Q;
+      // optional: the other speaker's next line, to check it still follows
+      if (str(b.next) && str(b.next_en)) {
+        const earlier = Array.isArray(b.earlier) ? b.earlier.filter(str).slice(-6) : [];
+        Object.assign(state, { next_line: b.next, next_line_english: b.next_en, expected_reply: b.suggested,
+                               learner_earlier: earlier.length ? earlier : ['(nothing yet)'] });
+        questions = { ...REPLY_Q, follows: FOLLOWS_Q };
+      }
     } else if (b.kind === 'prompt' && str(b.task) && str(b.model) && str(b.answer)) {
       state = { task: b.task, model_answer: b.model, learner_answer: b.answer };
       questions = PROMPT_Q;

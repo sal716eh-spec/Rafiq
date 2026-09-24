@@ -1,0 +1,31 @@
+name: Supabase users
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "list (read only) | delete"
+        required: true
+        default: "list"
+      arg:
+        description: "list: days to look back (default 3) · delete: account ids from the list, comma-separated (max 5)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+jobs:
+  users:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Run
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          CMD: ${{ inputs.command }}
+          ARG: ${{ inputs.arg }}
+        run: node tools/supabase-users.js "$CMD" "$ARG"

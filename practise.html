@@ -98,6 +98,62 @@
 .stat.none{color:var(--ink-soft)}
 @media (max-width:640px){.tiles{grid-template-columns:minmax(0,1fr)}}
 
+/* Spelling bee (spelling.js) */
+.sb-top{display:flex;justify-content:space-between;font-family:var(--ut);font-size:11px;letter-spacing:.08em;color:var(--ink-soft);margin:4px 0 10px}
+.sb-top b{color:var(--rubric)}
+.sb-card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:22px 20px 20px}
+.sb-prompt{text-align:center;margin-bottom:6px}
+.sb-pic{font-size:44px;line-height:1.2}
+.sb-en{font-size:20px;font-weight:600;margin-top:4px}
+.sb-how{font-size:13px;color:var(--ink-soft);margin-top:6px}
+.sb-listen{font-size:34px;width:76px;height:76px;border-radius:50%;border:1px solid var(--verdigris);background:var(--paper);cursor:pointer;touch-action:manipulation}
+.sb-listen.speaking{background:var(--verdigris)}
+.sb-hint{display:inline-block;margin-top:8px;font-size:13px;color:var(--verdigris);text-decoration:underline;cursor:pointer}
+.sb-links{margin-top:8px;font-size:13px;color:var(--ink-soft)}
+.sb-links .sb-hint{margin-top:0}
+.sb-card .ansrow{display:flex;gap:8px;margin-top:12px;position:relative}
+.sb-card .ansrow .btn{flex:0 0 auto;min-height:44px}
+.sb-card input.ar-in{flex:1;min-width:0;font-family:var(--ar);font-size:24px;line-height:1.7;direction:rtl;text-align:right;
+  background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;color:var(--ink)}
+.sb-card input.ar-in:focus{border-color:var(--verdigris);outline:none}
+.sb-card input.ar-in:disabled{opacity:1;-webkit-text-fill-color:var(--ink)}
+.sb-out{min-height:8px}
+.sb-msg{font-size:14px;color:var(--ink-soft);margin:12px 0 0}
+.sb-near{color:var(--gold,#9a7b1c)}
+.sb-verdict{font-size:16px;font-weight:600;margin:14px 0 6px}
+.sb-verdict.ok{color:var(--verdigris)} .sb-verdict.no{color:var(--rubric)}
+.sb-full{font-family:var(--ut);font-size:10.5px;letter-spacing:.06em;color:var(--verdigris);border:1px solid var(--verdigris);border-radius:10px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+.sb-row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-top:6px}
+.sb-lab{font-family:var(--ut);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);min-width:84px}
+.sb-ar{font-family:var(--ar);font-size:24px;direction:rtl;line-height:1.8}
+.sb-ar .ok{color:var(--verdigris)} .sb-ar .no{color:var(--rubric);text-decoration:underline}
+.sb-word{font-family:var(--ar);font-size:22px;line-height:1.7;direction:rtl;background:none;border:none;color:var(--ink);cursor:pointer;padding:0}
+.sb-gloss{font-size:13px;color:var(--ink-soft)}
+.sb-note{font-size:12.5px;color:var(--ink-soft);margin:8px 0 0}
+.sb-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.sb-actions .btn{flex:1;min-height:44px;text-align:center}
+.sb-empty{font-size:14.5px;line-height:1.55;margin:0 0 14px}
+.sb-end{text-align:center}
+.sb-big{font-size:40px;font-weight:700;color:var(--verdigris)}
+.sb-best{font-size:14.5px;margin:10px 0 0}
+.sb-miss{text-align:left;margin-top:16px;padding-top:12px;border-top:1px solid var(--rule)}
+/* Arabic keyboard (arkb.js) */
+.arkb{position:absolute;z-index:200;background:rgba(var(--paper-rgb,241,236,224),.85);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);
+  border:1px solid var(--rule);border-radius:10px;box-shadow:0 10px 28px -10px rgba(var(--ink-rgb,23,38,43),.4);padding:10px;display:none;max-width:360px}
+.arkb.on{display:block}
+.arkb-row{display:flex;gap:4px;margin-bottom:4px;justify-content:center}
+.arkb-key{font-family:var(--ar);font-size:17px;line-height:1;min-width:30px;min-height:38px;
+  border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);cursor:pointer;padding:0 2px}
+.arkb-key:active{background:var(--verdigris);color:#fff;border-color:var(--verdigris)}
+.arkb-harakat{display:flex;gap:4px;margin:6px 0;flex-wrap:wrap;justify-content:center;border-top:1px dashed var(--rule);padding-top:8px}
+.arkb-hk{font-size:15px;color:var(--rubric);min-width:34px}
+.arkb-bottom{display:flex;gap:6px;margin-top:4px}
+.arkb-wide{flex:1;font-family:var(--la);font-size:12.5px;min-height:38px}
+@media (max-width:860px){
+  .arkb{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;border-radius:14px 14px 0 0;padding-bottom:calc(10px + env(safe-area-inset-bottom))}
+  .arkb-key{min-width:8.6vw;min-height:42px;font-size:18px}
+}
+
 /* Pointer devices only — :hover sticks after a tap on touchscreens. */
 @media (hover:hover) and (pointer:fine){
 
@@ -192,7 +248,14 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
       d:'Extra rounds on units you’ve finished',
       m: done.length ? `${done.length} unit${done.length===1?'':'s'} ready` : 'Finish a unit to unlock it',
       intro:'A fresh mix of a finished unit’s words and sentences each time — good before moving on, or to refresh an older unit.',
-      body:()=>redo}
+      body:()=>redo},
+    spelling:{icon:'🐝', t:'Spelling bee', cx:'',
+      d:'Hear a word or see its meaning, then type it in Arabic',
+      get m(){ const n=RafiqSpelling.pool().length, b=RafiqSpelling.best();   // a getter, so a new best shows on return
+        return n<4 ? 'Unlocks after a few lessons' : `${n} words ready`+(b?` · best <b>${b.score}/${b.total}</b>`:''); },
+      intro:'Spell words you’ve met in your lessons. Get the letters right to pass; add the vowel marks for a bonus. Words you miss come back later in the round.',
+      body:()=>`<div id="spelling"></div>`,
+      mount:()=>RafiqSpelling.mount(document.getElementById('spelling'))}
   };
   const row=(href,x)=>`<a class="prow" href="${href}"><span class="pi">${x.icon}</span>
       <span class="pt"><b>${x.t}${x.cx?` <span class="cx">${x.cx}</span>`:''}</b><span class="pd">${x.d}</span><span class="pm">${x.m}</span></span>
@@ -209,12 +272,13 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
       // back to the menu: undo the step we took from it, or replace this view if we landed here directly
       el.querySelector('.pback').onclick=e=>{ e.preventDefault();
         if(fromMenu){ history.back(); } else { history.replaceState(null,'',location.pathname); paint(); } };
+      if(sec.mount) sec.mount();
       scrollTo(0,0); return;
     }
     el.innerHTML=`<div class="plist">`+
       row('session.html?focus=weak',{icon:'🎯', t:'Weak-spots review', cx:'Complete',
         d:'Exercises picked for the mistakes you keep making', m:'About 5 minutes'})+
-      row('#beyond',SECTIONS.beyond)+row('#scenes',SECTIONS.scenes)+row('#redo',SECTIONS.redo)+`</div>`;
+      row('#beyond',SECTIONS.beyond)+row('#scenes',SECTIONS.scenes)+row('#redo',SECTIONS.redo)+row('#spelling',SECTIONS.spelling)+`</div>`;
     el.querySelectorAll('.prow[href^="#"]').forEach(a=>a.addEventListener('click',()=>{ fromMenu=true; }));
   }
   addEventListener('hashchange',paint);
@@ -245,6 +309,10 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
 <script src="path-data.js?v=20260922"></script>
 <script src="alphabet-data.js?v=20260922"></script>
 <script src="path.js?v=20260925"></script>
+<script src="audio.js?v=900"></script>
+<script src="sounds.js?v=1"></script>
+<script src="spelling.js?v=1"></script>
+<script src="arkb.js?v=2" defer></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="nav.js?v=20260924"></script>
 <script>

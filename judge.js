@@ -102,12 +102,18 @@
      fits was 46/47 on labelled replies and 90/90 on the conversations' own
      replies (tools/typesafe-exp/round3b.py). Grammar has a quiet middle band: two
      correct short replies scored 0.52–0.54, so 0.5–0.7 gets no comment. */
-  async function reply(previous, previousEn, suggested, said, situation){
-    const j = await post({kind:'reply', situation, previous, previous_en:previousEn, suggested, answer:said}, ['fits','grammar']);
+  /* next / nextEn: the other speaker's next line, if any; earlier: what the
+     learner said before. With them, `follows` says whether that next line still
+     makes sense after this reply (older Worker without it: assume it does). */
+  async function reply(previous, previousEn, suggested, said, situation, next, nextEn, earlier){
+    const body={kind:'reply', situation, previous, previous_en:previousEn, suggested, answer:said};
+    if(next && nextEn) Object.assign(body, {next, next_en:nextEn, earlier:earlier||[]});
+    const j = await post(body, ['fits','grammar']);
     if(!j) return null;
     const grammar = j.grammar>=0.7 ? 'ok' : j.grammar>=0.5 ? 'unsure' : 'slip';
     if(grammar==='slip') note(j.err);
-    return {fits: j.fits>=0.5, grammar, why: grammar==='slip' ? (ERR[j.err]||ERR.grammar_other) : ''};
+    return {fits: j.fits>=0.5, follows: typeof j.follows!=='number' || j.follows>=0.6,
+            grammar, why: grammar==='slip' ? (ERR[j.err]||ERR.grammar_other) : ''};
   }
 
   /* Mistake profile: every judged mistake type is counted with its date, so

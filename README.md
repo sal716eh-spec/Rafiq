@@ -86,6 +86,11 @@ Upcoming units (Travel & directions, Health & the body, Ramadan & Eid, Telling s
 
 - **Site:** GitHub Pages from `main`, root.
 - **Worker:** Cloudflare Workers & Pages → import this repo, root directory `/worker`; add secret `TYPESAFE_API_KEY`. Every push to `main` redeploys it. `judge.js` points at `https://rafiq-judge.luq09.workers.dev`.
+- **Accounts and email** (Supabase → Authentication):
+  1. **URL Configuration:** set Site URL to `https://rafiq-arabic.com` and add `https://rafiq-arabic.com/login.html` and `https://rafiq-arabic.com/reset-password.html` to Redirect URLs. Links to pages not on this list fall back to the Site URL.
+  2. **SMTP:** add a sender (e.g. Resend) so emails come from rafiq-arabic.com. Add the provider's SPF/DKIM records to the domain's DNS. Supabase's built-in sender only allows a few emails an hour.
+  3. **Emails:** paste `supabase/email-templates/confirm-signup.html` and `reset-password.html` into the matching templates (subjects are in the comment at the top of each).
+  4. **Providers → Email:** turn on "Confirm email". Sign-up then asks people to click the link before they can sign in, and the sign-in form offers to resend it.
 - **Audio:** run the **Render audio** GitHub Action (ElevenLabs) to record clips for new lines; until then the device's Arabic voice is used. The 12 dialogues written for the independent app don't have clips yet.
 - **Rebuild the path** after changing words or units: `node tools/build-path.js`.
 

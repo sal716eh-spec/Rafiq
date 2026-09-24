@@ -1,0 +1,1546 @@
+{
+ "about": "Course words linked to roots used in salah. Candidates by letter/corpus matching, judged by TypeSafe (tools/salah/root_judge.py, accepted at >= 0.5), then every one checked by hand: accept / reject with a reason. AWAITING TEACHER REVIEW.",
+ "links": [
+  {
+   "id": 46,
+   "ar": "أَب",
+   "en": "father",
+   "root": "أبو",
+   "p": 0.91,
+   "decision": "accept"
+  },
+  {
+   "id": 627,
+   "ar": "باب",
+   "en": "door",
+   "root": "أبو",
+   "p": 0.55,
+   "decision": "reject",
+   "why": "باب is from ب-و-ب"
+  },
+  {
+   "id": 212,
+   "ar": "واحِدَة",
+   "en": "one (f)",
+   "root": "أحد",
+   "p": 0.87,
+   "decision": "accept",
+   "note": "Dictionaries list both under و-ح-د; the corpus lists أَحَد under أ-ح-د. Both mean \"one\"."
+  },
+  {
+   "id": 289,
+   "ar": "حادِيَة عَشْرَة",
+   "en": "eleventh (f); eleven o'clock",
+   "root": "أحد",
+   "p": 0.6,
+   "decision": "accept",
+   "note": "as above"
+  },
+  {
+   "id": 426,
+   "ar": "أَحادِيث",
+   "en": "hadiths, sayings",
+   "root": "أحد",
+   "p": 0.73,
+   "decision": "reject",
+   "why": "أحاديث is from ح-د-ث"
+  },
+  {
+   "id": 492,
+   "ar": "أَحَدَ عَشَرَ",
+   "en": "eleven",
+   "root": "أحد",
+   "p": 0.68,
+   "decision": "accept",
+   "note": "as above"
+  },
+  {
+   "id": 165,
+   "ar": "أَكَلَ / يَأْكُلُ",
+   "en": "to eat",
+   "root": "أكل",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 6,
+   "ar": "الحَمْدُ لِلَّهِ",
+   "en": "praise be to God",
+   "root": "أله",
+   "p": 0.88,
+   "decision": "accept"
+  },
+  {
+   "id": 69,
+   "ar": "صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ",
+   "en": "peace and blessings be upon him",
+   "root": "أله",
+   "p": 0.56,
+   "decision": "accept"
+  },
+  {
+   "id": 70,
+   "ar": "اللهُ أَكْبَرُ",
+   "en": "God is greatest",
+   "root": "أله",
+   "p": 0.74,
+   "decision": "accept"
+  },
+  {
+   "id": 71,
+   "ar": "ما شاءَ اللهُ",
+   "en": "what God has willed",
+   "root": "أله",
+   "p": 0.86,
+   "decision": "accept"
+  },
+  {
+   "id": 233,
+   "ar": "إِنْ شاءَ اللهُ",
+   "en": "God willing",
+   "root": "أله",
+   "p": 0.88,
+   "decision": "accept"
+  },
+  {
+   "id": 234,
+   "ar": "جَزاكَ اللهُ خَيْراً",
+   "en": "may God reward you",
+   "root": "أله",
+   "p": 0.86,
+   "decision": "accept"
+  },
+  {
+   "id": 351,
+   "ar": "بارَكَ اللهُ فِيكَ",
+   "en": "God bless you",
+   "root": "أله",
+   "p": 0.86,
+   "decision": "accept"
+  },
+  {
+   "id": 559,
+   "ar": "السَّلامُ عَلَيْكُم وَرَحْمَةُ اللهِ وَبَرَكاتُهُ",
+   "en": "peace, mercy and blessings of God be upon you",
+   "root": "أله",
+   "p": 0.78,
+   "decision": "accept"
+  },
+  {
+   "id": 562,
+   "ar": "شَفاكَ اللهُ",
+   "en": "may God heal you",
+   "root": "أله",
+   "p": 0.6,
+   "decision": "accept"
+  },
+  {
+   "id": 580,
+   "ar": "وَعَلَيْكُمُ السَّلامُ وَرَحْمَةُ اللهِ وَبَرَكاتُهُ",
+   "en": "and upon you peace, mercy and blessings of God",
+   "root": "أله",
+   "p": 0.79,
+   "decision": "accept"
+  },
+  {
+   "id": 605,
+   "ar": "صَلاة العِيد",
+   "en": "the eid prayer",
+   "root": "أله",
+   "p": 0.53,
+   "decision": "reject",
+   "why": "no word from أ-ل-ه"
+  },
+  {
+   "id": 42,
+   "ar": "ـِيّ (النِّسْبَة)",
+   "en": "-ish, -an (makes an adjective)",
+   "root": "أنس",
+   "p": 0.65,
+   "decision": "reject",
+   "why": "coincidental letters"
+  },
+  {
+   "id": 438,
+   "ar": "خَطّ النَّسْخ",
+   "en": "Naskh script",
+   "root": "أنس",
+   "p": 0.66,
+   "decision": "reject",
+   "why": "نسخ is from ن-س-خ"
+  },
+  {
+   "id": 154,
+   "ar": "أَوَّل",
+   "en": "first",
+   "root": "أول",
+   "p": 0.7,
+   "decision": "reject",
+   "why": "آل (family) and أوّل (first) share a root in the corpus but the link would confuse"
+  },
+  {
+   "id": 206,
+   "ar": "أُولى",
+   "en": "first (f)",
+   "root": "أول",
+   "p": 0.72,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 590,
+   "ar": "جُمادى الأُولى",
+   "en": "Jumada al-Ula",
+   "root": "أول",
+   "p": 0.53,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 597,
+   "ar": "رَبِيع الأَوَّل",
+   "en": "Rabiʿ al-Awwal",
+   "root": "أول",
+   "p": 0.71,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 351,
+   "ar": "بارَكَ اللهُ فِيكَ",
+   "en": "God bless you",
+   "root": "برك",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 559,
+   "ar": "السَّلامُ عَلَيْكُم وَرَحْمَةُ اللهِ وَبَرَكاتُهُ",
+   "en": "peace, mercy and blessings of God be upon you",
+   "root": "برك",
+   "p": 0.9,
+   "decision": "accept"
+  },
+  {
+   "id": 580,
+   "ar": "وَعَلَيْكُمُ السَّلامُ وَرَحْمَةُ اللهِ وَبَرَكاتُهُ",
+   "en": "and upon you peace, mercy and blessings of God",
+   "root": "برك",
+   "p": 0.88,
+   "decision": "accept"
+  },
+  {
+   "id": 90,
+   "ar": "بَيْت",
+   "en": "house",
+   "root": "بيت",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 273,
+   "ar": "كُلِّيَّة التَّرْبِيَة",
+   "en": "College of Education",
+   "root": "تبب",
+   "p": 0.61,
+   "decision": "reject",
+   "why": "تربية is from ر-ب-و"
+  },
+  {
+   "id": 52,
+   "ar": "جَدّ",
+   "en": "grandfather",
+   "root": "جدد",
+   "p": 0.73,
+   "decision": "accept"
+  },
+  {
+   "id": 53,
+   "ar": "جَدَّة",
+   "en": "grandmother",
+   "root": "جدد",
+   "p": 0.6,
+   "decision": "accept"
+  },
+  {
+   "id": 205,
+   "ar": "جِدّاً",
+   "en": "very",
+   "root": "جدد",
+   "p": 0.56,
+   "decision": "accept"
+  },
+  {
+   "id": 260,
+   "ar": "جَدْوَل دِراسِيّ",
+   "en": "timetable",
+   "root": "جدد",
+   "p": 0.64,
+   "decision": "reject",
+   "why": "جدول is from ج-د-ل"
+  },
+  {
+   "id": 11,
+   "ar": "ما جِنْسِيَّتُكَ؟",
+   "en": "what is your nationality? (to a man)",
+   "root": "جنن",
+   "p": 0.52,
+   "decision": "reject",
+   "why": "جنسية is from ج-ن-س"
+  },
+  {
+   "id": 435,
+   "ar": "جَناح (قِسْم)",
+   "en": "wing, hall (section)",
+   "root": "جنن",
+   "p": 0.69,
+   "decision": "reject",
+   "why": "جناح is from ج-ن-ح"
+  },
+  {
+   "id": 167,
+   "ar": "جَوْعانُ",
+   "en": "hungry",
+   "root": "جوع",
+   "p": 0.89,
+   "decision": "accept"
+  },
+  {
+   "id": 747,
+   "ar": "جوع",
+   "en": "hunger",
+   "root": "جوع",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 626,
+   "ar": "حَبْل",
+   "en": "rope",
+   "root": "حبل",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 362,
+   "ar": "حَضَرَ / يَحْضُرُ",
+   "en": "to come, attend",
+   "root": "حضض",
+   "p": 0.52,
+   "decision": "reject",
+   "why": "حضر is from ح-ض-ر"
+  },
+  {
+   "id": 765,
+   "ar": "الحاضِر",
+   "en": "the present",
+   "root": "حضض",
+   "p": 0.51,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 6,
+   "ar": "الحَمْدُ لِلَّهِ",
+   "en": "praise be to God",
+   "root": "حمد",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 773,
+   "ar": "يَحْمِل",
+   "en": "he carries",
+   "root": "حمل",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 104,
+   "ar": "حَيّ",
+   "en": "district, neighbourhood",
+   "root": "حيي",
+   "p": 0.71,
+   "decision": "accept"
+  },
+  {
+   "id": 107,
+   "ar": "دَخَلَ / يَدْخُلُ",
+   "en": "to enter",
+   "root": "دخل",
+   "p": 0.96,
+   "decision": "accept"
+  },
+  {
+   "id": 108,
+   "ar": "تَفَضَّلْ (ادْخُلْ)",
+   "en": "please, come in",
+   "root": "دخل",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 470,
+   "ar": "تَأْشِيرَة دُخُول",
+   "en": "entry visa",
+   "root": "دخل",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 526,
+   "ar": "طَواف الوَداع",
+   "en": "the farewell circumambulation",
+   "root": "دعع",
+   "p": 0.76,
+   "decision": "reject",
+   "why": "وداع is from و-د-ع"
+  },
+  {
+   "id": 220,
+   "ar": "المَدِينَة (المُنَوَّرَة)",
+   "en": "Medina",
+   "root": "دين",
+   "p": 0.67,
+   "decision": "reject",
+   "why": "مدينة is usually listed under م-د-ن"
+  },
+  {
+   "id": 329,
+   "ar": "دِينار",
+   "en": "dinar",
+   "root": "دين",
+   "p": 0.65,
+   "decision": "reject",
+   "why": "دينار is a loanword"
+  },
+  {
+   "id": 421,
+   "ar": "مَدِينَة",
+   "en": "city",
+   "root": "دين",
+   "p": 0.68,
+   "decision": "reject",
+   "why": "مدينة is usually listed under م-د-ن"
+  },
+  {
+   "id": 405,
+   "ar": "رَأْي",
+   "en": "opinion",
+   "root": "رأي",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 595,
+   "ar": "رَأى / يَرى",
+   "en": "to see",
+   "root": "رأي",
+   "p": 0.96,
+   "decision": "accept"
+  },
+  {
+   "id": 273,
+   "ar": "كُلِّيَّة التَّرْبِيَة",
+   "en": "College of Education",
+   "root": "ربب",
+   "p": 0.88,
+   "decision": "reject",
+   "why": "تربية is from ر-ب-و"
+  },
+  {
+   "id": 378,
+   "ar": "فَصْل الرَّبِيع",
+   "en": "spring",
+   "root": "ربب",
+   "p": 0.83,
+   "decision": "reject",
+   "why": "ربيع is from ر-ب-ع"
+  },
+  {
+   "id": 596,
+   "ar": "رَبِيع الآخِر",
+   "en": "Rabiʿ al-Akhir",
+   "root": "ربب",
+   "p": 0.75,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 597,
+   "ar": "رَبِيع الأَوَّل",
+   "en": "Rabiʿ al-Awwal",
+   "root": "ربب",
+   "p": 0.75,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 307,
+   "ar": "مَرْحَلَة",
+   "en": "stage, level",
+   "root": "رحل",
+   "p": 0.85,
+   "decision": "accept"
+  },
+  {
+   "id": 308,
+   "ar": "مَرْحَلَة ابْتِدائِيَّة",
+   "en": "primary stage",
+   "root": "رحل",
+   "p": 0.88,
+   "decision": "accept"
+  },
+  {
+   "id": 309,
+   "ar": "مَرْحَلَة مُتَوَسِّطَة",
+   "en": "intermediate stage",
+   "root": "رحل",
+   "p": 0.86,
+   "decision": "accept"
+  },
+  {
+   "id": 406,
+   "ar": "رِحْلَة",
+   "en": "journey, trip",
+   "root": "رحل",
+   "p": 0.89,
+   "decision": "accept"
+  },
+  {
+   "id": 440,
+   "ar": "رِحْلات",
+   "en": "trips, excursions",
+   "root": "رحل",
+   "p": 0.92,
+   "decision": "accept"
+  },
+  {
+   "id": 478,
+   "ar": "رِحْلَة سَعِيدَة",
+   "en": "have a good trip",
+   "root": "رحل",
+   "p": 0.89,
+   "decision": "accept"
+  },
+  {
+   "id": 559,
+   "ar": "السَّلامُ عَلَيْكُم وَرَحْمَةُ اللهِ وَبَرَكاتُهُ",
+   "en": "peace, mercy and blessings of God be upon you",
+   "root": "رحم",
+   "p": 0.85,
+   "decision": "accept"
+  },
+  {
+   "id": 580,
+   "ar": "وَعَلَيْكُمُ السَّلامُ وَرَحْمَةُ اللهِ وَبَرَكاتُهُ",
+   "en": "and upon you peace, mercy and blessings of God",
+   "root": "رحم",
+   "p": 0.87,
+   "decision": "accept"
+  },
+  {
+   "id": 68,
+   "ar": "الرَّسُول",
+   "en": "the Messenger",
+   "root": "رسل",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 461,
+   "ar": "مُراسَلَة",
+   "en": "correspondence",
+   "root": "رسل",
+   "p": 0.86,
+   "decision": "accept"
+  },
+  {
+   "id": 511,
+   "ar": "رَمى / يَرْمِي",
+   "en": "to throw (the pebbles)",
+   "root": "رمي",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 442,
+   "ar": "سِباحَة",
+   "en": "swimming",
+   "root": "سبح",
+   "p": 0.66,
+   "decision": "accept",
+   "note": "سَبَحَ \"to swim\" and سُبْحان \"glory be\" share the root س-ب-ح."
+  },
+  {
+   "id": 106,
+   "ar": "سَكَنَ / يَسْكُنُ",
+   "en": "to live, reside",
+   "root": "سكن",
+   "p": 0.87,
+   "decision": "accept"
+  },
+  {
+   "id": 1,
+   "ar": "السَّلامُ عَلَيْكُم",
+   "en": "peace be upon you",
+   "root": "سلم",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 2,
+   "ar": "وَعَلَيْكُمُ السَّلام",
+   "en": "and peace be upon you (reply)",
+   "root": "سلم",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 8,
+   "ar": "مَعَ السَّلامَةِ",
+   "en": "goodbye",
+   "root": "سلم",
+   "p": 0.92,
+   "decision": "accept"
+  },
+  {
+   "id": 69,
+   "ar": "صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ",
+   "en": "peace and blessings be upon him",
+   "root": "سلم",
+   "p": 0.57,
+   "decision": "accept"
+  },
+  {
+   "id": 428,
+   "ar": "إِسْلامِيَّة",
+   "en": "Islamic (f)",
+   "root": "سلم",
+   "p": 0.83,
+   "decision": "accept"
+  },
+  {
+   "id": 455,
+   "ar": "كُتُب إِسْلامِيَّة",
+   "en": "Islamic books",
+   "root": "سلم",
+   "p": 0.7,
+   "decision": "accept"
+  },
+  {
+   "id": 559,
+   "ar": "السَّلامُ عَلَيْكُم وَرَحْمَةُ اللهِ وَبَرَكاتُهُ",
+   "en": "peace, mercy and blessings of God be upon you",
+   "root": "سلم",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 560,
+   "ar": "سَلِيم",
+   "en": "sound, healthy",
+   "root": "سلم",
+   "p": 0.9,
+   "decision": "accept"
+  },
+  {
+   "id": 580,
+   "ar": "وَعَلَيْكُمُ السَّلامُ وَرَحْمَةُ اللهِ وَبَرَكاتُهُ",
+   "en": "and upon you peace, mercy and blessings of God",
+   "root": "سلم",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 583,
+   "ar": "الإِسْلام",
+   "en": "Islam",
+   "root": "سلم",
+   "p": 0.89,
+   "decision": "accept"
+  },
+  {
+   "id": 227,
+   "ar": "سَمِعَ / يَسْمَعُ",
+   "en": "to hear",
+   "root": "سمع",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 9,
+   "ar": "ما اسْمُكَ؟",
+   "en": "what is your name? (to a man)",
+   "root": "سمو",
+   "p": 0.8,
+   "decision": "accept"
+  },
+  {
+   "id": 10,
+   "ar": "ما اسْمُكِ؟",
+   "en": "what is your name? (to a woman)",
+   "root": "سمو",
+   "p": 0.76,
+   "decision": "accept"
+  },
+  {
+   "id": 340,
+   "ar": "لَوْ سَمَحْتَ",
+   "en": "excuse me, please",
+   "root": "سمو",
+   "p": 0.76,
+   "decision": "reject",
+   "why": "سمح is from س-م-ح"
+  },
+  {
+   "id": 368,
+   "ar": "سَماء",
+   "en": "sky",
+   "root": "سمو",
+   "p": 0.51,
+   "decision": "accept",
+   "note": "سَماء (sky) and اسْم (name) are both listed under س-م-و (height)."
+  },
+  {
+   "id": 559,
+   "ar": "السَّلامُ عَلَيْكُم وَرَحْمَةُ اللهِ وَبَرَكاتُهُ",
+   "en": "peace, mercy and blessings of God be upon you",
+   "root": "سمو",
+   "p": 0.58,
+   "decision": "reject",
+   "why": "no word from س-م-و"
+  },
+  {
+   "id": 7,
+   "ar": "أَهْلاً وَسَهْلاً",
+   "en": "welcome",
+   "root": "سهو",
+   "p": 0.74,
+   "decision": "reject",
+   "why": "سهل is from س-ه-ل"
+  },
+  {
+   "id": 371,
+   "ar": "شِتاء",
+   "en": "winter",
+   "root": "شتو",
+   "p": 0.85,
+   "decision": "accept"
+  },
+  {
+   "id": 379,
+   "ar": "فَصْل الشِّتاء",
+   "en": "winter (season)",
+   "root": "شتو",
+   "p": 0.89,
+   "decision": "accept"
+  },
+  {
+   "id": 115,
+   "ar": "مُشاهَدَة",
+   "en": "watching, viewing",
+   "root": "شهد",
+   "p": 0.91,
+   "decision": "accept"
+  },
+  {
+   "id": 135,
+   "ar": "شاهَدَ / يُشاهِدُ",
+   "en": "to watch",
+   "root": "شهد",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 564,
+   "ar": "صَدْر",
+   "en": "chest",
+   "root": "صدر",
+   "p": 0.92,
+   "decision": "accept"
+  },
+  {
+   "id": 63,
+   "ar": "مُصَلَّى",
+   "en": "prayer room",
+   "root": "صلو",
+   "p": 0.92,
+   "decision": "accept"
+  },
+  {
+   "id": 64,
+   "ar": "صَلَّى / يُصَلِّي",
+   "en": "to pray",
+   "root": "صلو",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 69,
+   "ar": "صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ",
+   "en": "peace and blessings be upon him",
+   "root": "صلو",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 151,
+   "ar": "الصَّلاة",
+   "en": "prayer",
+   "root": "صلو",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 218,
+   "ar": "صَلَوات",
+   "en": "prayers",
+   "root": "صلو",
+   "p": 0.91,
+   "decision": "accept"
+  },
+  {
+   "id": 541,
+   "ar": "وَصَلَ / يَصِلُ",
+   "en": "to arrive",
+   "root": "صلو",
+   "p": 0.74,
+   "decision": "reject",
+   "why": "وصل is from و-ص-ل"
+  },
+  {
+   "id": 605,
+   "ar": "صَلاة العِيد",
+   "en": "the eid prayer",
+   "root": "صلو",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 63,
+   "ar": "مُصَلَّى",
+   "en": "prayer room",
+   "root": "صلي",
+   "p": 0.6,
+   "decision": "reject",
+   "why": "ص-ل-ي here is \"to burn\" (111:3), not prayer"
+  },
+  {
+   "id": 64,
+   "ar": "صَلَّى / يُصَلِّي",
+   "en": "to pray",
+   "root": "صلي",
+   "p": 0.53,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 69,
+   "ar": "صَلَّى اللهُ عَلَيْهِ وَسَلَّمَ",
+   "en": "peace and blessings be upon him",
+   "root": "صلي",
+   "p": 0.78,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 151,
+   "ar": "الصَّلاة",
+   "en": "prayer",
+   "root": "صلي",
+   "p": 0.66,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 218,
+   "ar": "صَلَوات",
+   "en": "prayers",
+   "root": "صلي",
+   "p": 0.54,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 304,
+   "ar": "كُلِّيَّة الصَّيْدَلَة",
+   "en": "College of Pharmacy",
+   "root": "صلي",
+   "p": 0.55,
+   "decision": "reject",
+   "why": "صيدلة is a loanword"
+  },
+  {
+   "id": 605,
+   "ar": "صَلاة العِيد",
+   "en": "the eid prayer",
+   "root": "صلي",
+   "p": 0.8,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 356,
+   "ar": "تَحْتَ الصِّفْرِ",
+   "en": "below zero",
+   "root": "صيف",
+   "p": 0.51,
+   "decision": "reject",
+   "why": "صفر is from ص-ف-ر"
+  },
+  {
+   "id": 374,
+   "ar": "صَيْف",
+   "en": "summer",
+   "root": "صيف",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 412,
+   "ar": "صَفْراءُ",
+   "en": "yellow (f)",
+   "root": "صيف",
+   "p": 0.59,
+   "decision": "reject",
+   "why": "صفراء is from ص-ف-ر"
+  },
+  {
+   "id": 607,
+   "ar": "عُطْلَة الصَّيْف",
+   "en": "summer holiday",
+   "root": "صيف",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 179,
+   "ar": "طَعام",
+   "en": "food",
+   "root": "طعم",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 196,
+   "ar": "مَطْعَم",
+   "en": "restaurant",
+   "root": "طعم",
+   "p": 0.91,
+   "decision": "accept"
+  },
+  {
+   "id": 29,
+   "ar": "طَبِيبَة",
+   "en": "doctor (f)",
+   "root": "طيب",
+   "p": 0.74,
+   "decision": "reject",
+   "why": "طبيب is from ط-ب-ب"
+  },
+  {
+   "id": 235,
+   "ar": "فِكْرَة طَيِّبَة",
+   "en": "a good idea",
+   "root": "طيب",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 297,
+   "ar": "طِبّ",
+   "en": "medicine (the subject)",
+   "root": "طيب",
+   "p": 0.71,
+   "decision": "reject",
+   "why": "طب is from ط-ب-ب"
+  },
+  {
+   "id": 298,
+   "ar": "طَبِيب",
+   "en": "doctor (m)",
+   "root": "طيب",
+   "p": 0.65,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 332,
+   "ar": "طَبَق بَيْض",
+   "en": "tray of eggs",
+   "root": "طيب",
+   "p": 0.59,
+   "decision": "reject",
+   "why": "طبق is from ط-ب-ق"
+  },
+  {
+   "id": 467,
+   "ar": "إِقامَة طَيِّبَة",
+   "en": "a pleasant stay",
+   "root": "طيب",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 566,
+   "ar": "طَبِيب أَسْنان",
+   "en": "dentist",
+   "root": "طيب",
+   "p": 0.66,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 567,
+   "ar": "طَبِيب أَنْف وَأُذُن وَحَنْجَرَة",
+   "en": "ENT doctor",
+   "root": "طيب",
+   "p": 0.64,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 223,
+   "ar": "طائِرَة",
+   "en": "aeroplane",
+   "root": "طير",
+   "p": 0.84,
+   "decision": "accept"
+  },
+  {
+   "id": 300,
+   "ar": "طَيَّار",
+   "en": "pilot",
+   "root": "طير",
+   "p": 0.81,
+   "decision": "accept"
+  },
+  {
+   "id": 301,
+   "ar": "طَيَران",
+   "en": "aviation, flying",
+   "root": "طير",
+   "p": 0.9,
+   "decision": "accept"
+  },
+  {
+   "id": 305,
+   "ar": "كُلِّيَّة الطَّيَران",
+   "en": "College of Aviation",
+   "root": "طير",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 477,
+   "ar": "خُطُوط (طَيَران)",
+   "en": "airlines",
+   "root": "طير",
+   "p": 0.86,
+   "decision": "accept"
+  },
+  {
+   "id": 671,
+   "ar": "طائِر",
+   "en": "bird",
+   "root": "طير",
+   "p": 0.92,
+   "decision": "accept"
+  },
+  {
+   "id": 152,
+   "ar": "يَوْم عُطْلَة",
+   "en": "day off",
+   "root": "عطو",
+   "p": 0.63,
+   "decision": "reject",
+   "why": "عطلة is from ع-ط-ل"
+  },
+  {
+   "id": 375,
+   "ar": "عُطْلَة الأُسْبُوع",
+   "en": "weekend",
+   "root": "عطو",
+   "p": 0.51,
+   "decision": "reject",
+   "why": "as above"
+  },
+  {
+   "id": 585,
+   "ar": "أَعْطى / يُعْطِي",
+   "en": "to give",
+   "root": "عطو",
+   "p": 0.85,
+   "decision": "accept"
+  },
+  {
+   "id": 658,
+   "ar": "عَظْمة",
+   "en": "bone",
+   "root": "عظم",
+   "p": 0.85,
+   "decision": "accept",
+   "note": "عَظْم (bone) and عَظِيم (magnificent) share ع-ظ-م."
+  },
+  {
+   "id": 694,
+   "ar": "عِقْد",
+   "en": "necklace",
+   "root": "عقد",
+   "p": 0.83,
+   "decision": "accept"
+  },
+  {
+   "id": 696,
+   "ar": "عَقيد",
+   "en": "colonel",
+   "root": "عقد",
+   "p": 0.82,
+   "decision": "accept",
+   "note": "عَقِيد (colonel) and عُقَد (knots) share ع-ق-د."
+  },
+  {
+   "id": 59,
+   "ar": "مُعَلِّمَة",
+   "en": "teacher (f)",
+   "root": "علم",
+   "p": 0.58,
+   "decision": "accept"
+  },
+  {
+   "id": 269,
+   "ar": "عُلُوم",
+   "en": "science",
+   "root": "علم",
+   "p": 0.76,
+   "decision": "accept"
+  },
+  {
+   "id": 278,
+   "ar": "مُعَلِّم",
+   "en": "teacher (m)",
+   "root": "علم",
+   "p": 0.64,
+   "decision": "accept"
+  },
+  {
+   "id": 450,
+   "ar": "عِلْمِيَّة",
+   "en": "scientific (f)",
+   "root": "علم",
+   "p": 0.62,
+   "decision": "accept"
+  },
+  {
+   "id": 456,
+   "ar": "كُتُب عِلْمِيَّة",
+   "en": "scientific books",
+   "root": "علم",
+   "p": 0.77,
+   "decision": "accept"
+  },
+  {
+   "id": 269,
+   "ar": "عُلُوم",
+   "en": "science",
+   "root": "علو",
+   "p": 0.5,
+   "decision": "reject",
+   "why": "علوم is from ع-ل-م"
+  },
+  {
+   "id": 456,
+   "ar": "كُتُب عِلْمِيَّة",
+   "en": "scientific books",
+   "root": "علو",
+   "p": 0.77,
+   "decision": "reject",
+   "why": "علمية is from ع-ل-م"
+  },
+  {
+   "id": 391,
+   "ar": "اسْتَغْرَقَ / يَسْتَغْرِقُ",
+   "en": "to take (time)",
+   "root": "غير",
+   "p": 0.59,
+   "decision": "reject",
+   "why": "استغرق is from غ-ر-ق"
+  },
+  {
+   "id": 485,
+   "ar": "فَتَحَ / يَفْتَحُ",
+   "en": "to open",
+   "root": "فتح",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 634,
+   "ar": "مِفْتاح",
+   "en": "key",
+   "root": "فتح",
+   "p": 0.87,
+   "decision": "accept"
+  },
+  {
+   "id": 136,
+   "ar": "فَعَلَ / يَفْعَلُ",
+   "en": "to do",
+   "root": "فعل",
+   "p": 0.91,
+   "decision": "accept"
+  },
+  {
+   "id": 633,
+   "ar": "فيل",
+   "en": "elephant",
+   "root": "فيل",
+   "p": 0.92,
+   "decision": "accept"
+  },
+  {
+   "id": 189,
+   "ar": "قَلِيل",
+   "en": "little, few",
+   "root": "قول",
+   "p": 0.55,
+   "decision": "reject",
+   "why": "قليل is from ق-ل-ل"
+  },
+  {
+   "id": 614,
+   "ar": "قالَ / يَقُولُ",
+   "en": "to say",
+   "root": "قول",
+   "p": 0.88,
+   "decision": "accept"
+  },
+  {
+   "id": 467,
+   "ar": "إِقامَة طَيِّبَة",
+   "en": "a pleasant stay",
+   "root": "قوم",
+   "p": 0.6,
+   "decision": "accept"
+  },
+  {
+   "id": 537,
+   "ar": "مَقام إِبْراهِيمَ",
+   "en": "the Station of Abraham",
+   "root": "قوم",
+   "p": 0.64,
+   "decision": "accept"
+  },
+  {
+   "id": 70,
+   "ar": "اللهُ أَكْبَرُ",
+   "en": "God is greatest",
+   "root": "كبر",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 161,
+   "ar": "كَبِير",
+   "en": "big, large",
+   "root": "كبر",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 191,
+   "ar": "كَثِير",
+   "en": "much, many",
+   "root": "كثر",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 270,
+   "ar": "كانَ / يَكُونُ",
+   "en": "to be",
+   "root": "كون",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 618,
+   "ar": "مَكان",
+   "en": "place",
+   "root": "كون",
+   "p": 0.51,
+   "decision": "accept"
+  },
+  {
+   "id": 3,
+   "ar": "كَيْفَ حالُكَ",
+   "en": "how are you? (to a man)",
+   "root": "كيف",
+   "p": 0.91,
+   "decision": "accept"
+  },
+  {
+   "id": 4,
+   "ar": "كَيْفَ حالُكِ",
+   "en": "how are you? (to a woman)",
+   "root": "كيف",
+   "p": 0.92,
+   "decision": "accept"
+  },
+  {
+   "id": 383,
+   "ar": "كَيْفَ",
+   "en": "how",
+   "root": "كيف",
+   "p": 0.9,
+   "decision": "accept"
+  },
+  {
+   "id": 101,
+   "ar": "مِرْآة",
+   "en": "mirror",
+   "root": "مرأ",
+   "p": 0.5,
+   "decision": "reject",
+   "why": "مرآة is from ر-أ-ي"
+  },
+  {
+   "id": 341,
+   "ar": "امْرَأَة",
+   "en": "woman",
+   "root": "مرأ",
+   "p": 0.92,
+   "decision": "accept"
+  },
+  {
+   "id": 461,
+   "ar": "مُراسَلَة",
+   "en": "correspondence",
+   "root": "مرأ",
+   "p": 0.54,
+   "decision": "reject",
+   "why": "مراسلة is from ر-س-ل"
+  },
+  {
+   "id": 535,
+   "ar": "المَرْوَة",
+   "en": "Marwa",
+   "root": "مرأ",
+   "p": 0.62,
+   "decision": "reject",
+   "why": "المروة is from م-ر-و"
+  },
+  {
+   "id": 637,
+   "ar": "مال",
+   "en": "money",
+   "root": "مول",
+   "p": 0.73,
+   "decision": "accept"
+  },
+  {
+   "id": 222,
+   "ar": "المَسْجِد النَّبَوِيّ",
+   "en": "the Prophet's Mosque",
+   "root": "نبأ",
+   "p": 0.89,
+   "decision": "accept"
+  },
+  {
+   "id": 220,
+   "ar": "المَدِينَة (المُنَوَّرَة)",
+   "en": "Medina",
+   "root": "نور",
+   "p": 0.7,
+   "decision": "accept"
+  },
+  {
+   "id": 763,
+   "ar": "النَّهار",
+   "en": "daytime",
+   "root": "نور",
+   "p": 0.51,
+   "decision": "reject",
+   "why": "نهار is from ن-ه-ر"
+  },
+  {
+   "id": 306,
+   "ar": "كُلِّيَّة الهَنْدَسَة",
+   "en": "College of Engineering",
+   "root": "هدي",
+   "p": 0.56,
+   "decision": "reject",
+   "why": "هندسة is a loanword"
+  },
+  {
+   "id": 423,
+   "ar": "هادِئ",
+   "en": "quiet, calm",
+   "root": "هدي",
+   "p": 0.63,
+   "decision": "reject",
+   "why": "هادئ is from ه-د-أ"
+  },
+  {
+   "id": 540,
+   "ar": "هَدْي",
+   "en": "sacrificial animal",
+   "root": "هدي",
+   "p": 0.72,
+   "decision": "accept"
+  },
+  {
+   "id": 713,
+   "ar": "هَدِيّة",
+   "en": "gift",
+   "root": "هدي",
+   "p": 0.81,
+   "decision": "accept"
+  },
+  {
+   "id": 482,
+   "ar": "عُمْرَة مَقْبُولَة",
+   "en": "may your umrah be accepted",
+   "root": "وقب",
+   "p": 0.87,
+   "decision": "reject",
+   "why": "مقبولة is from ق-ب-ل"
+  },
+  {
+   "id": 572,
+   "ar": "قابَلَ / يُقابِلُ",
+   "en": "to meet",
+   "root": "وقب",
+   "p": 0.7,
+   "decision": "reject",
+   "why": "قابل is from ق-ب-ل"
+  },
+  {
+   "id": 766,
+   "ar": "المُسْتَقْبَل",
+   "en": "the future",
+   "root": "وقب",
+   "p": 0.75,
+   "decision": "reject",
+   "why": "مستقبل is from ق-ب-ل"
+  },
+  {
+   "id": 51,
+   "ar": "أَوْلاد",
+   "en": "children, boys",
+   "root": "ولد",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 56,
+   "ar": "والِد",
+   "en": "father",
+   "root": "ولد",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 57,
+   "ar": "والِدَة",
+   "en": "mother",
+   "root": "ولد",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 111,
+   "ar": "لَدَى",
+   "en": "to have; at",
+   "root": "ولد",
+   "p": 0.65,
+   "decision": "reject",
+   "why": "لدى is a particle"
+  },
+  {
+   "id": 396,
+   "ar": "بَلَد",
+   "en": "country, town",
+   "root": "ولد",
+   "p": 0.59,
+   "decision": "reject",
+   "why": "بلد is from ب-ل-د"
+  },
+  {
+   "id": 639,
+   "ar": "وَلَد",
+   "en": "boy",
+   "root": "ولد",
+   "p": 0.95,
+   "decision": "accept"
+  },
+  {
+   "id": 752,
+   "ar": "يَد",
+   "en": "hand",
+   "root": "يدي",
+   "p": 0.76,
+   "decision": "accept"
+  },
+  {
+   "id": 152,
+   "ar": "يَوْم عُطْلَة",
+   "en": "day off",
+   "root": "يوم",
+   "p": 0.92,
+   "decision": "accept"
+  },
+  {
+   "id": 153,
+   "ar": "يَوْم عَمَل",
+   "en": "working day",
+   "root": "يوم",
+   "p": 0.91,
+   "decision": "accept"
+  },
+  {
+   "id": 283,
+   "ar": "يَوْم دِراسِيّ",
+   "en": "school day",
+   "root": "يوم",
+   "p": 0.93,
+   "decision": "accept"
+  },
+  {
+   "id": 622,
+   "ar": "يَوْم عِيد",
+   "en": "festival day",
+   "root": "يوم",
+   "p": 0.88,
+   "decision": "accept"
+  },
+  {
+   "id": 760,
+   "ar": "اليَوْم",
+   "en": "today",
+   "root": "يوم",
+   "p": 0.94,
+   "decision": "accept"
+  },
+  {
+   "id": 34,
+   "ar": "واحِد",
+   "en": "one",
+   "root": "أحد",
+   "p": 0.48,
+   "decision": "accept",
+   "why": "rescued below threshold on review",
+   "note": "Dictionaries list both under و-ح-د; the corpus lists أَحَد under أ-ح-د. Both mean \"one\"."
+  },
+  {
+   "id": 466,
+   "ar": "أَقامَ / يُقِيمُ",
+   "en": "to stay, reside",
+   "root": "قوم",
+   "p": 0.44,
+   "decision": "accept",
+   "why": "rescued below threshold on review"
+  }
+ ]
+}

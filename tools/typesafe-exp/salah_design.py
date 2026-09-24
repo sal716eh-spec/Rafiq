@@ -31,3 +31,20 @@ print("design   value  motivate  ease")
 for o in O:
     a=lambda q:sum(r[(o,l)][q]["score"] for l in L)/len(L)
     print(f"{o:7}  {a('value'):.2f}   {a('motiv'):.2f}      {a('effort'):.2f}")
+
+# Where should the salah track live?
+NAV=(" Current navigation: four tabs (Home, Practise, Progress, Settings). Home = the one daily path with a Continue button, plus a Review button. "
+ "Practise = a menu of four buttons: Weak-spots, Beyond the lessons, Real-life scenes (six role-play conversations: airport, doctor, masjid, restaurant, taxi, family visit), Redo a unit; "
+ "a Spelling bee is planned there too.")
+P={"in_scenes":"Put the salah lessons inside 'Real-life scenes' as a seventh scene.",
+   "practise_btn":"A new button in Practise called 'Your salah' (or 'Understand your salah'), opening its own step-by-step track.",
+   "home_track":"On Home, a second track under the daily path: a 'Your salah' card with its own Continue button and progress ('Al-Fatiha: 18 of 29 words'), also reachable from Practise.",
+   "own_tab":"A fifth tab in the bottom navigation called 'Salah'."}
+QP={"find":{"type":"score","instructions":"`app``nav` Learner: `learner`. Placement: `option`. How easily would this learner find it and come back to it?","criteria":["Hard","OK","Easy","Very easy"]},
+    "fit":{"type":"score","instructions":"`app``nav` Placement: `option`. How well does it fit what that part of the app is for, keeping the app simple and uncluttered?","criteria":["Poor fit","OK","Good fit","Perfect fit"]},
+    "signal":{"type":"score","instructions":"`app``nav` Placement: `option`. How clearly does it show new visitors that understanding salah is a core part of Rafiq (its selling point)?","criteria":["Hidden","Somewhat","Clearly","Front and centre"]}}
+with ThreadPoolExecutor(8) as ex: rp=dict(ex.map(lambda j:(j,ask({"app":APP,"nav":NAV,"learner":L[j[1]],"option":P[j[0]]},QP)["answers"]),[(o,l) for o in P for l in L]))
+print("\nplacement      find  fit   signal  total")
+for o in P:
+    a=lambda q:sum(rp[(o,l)][q]["score"] for l in L)/len(L)
+    print(f"{o:13}  {a('find'):.2f}  {a('fit'):.2f}  {a('signal'):.2f}    {a('find')+a('fit')+a('signal'):.2f}")

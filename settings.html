@@ -117,6 +117,13 @@ main.wrap{max-width:680px}
       </span>
     </div>
     <div class="row">
+      <div class="rl"><div class="rt">Answer style</div><div class="rs">For "Say this in Arabic": word tiles in the early units, typing later. Automatic moves on when you're ready.</div></div>
+      <span>
+        <select id="ansSel"><option value="auto">Automatic</option><option value="tiles">Always word tiles</option><option value="type">Always type</option></select>
+        <span class="saved" id="ansSaved">Saved</span>
+      </span>
+    </div>
+    <div class="row">
       <div class="rl"><div class="rt">Playback speed</div><div class="rs">How fast the Arabic is spoken.</div></div>
       <span>
         <input id="rateRange" type="range" min="0.5" max="1.1" step="0.05">
@@ -283,6 +290,12 @@ function wireProfileField(inputId, savedId, key, evt){
   try{ sel.value=localStorage.getItem('rafiq_kb')==='phone'?'phone':'app'; }catch(_){}
   sel.addEventListener('change',()=>{ try{ localStorage.setItem('rafiq_kb', sel.value); }catch(_){}
     const f=document.getElementById('kbSaved'); f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),1400); });
+})();
+(function(){
+  const sel=document.getElementById('ansSel'); if(!sel) return;
+  try{ const v=localStorage.getItem('rafiq_answer_style'); sel.value=v==='tiles'||v==='type'?v:'auto'; }catch(_){}
+  sel.addEventListener('change',()=>{ try{ localStorage.setItem('rafiq_answer_style', sel.value); }catch(_){}
+    const f=document.getElementById('ansSaved'); f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),1400); });
 })();
 (function(){
   const sel=document.getElementById('soundSel'); if(!sel) return;

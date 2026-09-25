@@ -215,11 +215,43 @@
     return n;
   }
 
+  /* How "Say this in Arabic" is answered: word tiles in units 1–3, tiles with
+     a piece or two that don't belong in units 4–6, typing from unit 7. Per
+     learner, per unit: 5 tile answers right first time in a row moves that unit
+     on a stage; typing that goes badly (under 5 of the last 10 right) brings it
+     back a stage. Settings can fix it to tiles or typing. Kept on the device. */
+  const ANSWER_STYLES=['tiles','mixed','type'];
+  const answerPref = () => { try{ const v=localStorage.getItem('rafiq_answer_style'); return v==='tiles'||v==='type' ? v : 'auto'; }catch(_){ return 'auto'; } };
+  const answerState = () => { try{ return JSON.parse(localStorage.getItem('rafiq_answer'))||{}; }catch(_){ return {}; } };
+  const saveAnswerState = s => { try{ localStorage.setItem('rafiq_answer', JSON.stringify(s)); }catch(_){} };
+  function answerStyle(n){
+    const pref=answerPref();
+    if(pref!=='auto') return pref;
+    const u=+n, base = u<=3 ? 0 : u<=6 ? 1 : 2, shift=(answerState().shift||{})[n]||0;
+    return ANSWER_STYLES[Math.max(0, Math.min(2, base+shift))];
+  }
+  /* After each "Say this in Arabic": style is how it was answered, ok whether
+     it was right first time. Returns 'up' or 'down' when the unit's stage moves. */
+  function answered(n, style, ok){
+    const s=answerState(); s.shift=s.shift||{}; s.run=s.run||{}; s.typed=s.typed||{};
+    let moved=null;
+    if(style==='type'){
+      const t=(s.typed[n]||[]).concat(ok?1:0).slice(-10); s.typed[n]=t;
+      if(t.length===10 && t.reduce((a,b)=>a+b,0)<5 && answerStyle(n)==='type'){ s.shift[n]=(s.shift[n]||0)-1; s.typed[n]=[]; moved='down'; }
+    } else {
+      s.run[n] = ok ? (s.run[n]||0)+1 : 0;
+      if(s.run[n]>=5 && answerStyle(n)!=='type'){ s.shift[n]=(s.shift[n]||0)+1; s.run[n]=0; moved='up'; }
+    }
+    saveAnswerState(s);
+    return answerPref()==='auto' ? moved : null;
+  }
+
   function wordsOf(p, batch){
     const ids = batch == null ? p.words : p.words.slice(batch*BATCH, (batch+1)*BATCH);
     return ids.map(wordById).filter(Boolean);
   }
 
   window.RafiqPath = { reviewScope, metWords, sentenceDone, period, wordsByDay, wordsReport, bestStreak, reviewDue, hasLearned, COMING, STREAK_GOALS, streakGoal, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
-                       complete, place, markDay, wordMet, week, doneToday, streak, wordsOf, unitData, wordById };
+                       complete, place, markDay, wordMet, week, doneToday, streak, wordsOf, unitData, wordById,
+                       answerStyle, answered, answerPref };
 })();

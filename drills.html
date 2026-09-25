@@ -428,16 +428,6 @@ main{padding:18px 0 60px 28px;min-width:0}
 .tf .task .ena{font-size:11.5px;color:var(--ink-soft)}
 .arrow{font-family:var(--ut);font-size:10.5px;color:var(--gold);letter-spacing:.1em;margin:10px 0 8px}
 
-/* build */
-.drop{direction:rtl;min-height:60px;border-bottom:2px solid var(--rule);padding:8px 4px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-bottom:12px}
-.drop.empty::after{content:"اضْغَطِ الْقِطَعَ بِالتَّرْتِيبِ";font-family:var(--ar);font-size:16px;line-height:1.8;color:var(--ink-soft);opacity:.55}
-.drop.right{border-bottom-color:var(--verdigris)}
-.drop.wrong{border-bottom-color:var(--rubric)}
-.tile{font-family:var(--ar);font-size:19px;direction:rtl;background:var(--paper-deep);border:1px solid var(--rule);border-radius:2px;padding:3px 12px;cursor:pointer;line-height:1.8;color:var(--ink);
-  touch-action:manipulation;transition:transform var(--press) var(--ease-out);-webkit-user-select:none;user-select:none}
-.tile.placed{background:var(--verdigris);border-color:var(--verdigris);color:var(--paper)}
-.tile:active{transform:scale(.94)}
-.pool{direction:rtl;display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;min-height:36px}
 
 /* answer input + diff */
 .ansrow{display:flex;gap:8px;align-items:stretch;margin-top:12px;flex-wrap:wrap}
@@ -563,7 +553,7 @@ footer{border-top:1px solid var(--rule);padding:16px 28px 30px;font-size:12px;co
   .gcard .ex{font-size:19px}
 
   /* everything tappable gets a real target */
-  .chip,.tile,.opt{min-height:44px;display:inline-flex;align-items:center;padding:4px 14px;font-size:18px}
+  .chip,.opt{min-height:44px;display:inline-flex;align-items:center;padding:4px 14px;font-size:18px}
   .btn{min-height:42px;padding:8px 14px}
   .say{min-height:34px;display:inline-flex;align-items:center;padding:2px 10px}
   .rb{min-height:44px;padding:6px 18px;font-size:13px}
@@ -579,7 +569,6 @@ footer{border-top:1px solid var(--rule);padding:16px 28px 30px;font-size:12px;co
   .ansrow{flex-direction:column}
   input.ar-in{width:100%;min-width:0;font-size:20px;min-height:50px}
   .ansrow .btn,.ansrow .mic{width:100%;min-height:46px}
-  .drop{min-height:66px}
   .line{grid-template-columns:26px minmax(0,1fr);gap:9px}
   .ladder{padding-right:14px;margin-bottom:24px}
   .rung::before{right:-19px}
@@ -592,7 +581,7 @@ footer{border-top:1px solid var(--rule);padding:16px 28px 30px;font-size:12px;co
   .line .ar,.frame .sent,.qar{font-size:19px}
   .rung{font-size:19px}
   .bad,.good,.diff{font-size:18px}
-  .chip,.tile,.opt{font-size:17px}
+  .chip,.opt{font-size:17px}
   .unit{width:132px}
 }
 
@@ -631,7 +620,6 @@ footer{border-top:1px solid var(--rule);padding:16px 28px 30px;font-size:12px;co
 .say:hover{color:var(--verdigris);border-color:var(--verdigris)}
 .chip:hover{border-color:var(--verdigris)}
 .opt:hover{border-color:var(--verdigris)}
-.tile:hover{border-color:var(--verdigris)}
 .rb.again:hover{border-color:var(--rubric);color:var(--rubric)}
 .rb.good:hover,.rb.easy:hover{border-color:var(--verdigris);color:var(--verdigris)}
 .gcard .ex:hover{color:var(--verdigris)}
@@ -1261,59 +1249,9 @@ const RENDER={
     const t=it.d,c=document.createElement('div');c.className='card';
     c.appendChild(taskBar(...TASKS.build));
     c.insertAdjacentHTML('beforeend',`<div class="prompt-en">${t.en}</div>`);
-    const drop=document.createElement('div');drop.className='drop empty';
-    const pool=document.createElement('div');pool.className='pool';
-    const verdict=document.createElement('div');verdict.className='verdict';
-    const placed=[];
-    let order=shuffle(t.parts);
-    if(t.parts.length>1&&order.join('|')===t.parts.join('|'))order=shuffle(order);
-    const refresh=()=>drop.classList.toggle('empty',placed.length===0);
-    order.forEach(p=>{
-      const b=document.createElement('button');b.className='tile';b.type='button';b.textContent=p;
-      b.onclick=()=>{
-        drop.classList.remove('right','wrong');verdict.textContent='';verdict.className='verdict';
-        if(b.classList.contains('placed')){b.classList.remove('placed');pool.appendChild(b);placed.splice(placed.indexOf(p),1)}
-        else{b.classList.add('placed');drop.appendChild(b);placed.push(p)}
-        refresh();
-      };
-      pool.appendChild(b);
-    });
-    c.appendChild(drop);c.appendChild(pool);
-    const bar=document.createElement('div');bar.className='toolbar';bar.style.marginBottom='0';
-    const chk=document.createElement('button');chk.className='btn';chk.type='button';chk.textContent='Check the order';
-    const rst=document.createElement('button');rst.className='btn';rst.type='button';rst.textContent='Clear';
-    chk.onclick=()=>{
-      if(placed.length<t.parts.length){verdict.className='verdict no';verdict.textContent='Place every piece first.';return}
-      const text=joinAr(t.parts);
-      if(placed.join('|')===t.parts.join('|')){
-        drop.classList.add('right');drop.classList.remove('wrong');window.RafiqSound&&RafiqSound.answer(true);
-        verdict.className='verdict ok';verdict.textContent='Correct — now say it aloud twice.';
-        say(text,null);
-        if(!c.dataset.done){c.dataset.done='1';c.appendChild(rateRow(it.id))}
-      }else{
-        const notYet=()=>{
-          drop.classList.add('wrong');drop.classList.remove('right');window.RafiqSound&&RafiqSound.answer(false);
-          verdict.className='verdict no';verdict.textContent='Not yet. Look for the word that has to come first.';
-        };
-        if(!(window.RafiqJudge&&RafiqJudge.on)){notYet();return}
-        // Arabic often allows more than one order; ask before calling it wrong.
-        const mine=placed.join('|');
-        verdict.className='verdict';verdict.textContent='Checking…';
-        RafiqJudge.build(t.en,text,joinAr(placed)).then(ok=>{
-          if(placed.join('|')!==mine)return;              // tiles moved while we waited
-          if(!ok){notYet();return}
-          drop.classList.add('right');drop.classList.remove('wrong');window.RafiqSound&&RafiqSound.answer(true);
-          verdict.className='verdict ok';
-          verdict.textContent='That order works too ✓ Another way to say it: '+text;
-          say(joinAr(placed),null);
-          if(!c.dataset.done){c.dataset.done='1';c.appendChild(rateRow(it.id))}
-        });
-      }
-    };
-    rst.onclick=()=>{placed.length=0;drop.classList.remove('right','wrong');verdict.textContent='';
-      [...drop.querySelectorAll('.tile')].forEach(b=>{b.classList.remove('placed');pool.appendChild(b)});refresh()};
-    bar.appendChild(chk);bar.appendChild(rst);
-    c.appendChild(bar);c.appendChild(verdict);
+    const tl=RafiqTiles.create({parts:t.parts, en:t.en, say, checkLabel:'Check the order', okText:'Correct — now say it aloud twice.',
+      onCorrect:()=>{ if(!c.dataset.done){c.dataset.done='1';c.appendChild(rateRow(it.id))} }});
+    c.appendChild(tl.el);
     return c;
   },
   produce(it){
@@ -1902,6 +1840,7 @@ backUnitsEl.addEventListener('click', showPicker);
 <script src="sounds.js?v=1"></script>
 <script src="progress.js?v=20260924"></script>
 <script src="translations.js?v=1"></script>
+<script src="tiles.js?v=1"></script>
 <script src="arkb.js?v=3" defer></script>
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>

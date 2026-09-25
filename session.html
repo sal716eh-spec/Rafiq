@@ -131,6 +131,11 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 .nextrow a:active,.nextrow button:active{transform:scale(.96)}
 .nextrow .primary{background:var(--verdigris);border-color:var(--verdigris);color:#fff}
 .nextrow small{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
+.swap{display:block;margin:12px auto 0;background:none;border:0;padding:6px 8px;font-family:var(--la);font-size:13.5px;
+  color:var(--verdigris);text-decoration:underline;cursor:pointer;touch-action:manipulation}
+.swap:active{opacity:.55}
+.stage-note{margin-top:12px;padding:10px 12px;border-radius:8px;font-size:14px;color:var(--ink);
+  background:color-mix(in srgb,var(--gold) 14%,var(--card));border:1px solid color-mix(in srgb,var(--gold) 50%,transparent)}
 @media (max-width:860px){
   #signout{font-size:12px;padding:8px 10px}
   .card{padding:16px}.taskbar{margin:-16px -16px 14px;padding:10px 12px}
@@ -181,7 +186,8 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 <script src="audio.js?v=900"></script>
 <script src="path-data.js?v=20260922"></script>
 <script src="alphabet-data.js?v=20260926"></script>
-<script src="path.js?v=20260926"></script>
+<script src="path.js?v=20260927"></script>
+<script src="tiles.js?v=1"></script>
 <script src="mistakes.js?v=20260922"></script>
 <script src="item-tags.js?v=20260922"></script>
 <script src="nav.js?v=20260924"></script>
@@ -463,6 +469,7 @@ function vLink(it){
   c.appendChild(ob);c.appendChild(why);c.appendChild(tr);panel.appendChild(c);
 }
 function vDrill(it){
+  if(it.mode==='build'||it.mode==='produce') return vSay(it);
   const c=document.createElement('div');c.className='card';
   const d=it.d;
   if(it.mode==='cloze'){
@@ -508,29 +515,86 @@ function vDrill(it){
     btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.ans,g);
       c.appendChild(rateRow(q=>gradeDrill(ID.drill(it),q),it.kind))};
     c.appendChild(btn);c.appendChild(box);
-  } else if(it.mode==='build'){
-    c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
-    c.insertAdjacentHTML('beforeend',`<div class="qen">${d.en}</div>`);
-    const target=joinAr(d.parts);
-    c.appendChild(answerRow(target,t=>RafiqJudge.produce(d.en,target,t)));
-    const btn=document.createElement('button');btn.className='btn';btn.textContent='Show the answer';btn.style.cssText='width:100%;margin-top:12px';
-    const box=document.createElement('div');box.style.display='none';
-    const g=document.createElement('div');g.className='good';g.textContent=target;box.appendChild(tappable(g,target));
-    btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(target,g);
-      c.appendChild(rateRow(q=>gradeDrill(ID.drill(it),q),it.kind))};
-    c.appendChild(btn);c.appendChild(box);
-  } else {                                   // produce
-    c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
-    c.insertAdjacentHTML('beforeend',`<div class="qen">${d.en}</div>`);
-    c.appendChild(answerRow(d.ar,t=>RafiqJudge.produce(d.en,d.ar,t)));
-    const btn=document.createElement('button');btn.className='btn';btn.textContent='Show the answer';btn.style.cssText='width:100%;margin-top:12px';
-    const box=document.createElement('div');box.style.display='none';
-    const g=document.createElement('div');g.className='good';g.textContent=d.ar;box.appendChild(tappable(g,d.ar));
-    btn.onclick=()=>{box.style.display='block';btn.style.display='none';say(d.ar,g);
-      c.appendChild(rateRow(q=>gradeDrill(ID.drill(it),q),it.kind))};
-    c.appendChild(btn);c.appendChild(box);
   }
   panel.appendChild(c);
+}
+
+/* "Say this in Arabic" (build and produce items). Word tiles in the early
+   units, typing later (RafiqPath.answerStyle); either card can switch to the
+   other for this one sentence. A tile answer is graded for you and never
+   counts as "easy": right first time is "good", anything else "again". */
+const PUNCT=/[؟?!.،,:]/g, lettersOf=s=>norm(s).replace(/\s/g,'');
+function sayParts(it){
+  if(it.mode==='build') return it.d.parts;
+  // a conversation line: its words, punctuation kept with the word before, long lines in about 7 pieces
+  const w=[]; it.d.ar.split(/\s+/).filter(Boolean).forEach(t=>{ if(!t.replace(PUNCT,'') && w.length) w[w.length-1]+=t; else w.push(t); });
+  const size=Math.ceil(w.length/7), out=[];
+  for(let i=0;i<w.length;i+=size) out.push(w.slice(i,i+size).join(' '));
+  return out;
+}
+function edits(a,b){
+  const d=Array.from({length:a.length+1},(_,i)=>[i].concat(new Array(b.length).fill(0)));
+  for(let j=1;j<=b.length;j++) d[0][j]=j;
+  for(let i=1;i<=a.length;i++) for(let j=1;j<=b.length;j++)
+    d[i][j]=Math.min(d[i-1][j]+1, d[i][j-1]+1, d[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+  return d[a.length][b.length];
+}
+/* Pieces that don't belong: other words from the same unit that look a bit
+   like words in this sentence. Never a word one letter away from one of them
+   (طالِب/طالِبَة, أَنْتَ/أَنْتِ), which could be right too. */
+function decoys(it, parts){
+  const u=it.unit, pool=new Set();
+  (u.builds||[]).forEach(b=>b.parts.forEach(p=>p.split(/\s+/).forEach(t=>pool.add(t.replace(PUNCT,'')))));
+  (u.dialogue||[]).forEach(l=>l[1].split(/\s+/).forEach(t=>pool.add(t.replace(PUNCT,''))));
+  const mine=parts.join(' ').split(/\s+/).map(lettersOf).filter(Boolean);
+  const seen=new Set(), cands=[];
+  pool.forEach(t=>{ const l=lettersOf(t);
+    if(l.length<2 || seen.has(l)) return; seen.add(l);
+    const near=Math.min(...mine.map(m=>edits(l,m)));
+    if(near<=1 || mine.some(m=>m.includes(l)||l.includes(m))) return;
+    cands.push({t, near}); });
+  cands.sort((a,b)=>a.near-b.near);
+  return shuffle(cands.slice(0,6)).slice(0, parts.length<=3 ? 1 : 2).map(x=>x.t);
+}
+function vSay(it, forced, old){
+  const d=it.d, n=it.unit.n, style=forced||RafiqPath.answerStyle(n);
+  const parts=sayParts(it), model=it.mode==='build' ? joinAr(parts) : d.ar;
+  const c=document.createElement('div'); c.className='card';
+  c.appendChild(taskBar('Say this in Arabic','قُلْها بِالْعَرَبِيَّةِ'));
+  c.insertAdjacentHTML('beforeend',`<div class="qen">${d.en}</div>`);
+  const swap=document.createElement('button'); swap.type='button'; swap.className='swap';
+  const btn=document.createElement('button'); btn.className='btn'; btn.textContent='Show the answer'; btn.style.cssText='width:100%;margin-top:12px';
+  const box=document.createElement('div'); box.style.display='none';
+  const g=document.createElement('div'); g.className='good'; g.textContent=model; box.appendChild(tappable(g,model));
+  let answered=false;
+  if(style==='type'){
+    c.appendChild(answerRow(model,t=>RafiqJudge.produce(d.en,model,t)));
+    swap.textContent='Use word tiles';
+    swap.onclick=()=>vSay(it,'tiles',c);
+    btn.onclick=()=>{ box.style.display='block'; btn.style.display='none'; swap.remove(); say(model,g);
+      c.appendChild(rateRow(q=>{ gradeDrill(ID.drill(it),q); RafiqPath.answered(n,'type',q!=='again'); },it.kind)); };
+  } else {
+    // tiles first time right: graded for you, then on
+    const settle=ok=>{
+      if(answered) return; answered=true;
+      const q=ok?'good':'again'; tally[q]++; if(!ok) kindWrong[it.kind]++;
+      gradeDrill(ID.drill(it),q);
+      const moved=RafiqPath.answered(n,style,ok);
+      btn.remove(); swap.remove();
+      if(moved==='up') c.insertAdjacentHTML('beforeend',`<div class="stage-note">${style==='tiles'
+        ?'Five in a row! From now on this unit adds a piece or two that don\'t belong.'
+        :'Five in a row! You\'ll type your answers in this unit from now on.'}</div>`);
+      c.appendChild(nextRow());
+    };
+    const tl=RafiqTiles.create({parts, extra: style==='mixed' ? decoys(it,parts) : [], en:d.en, say,
+      onCorrect:r=>settle(r.firstTry)});
+    c.appendChild(tl.el);
+    swap.textContent='Type it instead';
+    swap.onclick=()=>vSay(it,'type',c);
+    btn.onclick=()=>{ tl.reveal(); say(model,tl.el.querySelector('.tl-line')); settle(false); };
+  }
+  c.appendChild(btn); c.appendChild(box); c.appendChild(swap);
+  if(old) old.replaceWith(c); else panel.appendChild(c);
 }
 Progress.init().then(()=>{
   if(REDO && !RafiqPath.unitDone(RafiqPath.units().find(p=>p.n===UNIT)||{n:'',words:[]})){ location.href='practise.html'; return; }

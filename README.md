@@ -98,6 +98,7 @@ Upcoming units (Travel & directions, Health & the body, Ramadan & Eid, Telling s
 
 - The 12 first-conversation dialogues were rewritten for the independent app (`tools/new-dialogues.json`) and checked with TypeSafe; **a teacher should still read them**, along with the vowel marks and case endings throughout.
 - English glosses and transliterations in `vocab-data.js` are editorial.
+- "Say this in Arabic" uses word tiles in units 1–3, tiles plus a piece or two that don't belong in units 4–6, and typing from unit 7 (`RafiqPath.answerStyle`; learners can change it in Settings). The extra pieces are picked automatically from the same unit's words, never one letter away from a word in the sentence; a teacher should still look over a sample (`decoys()` in `session.html`).
 - The reading starter's example words (`alphabet-data.js`: three per letter, one per vowel mark) are mostly from `vocab-data.js`; a teacher should check them, especially the few that aren't (e.g. حَدِيث, ثَلْج, تِلْمِيذ, عَطَش, عَصِير, قَمِيص, قِطّ, حافِظ, صَغِير, فارِغ). Run **Render audio** to record the new letter names and words; until then the device voice reads them. The listening test only uses words that already have recordings.
 - Built-in speech is fine for rhythm and shadowing, not a pronunciation model.
 

@@ -12901,6 +12901,370 @@
   "chars": 3
  },
  {
+  "id": "1q9nhp9",
+  "text": "أَلِف",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "36rtyj",
+  "text": "باء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "36rvjd",
+  "text": "تاء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1re7hj7",
+  "text": "مَتَى",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "36rxyg",
+  "text": "ثاء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1xq4vi0",
+  "text": "حَدِيث",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 6
+ },
+ {
+  "id": "y6epyu",
+  "text": "جِيم",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 4
+ },
+ {
+  "id": "1qd2gy0",
+  "text": "جَمَل",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "1qez7ui",
+  "text": "ثَلْج",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "36rt7y",
+  "text": "حاء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "36rsdp",
+  "text": "خاء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "36rutl",
+  "text": "دال",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1qcbyok",
+  "text": "دَرْس",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "36rbbq",
+  "text": "ذال",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1pzrmwq",
+  "text": "ذَهَب",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "1tj0n52",
+  "text": "تِلْمِيذ",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 8
+ },
+ {
+  "id": "36ranm",
+  "text": "راء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "36rcwq",
+  "text": "زاي",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1pydb3f",
+  "text": "زَيْت",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "y5xt1m",
+  "text": "سِين",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 4
+ },
+ {
+  "id": "y6kve5",
+  "text": "شِين",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 4
+ },
+ {
+  "id": "1qkduwr",
+  "text": "شَمْس",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "1q5rlnj",
+  "text": "عَطَش",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "36rz5k",
+  "text": "صاد",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1qf9fvw",
+  "text": "عَصِير",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 6
+ },
+ {
+  "id": "36rybf",
+  "text": "ضاد",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1qiwtms",
+  "text": "ضَيْف",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "36s0qc",
+  "text": "طاء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "y9oky9",
+  "text": "قِطّ",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 4
+ },
+ {
+  "id": "36rhbv",
+  "text": "ظاء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1q56cgm",
+  "text": "ظُهْر",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "40f16",
+  "text": "عَظْمَة",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 7
+ },
+ {
+  "id": "1qdy6xy",
+  "text": "حافِظ",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "1q5th8s",
+  "text": "عَيْن",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "1q3nwun",
+  "text": "غَيْن",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "2x19an",
+  "text": "صَغِير",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 6
+ },
+ {
+  "id": "1tb4a2g",
+  "text": "فارِغ",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "36vaf6",
+  "text": "فاء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "y9kyka",
+  "text": "فِيل",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 4
+ },
+ {
+  "id": "36vfz5",
+  "text": "قاف",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "36vc2o",
+  "text": "كاف",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "36vb8j",
+  "text": "لام",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "y7hh1b",
+  "text": "مِيم",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 4
+ },
+ {
+  "id": "y9jabm",
+  "text": "نُون",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 4
+ },
+ {
+  "id": "y9jaet",
+  "text": "نُور",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 4
+ },
+ {
+  "id": "y7h9bu",
+  "text": "مَنْ",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 4
+ },
+ {
+  "id": "36v8uc",
+  "text": "هاء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1tcv5yt",
+  "text": "هِلال",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "36vkbm",
+  "text": "واو",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "1thxypq",
+  "text": "يَوْم",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 5
+ },
+ {
+  "id": "36vlxl",
+  "text": "ياء",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 3
+ },
+ {
+  "id": "scfhpb",
+  "text": "كِتابٌ",
+  "bucket": "alphabet",
+  "unit": "00",
+  "chars": 6
+ },
+ {
   "id": "1lnnvrj",
   "text": "السَّلامُ عَلَيْكُمْ. أَعْطِنِي جَوازَ السَّفَرِ، مِنْ فَضْلِكَ.",
   "bucket": "scene",
@@ -13760,13 +14124,6 @@
   "bucket": "connector-ex",
   "unit": "-",
   "chars": 14
- },
- {
-  "id": "y7h9bu",
-  "text": "مَنْ",
-  "bucket": "connector",
-  "unit": "-",
-  "chars": 4
  },
  {
   "id": "o2yn15",

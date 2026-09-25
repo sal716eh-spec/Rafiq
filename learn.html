@@ -501,7 +501,7 @@ function runHearing(p, step){
       const body=el(`<div class="done"><div class="tick">🎧</div><h2>${score} / ${items.length}</h2>
         <p>You need ${TEST_PASS} to pass. Let's practise the letters that tripped you up, then try again.</p>
         <div class="miss-l">${missed.map(ch=>`<span>${ch}</span>`).join('')}</div></div>`);
-      screen(body,[button('Practise these letters',()=>practise(missed)), button('Complete',home,true)]);
+      screen(body,[button('Practise these letters',()=>practise(missed)), button('Back to home',home,true)]);
     };
     q();
   };
@@ -527,7 +527,7 @@ function runHearing(p, step){
       setBar(1,1);
       screen(el(`<div class="done"><div class="tick">💪</div><h2>Ready to try again?</h2>
         <p>A fresh set of ${TEST_LEN} words. You need ${TEST_PASS} to pass.</p></div>`),
-        [button('Retake the test',test), button('Complete',home,true)]);
+        [button('Retake the test',test), button('Back to home',home,true)]);
     };
     card(0);
   };

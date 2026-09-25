@@ -130,6 +130,7 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
   transition:transform var(--press,120ms) var(--ease-out,ease-out)}
 .nextrow a:active,.nextrow button:active{transform:scale(.96)}
 .nextrow .primary{background:var(--verdigris);border-color:var(--verdigris);color:#fff}
+.nextrow small{display:block;font-size:12px;color:var(--ink-soft);margin-top:2px}
 @media (max-width:860px){
   #signout{font-size:12px;padding:8px 10px}
   .card{padding:16px}.taskbar{margin:-16px -16px 14px;padding:10px 12px}
@@ -179,8 +180,8 @@ input.ar-in{flex:1;min-width:200px;font-family:var(--ar);font-size:21px;line-hei
 <script src="drills-data.js?v=20260922"></script>
 <script src="audio.js?v=900"></script>
 <script src="path-data.js?v=20260922"></script>
-<script src="alphabet-data.js?v=20260922"></script>
-<script src="path.js?v=20260925"></script>
+<script src="alphabet-data.js?v=20260926"></script>
+<script src="path.js?v=20260926"></script>
 <script src="mistakes.js?v=20260922"></script>
 <script src="item-tags.js?v=20260922"></script>
 <script src="nav.js?v=20260924"></script>
@@ -399,8 +400,8 @@ function finish(){
     const nx=RafiqPath.next();
     panel.innerHTML=`<div class="done"><div class="big">أَحْسَنْت</div><h2>Practise — done</h2>
       <p>${n} item${n===1?'':'s'} practised.</p>${focusHTML()}
-      <div class="nextrow">${nx.step?`<a class="primary" href="learn.html?u=${nx.unit.n}&s=${nx.step.key}">Next: ${nx.step.title}</a>`:''}
-      <a href="dashboard.html">Back to home</a></div></div>`;
+      <div class="nextrow"><a class="primary" href="dashboard.html">Complete</a>
+      ${nx.step?`<a href="learn.html?u=${nx.unit.n}&s=${nx.step.key}&cont=1">Continue learning<small>${nx.unit.n===UNIT?'':'Unit '+(+nx.unit.n)+': '}${nx.step.title}</small></a>`:''}</div></div>`;
     return;
   }
   RafiqPath.markDay();

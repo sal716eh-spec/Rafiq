@@ -35,7 +35,8 @@
   function steps(p){
     if(p.alpha) return ALPHABET_GROUPS.map((g,i) => ({key:'letters'+(i+1), kind:'letters', group:i,
         title:g.title.replace(/^Letters \d+: /,'Letters: '), mins:5}))
-      .concat([{key:'vowels', kind:'vowels', title:'The vowel marks', mins:5}]);
+      .concat([{key:'vowels', kind:'vowels', title:'The vowel marks', mins:5},
+               {key:'hear', kind:'hearing', title:'Listening test', mins:6}]);
     const nb = Math.ceil(p.words.length / BATCH), out = [];
     const words = i => ({key:'words'+(i+1), kind:'words', batch:i,
       title: nb > 1 ? `New words ${i+1} of ${nb}` : 'New words', mins: 5});
@@ -54,7 +55,12 @@
   const sid = (n, key) => 'p:' + n + '|' + key;
   const stepDone = (n, key) => Progress.hasSeen(sid(n, key));
   const placed = n => Progress.hasSeen(sid(n, 'placed'));
-  function unitDone(p){ return placed(p.n) || steps(p).every(s => stepDone(p.n, s.key)); }
+  /* The listening test was added after some learners had finished the reading
+     starter and moved on to unit 1; it stays open to them but doesn't pull them back. */
+  const movedOn = () => UNITS.some(u => !u.alpha && (placed(u.n) || steps(u).some(s => stepDone(u.n, s.key))));
+  function unitDone(p){
+    return placed(p.n) || steps(p).every(s => stepDone(p.n, s.key) || (p.alpha && s.key === 'hear' && movedOn()));
+  }
 
   /* The unit you're on: the first one not finished. Everything before it is
      done; everything after is "coming up" but still openable. */

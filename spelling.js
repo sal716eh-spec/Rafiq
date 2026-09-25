@@ -67,9 +67,13 @@
     // words due for review first, then the rest, each group shuffled
     const due = shuffle(words.filter(w => Progress.isDue('v:'+w.id)));
     const rest = shuffle(words.filter(w => !Progress.isDue('v:'+w.id)));
-    const queue = due.concat(rest).slice(0, ROUND).map(w => ({w, retry:false}));
-    const total = queue.length, missed = [];
+    const queue = due.concat(rest).slice(0, ROUND).map((w, i) => ({w, i, retry:false}));
+    const total = queue.length, missed = [], marks = new Array(total).fill('');
     let pos = 0, score = 0, bonus = 0, turn = Math.random() < .5 ? 0 : 1;
+    // on a phone, focusing the input pops the OS keyboard over the word just shown; let them tap when ready
+    const autoFocus = matchMedia('(hover:hover) and (pointer:fine)').matches;
+    const bar = cur => `<div class="sb-bar" role="progressbar" aria-label="Round progress" aria-valuemin="0" aria-valuemax="${total}" aria-valuenow="${marks.filter(Boolean).length}">`+
+      marks.map((m, i) => `<span class="${m}${i === cur ? ' cur' : ''}"></span>`).join('') + '</div>';
 
     function ask(){
       if(pos >= queue.length) return finish();
@@ -89,7 +93,8 @@
       // Check sits beside the input and messages above it: on wide screens the
       // on-screen keyboard opens just below the input and would cover them
       el.innerHTML = `<div class="sb-top"><span>${item.retry ? 'One you missed' : `Word ${n} of ${total}`}</span><span>Score <b>${score}</b></span></div>
-        <div class="sb-card">
+        ${bar(item.i)}
+        <div class="sb-card sb-in">
           <div class="sb-prompt">${prompt}</div>
           <div class="sb-msgline" aria-live="polite"></div>
           <div class="ansrow"><input class="ar-in" dir="rtl" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="اكْتُبْ هُنا" aria-label="Your spelling">
@@ -100,7 +105,8 @@
       if(mode === 'hear'){
         const b = el.querySelector('.sb-listen');
         b.onclick = () => say(w.ar, b); say(w.ar, b);
-        el.querySelector('[data-act="en"]').onclick = () => { el.querySelector('.sb-prompt .sb-en').hidden = false; };
+        const en = el.querySelector('[data-act="en"]');
+        en.onclick = () => { el.querySelector('.sb-prompt .sb-en').hidden = false; en.nextSibling.remove(); en.remove(); };
       }
       let answered = false;
       const check = give => {
@@ -113,17 +119,22 @@
           const hint = unifyAlef(t) === unifyAlef(target) ? 'Check the hamza on the alef: أ, إ, آ or plain ا?'
             : unifyEnd(t) === unifyEnd(target) ? (/[ةه]$/.test(target) ? 'Check the last letter: ة or ه?' : 'Check the last letter: ى or ي?')
             : unifyEnd(unifyAlef(t)) === unifyEnd(unifyAlef(target)) ? 'Check the alef and the last letter.' : '';
-          if(hint){ item.near = true; msg.innerHTML = `<p class="sb-msg sb-near">Nearly! ${hint} Try again.</p>`; inp.focus(); return; }
+          if(hint){ item.near = true; inp.classList.add('is-near');
+            msg.innerHTML = `<p class="sb-msg sb-near sb-in">Nearly! ${hint} Try again.</p>`; inp.focus(); return; }
         }
         answered = true;
         msg.innerHTML = '';
         el.querySelector('.sb-links').remove();
         const full = ok && hasMarks(typed) && vowelled(typed) === vowelled(w.ar);
-        sound(ok);
+        // colour, shake and sound land on the same frame; a voluntary "show me" isn't an error, so it stays quiet
+        inp.classList.remove('is-near');
+        if(!give){ inp.classList.add(ok ? 'is-ok' : 'is-no'); sound(ok); }
         if(!item.retry){
+          marks[item.i] = ok ? 'ok' : 'no';
+          const seg = el.querySelectorAll('.sb-bar span')[item.i]; if(seg) seg.className = marks[item.i] + ' cur';
           Progress.grade('v:'+w.id, ok ? 'good' : 'again');
           if(ok){ score++; if(full) bonus++; }
-          else { missed.push(w); queue.splice(Math.min(queue.length, pos+3), 0, {w, retry:true}); }
+          else { missed.push(w); queue.splice(Math.min(queue.length, pos+3), 0, {w, i:item.i, retry:true}); }
         }
         let html, answer = esc(w.ar);
         if(ok){
@@ -137,7 +148,8 @@
         html += `<div class="sb-row"><span class="sb-lab">${ok ? 'With vowels' : 'Answer'}</span>
           <button class="sb-word sb-ar" type="button" aria-label="Play">${answer} 🔊</button><span class="sb-gloss">${esc(w.en)}</span></div>`;
         if(!ok) html += `<p class="sb-note">${item.retry ? 'You’ll meet it again in review.' : 'This one comes back later in the round.'}</p>`;
-        out.innerHTML = html;
+        out.innerHTML = `<div class="sb-in">${html}</div>`;
+        el.querySelector('.sb-top b').textContent = score;
         const wb = out.querySelector('.sb-word'); wb.onclick = () => say(w.ar, wb);
         inp.blur(); inp.disabled = true;   // disabled, not readOnly: a tap must not reopen the keyboard
         const nb = el.querySelector('[data-act="check"]'); nb.textContent = pos+1 >= queue.length ? 'See results' : 'Next'; nb.focus();
@@ -146,13 +158,14 @@
       el.querySelector('[data-act="check"]').onclick = () => check(false);
       el.querySelector('[data-act="give"]').onclick = () => check(true);
       inp.addEventListener('keydown', e => { if(e.key === 'Enter'){ e.preventDefault(); check(false); } });
-      if(mode === 'see') inp.focus();
+      inp.addEventListener('input', () => inp.classList.remove('is-near'));
+      if(mode === 'see' && autoFocus) inp.focus();
     }
 
     function finish(){
       const prev = best(), isBest = !prev || score > prev.score;
       if(isBest) saveBest(score, total);
-      el.innerHTML = `<div class="sb-card sb-end">
+      el.innerHTML = `${bar(-1)}<div class="sb-card sb-end sb-in">
         <div class="sb-big">${score} / ${total}</div>
         <div class="sb-how">right first time${bonus ? ` · <b>${bonus}</b> fully vowelled` : ''}</div>
         <p class="sb-best">${isBest && prev ? '🎉 New best!' : prev ? `Your best: ${prev.score} / ${prev.total}` : 'Your first round — beat it next time.'}</p>
@@ -162,7 +175,8 @@
           <a class="btn ghost" href="#">Back to Practise</a></div></div>`;
       el.querySelectorAll('.sb-miss .sb-word').forEach(b => b.onclick = () => say(b.dataset.ar, b));
       el.querySelector('[data-act="again"]').onclick = () => mount(el);
-      scrollTo(0, 0);
+      const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+      scrollTo({ top: 0, behavior: still ? 'auto' : 'smooth' });
     }
     ask();
   }

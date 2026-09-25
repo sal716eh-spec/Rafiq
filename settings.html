@@ -110,6 +110,13 @@ main.wrap{max-width:680px}
       </span>
     </div>
     <div class="row">
+      <div class="rl"><div class="rt">Arabic keyboard on phones</div><div class="rs">Only one opens. Rafiq's has the vowel marks; choose your phone's own if you already type Arabic on it.</div></div>
+      <span>
+        <select id="kbSel"><option value="app">Rafiq keyboard</option><option value="phone">My phone's keyboard</option></select>
+        <span class="saved" id="kbSaved">Saved</span>
+      </span>
+    </div>
+    <div class="row">
       <div class="rl"><div class="rt">Playback speed</div><div class="rs">How fast the Arabic is spoken.</div></div>
       <span>
         <input id="rateRange" type="range" min="0.5" max="1.1" step="0.05">
@@ -271,6 +278,12 @@ function wireProfileField(inputId, savedId, key, evt){
     flash(savedId);
   });
 }
+(function(){
+  const sel=document.getElementById('kbSel'); if(!sel) return;
+  try{ sel.value=localStorage.getItem('rafiq_kb')==='phone'?'phone':'app'; }catch(_){}
+  sel.addEventListener('change',()=>{ try{ localStorage.setItem('rafiq_kb', sel.value); }catch(_){}
+    const f=document.getElementById('kbSaved'); f.classList.add('show'); setTimeout(()=>f.classList.remove('show'),1400); });
+})();
 (function(){
   const sel=document.getElementById('soundSel'); if(!sel) return;
   try{ sel.value=localStorage.getItem('rafiq_sounds')==='off'?'off':'on'; }catch(_){}

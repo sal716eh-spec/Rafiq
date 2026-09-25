@@ -1,0 +1,100 @@
+[
+ {
+  "file": "r01",
+  "text": "رَفِيق. In Arabic, it means companion.",
+  "voice": "Ywuz3KyW2N5pqKNpwcCL",
+  "stability": 0.55,
+  "style": 0.2
+ },
+ {
+  "file": "n02",
+  "text": "That's what this app was made to be: a companion for anyone studying Arabic.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n03",
+  "text": "In a class, at a madrasa, or on your own, lessons give you new words. Keeping them is the hard part.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n04",
+  "text": "So everything here is built on what memory research says works.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n05",
+  "text": "Spacing. Coming back to a word after a gap beats cramming. It's one of the most replicated findings in memory research.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n06",
+  "text": "Testing. Pulling a word from memory strengthens it more than reading it again.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n07",
+  "text": "Habit. A little every day. In one well-known study, a daily habit took about sixty-six days to feel automatic.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "r08",
+  "text": "So رَفِيق brings each word back just before you'd forget it, and asks you to recall it, not just reread it.",
+  "voice": "Ywuz3KyW2N5pqKNpwcCL",
+  "stability": 0.55,
+  "style": 0.2
+ },
+ {
+  "file": "n09",
+  "text": "Use it to revise alongside your course. Or start from nothing at all.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n10",
+  "text": "Can't read Arabic yet? Begin with the twenty-eight letters, in families that share a shape.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n11",
+  "text": "Every letter comes with three words, the letter in red, and a native voice to copy.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n12",
+  "text": "Then the vowel marks, and a listening test to train your ear.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n13",
+  "text": "From your first letter to your first conversation.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n14",
+  "text": "A few minutes a day, with a companion beside you.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ }
+]

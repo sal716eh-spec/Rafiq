@@ -1,0 +1,543 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Rafiq — the story (v8)</title>
+    <script src="assets/lib/gsap.min.js"></script>
+    <script src="assets/audio-data.js"></script>
+    <style>
+      @font-face { font-family: "Plex Arabic"; src: url("assets/fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2") format("woff2"); font-weight: 500; }
+      @font-face { font-family: "Plex Arabic"; src: url("assets/fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2") format("woff2"); font-weight: 600; }
+      @font-face { font-family: "Plex Arabic"; src: url("assets/fonts/ibm-plex-sans-arabic-arabic-700-normal.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "Karla"; src: url("assets/fonts/karla-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Karla"; src: url("assets/fonts/karla-latin-500-normal.woff2") format("woff2"); font-weight: 500; }
+      @font-face { font-family: "Karla"; src: url("assets/fonts/karla-latin-700-normal.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2"); font-weight: 500; }
+
+      :root {
+        --paper: #f1ece0; --paper-deep: #e4dcc9; --card: #f7f3ea;
+        --ink: #17262b; --ink-soft: #4f6163;
+        --rubric: #b4322a; --verdigris: #2e7263; --gold: #a8842c;
+        --ar: "Plex Arabic", "Karla", sans-serif; --la: "Karla", sans-serif; --ut: "JetBrains Mono", monospace;
+      }
+      body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--la); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--paper); }
+
+      .bg { position: absolute; inset: 0; pointer-events: none; }
+      #glow { position: absolute; width: 1600px; height: 1600px; left: 160px; top: -260px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(168,132,44,0.24) 0%, rgba(168,132,44,0.07) 42%, rgba(241,236,224,0) 70%); }
+      #ghost { position: absolute; right: 0; bottom: 0; width: 1000px; height: 1000px; }
+      #ink { position: absolute; left: 510px; top: 535px; width: 900px; height: 10px; border-radius: 5px; background: var(--rubric); transform-origin: right center; }
+      .frame-rule { position: absolute; left: 110px; right: 110px; height: 3px; background: var(--ink); opacity: 0.14; }
+      #rule-top { top: 70px; } #rule-bot { bottom: 70px; }
+      .meta { position: absolute; top: 34px; font-family: var(--ut); font-size: 20px; letter-spacing: 0.14em; color: var(--ink-soft); }
+      #meta-l { left: 110px; } #meta-r { right: 110px; }
+
+      .clip { position: absolute; inset: 0; }
+      .inner { position: absolute; inset: 0; box-sizing: border-box; padding: 130px 150px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+      .kicker { font-family: var(--ut); font-size: 22px; letter-spacing: 0.14em; color: var(--ink-soft); text-transform: uppercase; }
+      .card { background: var(--card); border: 3px solid rgba(23,38,43,0.14); border-radius: 28px; box-shadow: 0 30px 60px rgba(23,38,43,0.10); }
+      .ar { font-family: var(--ar); direction: rtl; }
+      .hl { color: var(--rubric); }
+      .big-line { font-size: 76px; font-weight: 700; letter-spacing: -0.01em; text-align: center; max-width: 1500px; }
+      .title { font-size: 64px; font-weight: 700; margin-top: 14px; text-align: center; }
+      .source { position: absolute; left: 150px; bottom: 112px; font-family: var(--ut); font-size: 24px; letter-spacing: 0.06em; color: var(--ink-soft); }
+      .source b { color: var(--ink); font-weight: 500; }
+      .brand { display: flex; align-items: center; gap: 36px; }
+      .tile { position: relative; width: 170px; height: 170px; border-radius: 38px; background: var(--ink); display: flex; align-items: center; justify-content: center; }
+      .tile .r { font-family: var(--ar); font-weight: 700; font-size: 118px; color: var(--paper); line-height: 1; margin-top: -8px; }
+      .tile .dot { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: var(--rubric); right: 34px; top: 32px; }
+      .brand-name { font-size: 140px; font-weight: 700; letter-spacing: -0.02em; }
+      .mk { position: relative; display: inline-block; white-space: nowrap; }
+      .mk-r { color: var(--rubric); }
+      .mk-i { position: absolute; left: 0; top: 0; right: 0; color: var(--ink); }
+
+      /* A — companion */
+      #a-one, #a-two { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+      #a-word { font-weight: 700; font-size: 260px; line-height: 1.5; }
+      #a-gloss { display: flex; align-items: baseline; gap: 34px; margin-top: -10px; }
+      #a-gloss .tr { font-size: 46px; font-style: italic; color: var(--ink-soft); }
+      #a-gloss .en { font-size: 70px; font-weight: 700; color: var(--rubric); }
+      #a-sub { font-size: 54px; font-weight: 500; color: var(--ink-soft); margin-top: 40px; }
+
+      /* C — the hard part */
+      #c-chips { display: flex; gap: 30px; }
+      .chip { padding: 22px 38px; border-radius: 60px; background: var(--card); border: 3px solid rgba(23,38,43,0.14); font-size: 40px; font-weight: 700; }
+      #c-words { display: flex; gap: 48px; margin-top: 70px; }
+      .wc { width: 360px; padding: 26px 30px 32px; text-align: center; }
+      .wc .ar { font-weight: 700; font-size: 110px; line-height: 1.6; }
+      .wc .en { font-size: 36px; font-weight: 500; color: var(--ink-soft); }
+      #c-line { margin-top: 60px; font-size: 66px; font-weight: 700; color: var(--rubric); }
+
+      /* D — the research */
+      #d-cards { display: flex; gap: 44px; margin-top: 60px; }
+      .rc { width: 440px; padding: 44px 40px 48px; text-align: center; box-sizing: border-box; }
+      .rc .n { font-family: var(--ut); font-size: 30px; color: var(--gold); }
+      .rc .i { font-size: 96px; line-height: 1.3; margin-top: 10px; }
+      .rc .t { font-size: 56px; font-weight: 700; margin-top: 8px; }
+
+      /* E — spacing */
+      #e .inner { justify-content: flex-start; padding-top: 150px; }
+      .lane { position: relative; width: 1500px; height: 170px; margin-top: 40px; }
+      .lane .lbl { position: absolute; left: 0; top: 0; font-size: 38px; font-weight: 700; }
+      .lane .res { position: absolute; right: 0; top: 0; font-size: 34px; font-weight: 700; }
+      .lane .axis { position: absolute; left: 0; right: 0; top: 108px; height: 3px; background: rgba(23,38,43,0.18); }
+      .pt { position: absolute; top: 90px; width: 40px; height: 40px; margin-left: -20px; border-radius: 50%; background: var(--ink); }
+      .pt.ok { background: var(--verdigris); }
+      .day { position: absolute; top: 140px; width: 160px; margin-left: -80px; text-align: center; font-family: var(--ut); font-size: 22px; color: var(--ink-soft); }
+      #e-cram .res { color: var(--rubric); } #e-space .res { color: var(--verdigris); }
+
+      /* F — testing */
+      #fz-pair { display: flex; gap: 70px; margin-top: 60px; align-items: stretch; }
+      .tc { width: 640px; padding: 38px 44px 46px; text-align: center; box-sizing: border-box; }
+      .tc .k { font-size: 40px; font-weight: 700; }
+      .tc .ar { font-weight: 700; font-size: 150px; line-height: 1.55; }
+      .tc .en { position: relative; font-size: 52px; font-weight: 700; height: 70px; }
+      #fz-read { opacity: 0.55; }
+      #fz-read .en { color: var(--ink-soft); }
+      #fz-q, #fz-a { position: absolute; left: 0; right: 0; top: 0; }
+      #fz-q { color: var(--gold); }
+      #fz-a { color: var(--verdigris); }
+      #fz-recall { border-color: var(--verdigris); }
+
+      /* G — habit */
+      #g .inner { flex-direction: row; gap: 110px; }
+      #g-grid { display: grid; grid-template-columns: repeat(11, 56px); gap: 16px; }
+      .hd { width: 56px; height: 56px; border-radius: 50%; background: rgba(23,38,43,0.10); }
+      #g-side { width: 640px; }
+      #g-side .title { text-align: left; margin-top: 10px; }
+      #g-count { margin-top: 40px; font-size: 120px; font-weight: 700; color: var(--rubric); }
+      #g-count small { font-size: 50px; color: var(--ink); font-weight: 500; }
+      #g-note { font-size: 44px; font-weight: 500; color: var(--ink-soft); margin-top: 8px; }
+
+      /* H — Rafiq does it */
+      #h .inner { flex-direction: row; gap: 90px; }
+      #h-quiz { width: 820px; padding: 44px 54px 50px; box-sizing: border-box; text-align: center; }
+      #h-quiz .ar { font-weight: 700; font-size: 170px; line-height: 1.5; }
+      .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 18px; }
+      .opt { height: 96px; border-radius: 20px; border: 3px solid rgba(23,38,43,0.16); background: #fffdf8; font-size: 40px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+      #h-side { width: 560px; }
+      #h-side .title { text-align: left; font-size: 56px; }
+      .sched { display: flex; gap: 16px; margin-top: 34px; flex-wrap: wrap; }
+      .sched span { padding: 14px 24px; border-radius: 40px; background: var(--ink); color: var(--paper); font-family: var(--ut); font-size: 26px; }
+      #h-due { margin-top: 36px; font-size: 36px; color: var(--ink-soft); }
+      #h-due b { color: var(--rubric); }
+
+      /* I — two doors */
+      #i-pair { display: flex; gap: 70px; margin-top: 30px; }
+      .door { width: 680px; padding: 50px 56px 56px; box-sizing: border-box; }
+      .door .i { font-size: 90px; line-height: 1.3; }
+      .door .ar-i { font-family: var(--ar); font-weight: 700; font-size: 100px; line-height: 1.4; direction: rtl; text-align: left; }
+      .door .t { font-size: 58px; font-weight: 700; margin-top: 14px; }
+      .door .s { font-size: 36px; color: var(--ink-soft); margin-top: 10px; }
+      #i-zero { border-color: var(--rubric); }
+
+      /* J — the alphabet */
+      #j-grid { display: grid; grid-template-columns: repeat(7, 150px); gap: 16px; direction: rtl; margin-top: 44px; }
+      .al { height: 128px; border-radius: 22px; border: 3px solid rgba(23,38,43,0.14); background: var(--card); font-family: var(--ar); font-weight: 700; font-size: 70px;
+        display: flex; align-items: center; justify-content: center; color: var(--ink-soft); padding-bottom: 8px; box-sizing: border-box; }
+      #j-cap { margin-top: 34px; font-size: 40px; font-weight: 500; color: var(--ink-soft); }
+
+      /* K — a letter */
+      #k .inner { flex-direction: row; gap: 80px; }
+      #k-card { width: 640px; padding: 40px 50px 50px; box-sizing: border-box; text-align: center; }
+      #k-letter { font-family: var(--ar); font-weight: 700; font-size: 230px; line-height: 1.3; }
+      #k-name { font-family: var(--ar); font-weight: 600; font-size: 60px; line-height: 1.6; }
+      #k-sound { font-size: 38px; color: var(--ink-soft); }
+      #k-forms { display: flex; justify-content: center; gap: 40px; margin-top: 18px; direction: rtl; }
+      #k-forms div { font-family: var(--ar); font-weight: 600; font-size: 64px; line-height: 1.6; }
+      #k-exs { width: 860px; display: flex; flex-direction: column; gap: 22px; }
+      .ex { display: flex; align-items: center; gap: 34px; padding: 18px 40px; direction: rtl; }
+      .ex .w { font-family: var(--ar); font-weight: 700; font-size: 96px; line-height: 1.55; }
+      .ex .tx { direction: ltr; text-align: left; flex: 1; }
+      .ex .tr { font-family: var(--ut); font-size: 30px; color: var(--ink-soft); }
+      .ex .tr b { color: var(--rubric); font-weight: 500; }
+      .ex .en { font-size: 40px; font-weight: 700; }
+      .ex .pos { direction: ltr; font-family: var(--ut); font-size: 22px; letter-spacing: 0.12em; color: var(--ink-soft); }
+      #k-ex1 { border-color: var(--verdigris); }
+
+      /* L — vowels and the listening test */
+      #l .inner { flex-direction: row; gap: 90px; }
+      #l-vowel { width: 560px; padding: 40px 40px 50px; box-sizing: border-box; text-align: center; }
+      #l-vowel .v { font-family: var(--ar); font-weight: 700; font-size: 250px; line-height: 1.45; }
+      #l-vowel .s { font-size: 46px; font-weight: 700; }
+      #l-vowel .w { font-size: 34px; color: var(--ink-soft); margin-top: 6px; }
+      #l-test { width: 820px; padding: 44px 54px 50px; box-sizing: border-box; text-align: center; }
+      #l-play { width: 150px; height: 150px; margin: 22px auto 0; border-radius: 50%; background: var(--verdigris); color: #fff; font-size: 64px; display: flex; align-items: center; justify-content: center; }
+      #l-q { font-size: 38px; color: var(--ink-soft); margin-top: 22px; }
+      .lopts { display: flex; gap: 22px; margin-top: 24px; direction: rtl; }
+      .lopts div { flex: 1; height: 130px; border-radius: 22px; border: 3px solid rgba(23,38,43,0.16); background: #fffdf8; font-family: var(--ar); font-weight: 700; font-size: 80px; display: flex; align-items: center; justify-content: center; padding-bottom: 8px; box-sizing: border-box; }
+      #l-rev { margin-top: 24px; font-size: 40px; font-weight: 700; }
+      #l-rev .ar { font-size: 70px; margin-right: 18px; }
+
+      /* M — first conversation */
+      #m-row { display: flex; align-items: center; gap: 44px; margin-top: 40px; }
+      .step { padding: 30px 46px; font-family: var(--ar); font-weight: 700; font-size: 110px; line-height: 1.5; }
+      .arrow { font-size: 60px; color: var(--gold); }
+      #m-bub { padding: 26px 40px 30px; border-radius: 30px; background: var(--ink); border-bottom-right-radius: 8px; }
+      #m-bub .ar { font-weight: 600; font-size: 56px; line-height: 1.75; color: var(--paper); }
+      #m-ok { margin-top: 40px; font-size: 48px; font-weight: 700; color: var(--verdigris); }
+
+      /* N — close */
+      #n1, #n2 { font-size: 80px; max-width: 1700px; }
+      #n2 { color: var(--rubric); margin-top: 10px; }
+      #n-brand { margin-top: 60px; }
+      #n-url { font-family: var(--ut); font-size: 34px; letter-spacing: 0.1em; color: var(--ink-soft); margin-top: 30px; }
+      #n-try { margin-top: 18px; font-size: 36px; font-weight: 700; color: var(--verdigris); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1920" data-height="1080" data-duration="85.95">
+      <div class="bg" id="bg">
+        <div id="glow"></div>
+        <canvas id="ghost" width="1000" height="1000"></canvas>
+        <div class="frame-rule" id="rule-top"></div>
+        <div id="ink"></div>
+        <div class="frame-rule" id="rule-bot"></div>
+        <div class="meta" id="meta-l">RAFIQ · THE STORY</div>
+        <div class="meta" id="meta-r">RAFIQ-ARABIC.COM</div>
+      </div>
+
+      <section id="a" class="clip" data-start="0.0" data-duration="9.328" data-track-index="1"><div class="inner">
+        <div id="a-one">
+          <div class="ar" id="a-word">رَفِيق</div>
+          <div id="a-gloss"><span class="tr">rafīq</span><span class="en">companion</span></div>
+        </div>
+        <div id="a-two">
+          <div class="brand" id="a-brand"><div class="tile" id="a-tile"><span class="r">ر</span><span class="dot"></span></div><div class="brand-name">Rafiq</div></div>
+          <div id="a-sub">a companion for anyone studying Arabic</div>
+        </div>
+      </div></section>
+
+      <section id="c" class="clip" data-start="8.778" data-duration="7.485" data-track-index="2"><div class="inner">
+        <div id="c-chips"><div class="chip" id="c-ch1">🏫 In a class</div><div class="chip" id="c-ch2">🕌 At a madrasa</div><div class="chip" id="c-ch3">🏠 On your own</div></div>
+        <div id="c-words">
+          <div class="wc card" id="c-w1"><div class="ar">كِتاب</div><div class="en">book</div></div>
+          <div class="wc card" id="c-w2"><div class="ar">مَدِينَة</div><div class="en">city</div></div>
+          <div class="wc card" id="c-w3"><div class="ar">صَدِيق</div><div class="en">friend</div></div>
+        </div>
+        <div id="c-line">Keeping them is the hard part.</div>
+      </div></section>
+
+      <section id="d" class="clip" data-start="15.713" data-duration="5.212" data-track-index="3"><div class="inner">
+        <div class="kicker">What memory research says works</div>
+        <div id="d-cards">
+          <div class="rc card" id="d-1"><div class="n">1</div><div class="i">📅</div><div class="t">Spacing</div></div>
+          <div class="rc card" id="d-2"><div class="n">2</div><div class="i">🧠</div><div class="t">Testing</div></div>
+          <div class="rc card" id="d-3"><div class="n">3</div><div class="i">🔥</div><div class="t">Habit</div></div>
+        </div>
+      </div></section>
+
+      <section id="e" class="clip" data-start="20.375" data-duration="8.785" data-track-index="4"><div class="inner">
+        <div class="kicker">1 · Spacing</div>
+        <div class="title">Come back after a gap. Don't cram.</div>
+        <div class="lane" id="e-cram">
+          <div class="lbl">Cramming</div><div class="res" id="e-cram-res">all in one day → forgotten</div><div class="axis"></div>
+          <div class="pt cp" style="left:40px"></div><div class="pt cp" style="left:70px"></div><div class="pt cp" style="left:100px"></div><div class="pt cp" style="left:130px"></div><div class="pt cp" style="left:160px"></div>
+          <div class="day" style="left:100px">DAY 1</div>
+        </div>
+        <div class="lane" id="e-space">
+          <div class="lbl">Spacing</div><div class="res" id="e-space-res">✓ remembered</div><div class="axis"></div>
+          <div class="pt ok sp" id="sp1" style="left:40px"></div><div class="pt ok sp" id="sp2" style="left:230px"></div><div class="pt ok sp" id="sp3" style="left:500px"></div><div class="pt ok sp" id="sp4" style="left:880px"></div><div class="pt ok sp" id="sp5" style="left:1460px"></div>
+          <div class="day sd" style="left:40px">DAY 1</div><div class="day sd" style="left:230px">DAY 2</div><div class="day sd" style="left:500px">DAY 4</div><div class="day sd" style="left:880px">DAY 8</div><div class="day sd" style="left:1460px">DAY 16</div>
+        </div>
+        <div class="source">Cepeda et al., 2006 · <b>a review of 254 studies</b></div>
+      </div></section>
+
+      <section id="fz" class="clip" data-start="28.61" data-duration="5.647" data-track-index="5"><div class="inner">
+        <div class="kicker">2 · Testing</div>
+        <div class="title">Recall it. Don't just reread it.</div>
+        <div id="fz-pair">
+          <div class="tc card" id="fz-read"><div class="k">Reading it again</div><div class="ar">بَيْت</div><div class="en">house</div></div>
+          <div class="tc card" id="fz-recall"><div class="k">Pulling it from memory</div><div class="ar">بَيْت</div><div class="en"><span id="fz-q">?</span><span id="fz-a">house ✓</span></div></div>
+        </div>
+        <div class="source">Roediger &amp; Karpicke, 2006 · <b>the testing effect</b></div>
+      </div></section>
+
+      <section id="g" class="clip" data-start="33.707" data-duration="8.974" data-track-index="6"><div class="inner">
+        <div id="g-grid"></div>
+        <div id="g-side">
+          <div class="kicker">3 · Habit</div>
+          <div class="title">A little, every day</div>
+          <div id="g-count">🔥 <span id="g-n">0</span> <small>days</small></div>
+          <div id="g-note">about how long a daily habit took to feel automatic</div>
+        </div>
+        <div class="source">Lally et al., 2010 · <b>how habits form</b></div>
+      </div></section>
+
+      <section id="h" class="clip" data-start="42.131" data-duration="7.519" data-track-index="7"><div class="inner">
+        <div class="card" id="h-quiz">
+          <div class="kicker">Review · what does this mean?</div>
+          <div class="ar">بَيْت</div>
+          <div class="opts"><div class="opt" id="h-right">house</div><div class="opt">book</div><div class="opt">school</div><div class="opt">friend</div></div>
+        </div>
+        <div id="h-side">
+          <div class="title">Back just before you'd forget it</div>
+          <div class="sched"><span>in 2 days</span><span>4</span><span>8</span><span>16</span></div>
+          <div id="h-due"><b>12</b> to review from your lessons</div>
+        </div>
+      </div></section>
+
+      <section id="i" class="clip" data-start="49.1" data-duration="5.548" data-track-index="8"><div class="inner">
+        <div id="i-pair">
+          <div class="door card" id="i-rev"><div class="i">📚</div><div class="t">Revise alongside your course</div><div class="s">Your lessons' words, back on time</div></div>
+          <div class="door card" id="i-zero"><div class="ar-i">ا ب ت</div><div class="t">Start from nothing</div><div class="s">The letters first, then everything else</div></div>
+        </div>
+      </div></section>
+
+      <section id="j" class="clip" data-start="54.098" data-duration="6.343" data-track-index="9"><div class="inner">
+        <div class="kicker">Reading Arabic · 28 letters in 7 families</div>
+        <div id="j-grid"></div>
+        <div id="j-cap">Read right to left, family by family</div>
+      </div></section>
+
+      <section id="k" class="clip" data-start="59.891" data-duration="7.557" data-track-index="10"><div class="inner">
+        <div class="card" id="k-card">
+          <div class="kicker">Letters 1 · 2 of 4</div>
+          <div id="k-letter">ب</div>
+          <div id="k-name">باء</div>
+          <div id="k-sound">"b" as in "bed" · one dot below</div>
+          <div id="k-forms"><div>ب</div><div>ب&#x200d;</div><div>&#x200d;ب&#x200d;</div><div>&#x200d;ب</div></div>
+        </div>
+        <div id="k-exs">
+          <div class="ex card" id="k-ex1"><span class="w"><span class="hl">بَ&#x200d;</span>&#x200d;يْت</span><span class="tx"><div class="tr"><b>b</b>ayt</div><div class="en">house</div></span><span class="pos">START</span></div>
+          <div class="ex card" id="k-ex2"><span class="w">طالِ&#x200d;<span class="hl">&#x200d;بَ&#x200d;</span>&#x200d;ة</span><span class="tx"><div class="tr">ṭāli<b>b</b>a</div><div class="en">student (f)</div></span><span class="pos">MIDDLE</span></div>
+          <div class="ex card" id="k-ex3"><span class="w">كِتا<span class="hl">ب</span></span><span class="tx"><div class="tr">kitā<b>b</b></div><div class="en">book</div></span><span class="pos">END</span></div>
+        </div>
+      </div></section>
+
+      <section id="l" class="clip" data-start="66.898" data-duration="7.72" data-track-index="11"><div class="inner">
+        <div class="card" id="l-vowel">
+          <div class="kicker">The vowel marks</div>
+          <div class="v"><span class="mk" data-layout-allow-overlap="true"><span class="mk-r" data-layout-allow-overlap="true">بَ</span><span class="mk-i" data-layout-allow-overlap="true">ب</span></span></div>
+          <div class="s">"ba"</div><div class="w">fatha: a short "a"</div>
+        </div>
+        <div class="card" id="l-test">
+          <div class="kicker">Listening test</div>
+          <div id="l-play">🔊</div>
+          <div id="l-q">Which letter does this word start with?</div>
+          <div class="lopts"><div id="l-s">س</div><div>ص</div><div>ث</div></div>
+          <div id="l-rev"><span class="ar"><span class="hl">سَ&#x200d;</span>&#x200d;مَك</span>fish</div>
+        </div>
+      </div></section>
+
+      <section id="m" class="clip" data-start="74.068" data-duration="4.694" data-track-index="12"><div class="inner">
+        <div class="kicker">Your first letter → your first conversation</div>
+        <div id="m-row">
+          <div class="step card" id="m-1">ا</div><div class="arrow" id="m-a1">→</div>
+          <div class="step card ar" id="m-2">بَيْت</div><div class="arrow" id="m-a2">→</div>
+          <div id="m-bub"><div class="ar">وَعَلَيْكُمُ السَّلامُ، أَهْلًا وَسَهْلًا!</div></div>
+        </div>
+        <div id="m-ok">✓ Good reply.</div>
+      </div></section>
+
+      <section id="n" class="clip" data-start="78.212" data-duration="7.738" data-track-index="13"><div class="inner">
+        <div class="big-line" id="n1">A few minutes a day,</div>
+        <div class="big-line" id="n2">with a companion beside you.</div>
+        <div class="brand" id="n-brand"><div class="tile" id="n-tile"><span class="r">ر</span><span class="dot"></span></div><div class="brand-name">Rafiq</div></div>
+        <div id="n-url">rafiq-arabic.com</div>
+        <div id="n-try">Try it free</div>
+      </div></section>
+
+      <audio id="r01" src="assets/vo/r01.wav" data-start="0.9" data-duration="2.394" data-track-index="21"></audio>
+      <audio id="n02" src="assets/vo/n02.wav" data-start="3.794" data-duration="4.734" data-track-index="22"></audio>
+      <audio id="n03" src="assets/vo/n03.wav" data-start="9.228" data-duration="6.335" data-track-index="23"></audio>
+      <audio id="n04" src="assets/vo/n04.wav" data-start="16.163" data-duration="3.962" data-track-index="24"></audio>
+      <audio id="n05" src="assets/vo/n05.wav" data-start="20.825" data-duration="7.536" data-track-index="25"></audio>
+      <audio id="n06" src="assets/vo/n06.wav" data-start="29.06" data-duration="4.397" data-track-index="26"></audio>
+      <audio id="n07" src="assets/vo/n07.wav" data-start="34.157" data-duration="7.724" data-track-index="27"></audio>
+      <audio id="r08" src="assets/vo/r08.wav" data-start="42.581" data-duration="6.169" data-track-index="28"></audio>
+      <audio id="n09" src="assets/vo/n09.wav" data-start="49.55" data-duration="4.298" data-track-index="29"></audio>
+      <audio id="n10" src="assets/vo/n10.wav" data-start="54.548" data-duration="5.093" data-track-index="30"></audio>
+      <audio id="n11" src="assets/vo/n11.wav" data-start="60.341" data-duration="4.879" data-track-index="31"></audio>
+      <audio id="ar_bayt" src="assets/ar/bayt.wav" data-start="65.57" data-duration="0.979" data-track-index="32"></audio>
+      <audio id="n12" src="assets/vo/n12.wav" data-start="67.348" data-duration="3.591" data-track-index="33"></audio>
+      <audio id="ar_samak" src="assets/ar/samak.wav" data-start="71.339" data-duration="0.979" data-track-index="34"></audio>
+      <audio id="n13" src="assets/vo/n13.wav" data-start="74.518" data-duration="2.944" data-track-index="35"></audio>
+      <audio id="n14" src="assets/vo/n14.wav" data-start="78.662" data-duration="2.626" data-track-index="36"></audio>
+      <audio id="r15" src="assets/vo/r15.wav" data-start="81.788" data-duration="1.765" data-track-index="37"></audio>
+      <audio id="opener" src="assets/sfx-gen/opener.wav" data-start="0.0" data-duration="0.65" data-track-index="38" data-volume="1.0"></audio>
+      <audio id="pen-word" src="assets/sfx-gen/pen-write.wav" data-start="0.85" data-duration="1.6" data-track-index="39" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.1, "v": 0.5}, {"t": 1.3, "v": 0.5}, {"t": 1.6, "v": 0.0}]}]}'></audio>
+      <audio id="page0" src="assets/sfx-gen/page-turn.wav" data-start="8.778" data-duration="1.48" data-track-index="40" data-volume="0.4"></audio>
+      <audio id="page1" src="assets/sfx-gen/page-turn.wav" data-start="15.713" data-duration="1.48" data-track-index="41" data-volume="0.4"></audio>
+      <audio id="page2" src="assets/sfx-gen/page-turn.wav" data-start="20.375" data-duration="1.48" data-track-index="42" data-volume="0.4"></audio>
+      <audio id="page3" src="assets/sfx-gen/page-turn.wav" data-start="28.61" data-duration="1.48" data-track-index="43" data-volume="0.4"></audio>
+      <audio id="page4" src="assets/sfx-gen/page-turn.wav" data-start="33.707" data-duration="1.48" data-track-index="44" data-volume="0.4"></audio>
+      <audio id="page5" src="assets/sfx-gen/page-turn.wav" data-start="42.131" data-duration="1.48" data-track-index="45" data-volume="0.4"></audio>
+      <audio id="page6" src="assets/sfx-gen/page-turn.wav" data-start="49.1" data-duration="1.48" data-track-index="46" data-volume="0.4"></audio>
+      <audio id="page7" src="assets/sfx-gen/page-turn.wav" data-start="54.098" data-duration="1.48" data-track-index="47" data-volume="0.4"></audio>
+      <audio id="page8" src="assets/sfx-gen/page-turn.wav" data-start="59.891" data-duration="1.48" data-track-index="48" data-volume="0.4"></audio>
+      <audio id="page9" src="assets/sfx-gen/page-turn.wav" data-start="66.898" data-duration="1.48" data-track-index="49" data-volume="0.4"></audio>
+      <audio id="page10" src="assets/sfx-gen/page-turn.wav" data-start="74.068" data-duration="1.48" data-track-index="50" data-volume="0.4"></audio>
+      <audio id="page11" src="assets/sfx-gen/page-turn.wav" data-start="78.212" data-duration="1.48" data-track-index="51" data-volume="0.4"></audio>
+      <audio id="logo1" src="assets/sfx/impactSoft_medium_002.ogg" data-start="3.994" data-duration="0.135" data-track-index="52" data-volume="0.55"></audio>
+      <audio id="tick0" src="assets/sfx-gen/pen-stroke.wav" data-start="22.725" data-duration="1.2" data-track-index="53" data-volume="0.35"></audio>
+      <audio id="tick1" src="assets/sfx-gen/pen-stroke.wav" data-start="23.425" data-duration="1.2" data-track-index="54" data-volume="0.35"></audio>
+      <audio id="tick2" src="assets/sfx-gen/pen-stroke.wav" data-start="24.125" data-duration="1.2" data-track-index="55" data-volume="0.35"></audio>
+      <audio id="tick3" src="assets/sfx-gen/pen-stroke.wav" data-start="24.825" data-duration="1.2" data-track-index="56" data-volume="0.35"></audio>
+      <audio id="tick4" src="assets/sfx-gen/pen-stroke.wav" data-start="25.525" data-duration="1.2" data-track-index="57" data-volume="0.35"></audio>
+      <audio id="ok-test" src="assets/sfx/bong_001.ogg" data-start="32.16" data-duration="0.123" data-track-index="58" data-volume="0.5"></audio>
+      <audio id="tap-quiz" src="assets/sfx-gen/tap.wav" data-start="45.781" data-duration="0.6" data-track-index="59" data-volume="0.5"></audio>
+      <audio id="ok-quiz" src="assets/sfx/bong_001.ogg" data-start="45.881" data-duration="0.123" data-track-index="60" data-volume="0.5"></audio>
+      <audio id="pen-abc" src="assets/sfx-gen/pen-write.wav" data-start="55.948" data-duration="3.4" data-track-index="61" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.2, "v": 0.45}, {"t": 3.0, "v": 0.45}, {"t": 3.4, "v": 0.0}]}]}'></audio>
+      <audio id="tap-s" src="assets/sfx-gen/tap.wav" data-start="72.668" data-duration="0.6" data-track-index="62" data-volume="0.5"></audio>
+      <audio id="ok-s" src="assets/sfx/bong_001.ogg" data-start="72.768" data-duration="0.123" data-track-index="63" data-volume="0.5"></audio>
+      <audio id="ok-conv" src="assets/sfx/bong_001.ogg" data-start="76.518" data-duration="0.123" data-track-index="64" data-volume="0.45"></audio>
+      <audio id="logo2" src="assets/sfx/impactSoft_medium_002.ogg" data-start="81.488" data-duration="0.135" data-track-index="65" data-volume="0.55"></audio>
+      <audio id="room0" src="assets/amb/room.mp3" data-start="0.5" data-duration="62.04" data-track-index="66" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 1.5, "v": 0.6}, {"t": 60.84, "v": 0.6}, {"t": 62.04, "v": 0.0}]}]}'></audio>
+      <audio id="room1" src="assets/amb/room.mp3" data-start="62.04" data-duration="23.91" data-track-index="67" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.5, "v": 0.6}, {"t": 22.71, "v": 0.6}, {"t": 23.91, "v": 0.0}]}]}'></audio>
+      <audio id="fountain0" src="assets/sfx-gen/fountain.wav" data-start="2.8" data-duration="22.0" data-track-index="68" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 1.5, "v": 0.17}, {"t": 20.8, "v": 0.17}, {"t": 22.0, "v": 0.0}]}]}'></audio>
+      <audio id="fountain1" src="assets/sfx-gen/fountain.wav" data-start="24.3" data-duration="22.0" data-track-index="69" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.5, "v": 0.17}, {"t": 20.8, "v": 0.17}, {"t": 22.0, "v": 0.0}]}]}'></audio>
+      <audio id="fountain2" src="assets/sfx-gen/fountain.wav" data-start="45.8" data-duration="22.0" data-track-index="70" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.5, "v": 0.17}, {"t": 20.8, "v": 0.17}, {"t": 22.0, "v": 0.0}]}]}'></audio>
+      <audio id="fountain3" src="assets/sfx-gen/fountain.wav" data-start="67.3" data-duration="18.35" data-track-index="71" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.5, "v": 0.17}, {"t": 17.15, "v": 0.17}, {"t": 18.35, "v": 0.0}]}]}'></audio>
+      <audio id="birds0" src="assets/sfx-gen/birds.wav" data-start="3.4" data-duration="15.0" data-track-index="72" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 1.5, "v": 0.12}, {"t": 13.8, "v": 0.12}, {"t": 15.0, "v": 0.0}]}]}'></audio>
+      <audio id="birds1" src="assets/sfx-gen/birds.wav" data-start="17.9" data-duration="15.0" data-track-index="73" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.5, "v": 0.12}, {"t": 13.8, "v": 0.12}, {"t": 15.0, "v": 0.0}]}]}'></audio>
+      <audio id="birds2" src="assets/sfx-gen/birds.wav" data-start="32.4" data-duration="15.0" data-track-index="74" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.5, "v": 0.12}, {"t": 13.8, "v": 0.12}, {"t": 15.0, "v": 0.0}]}]}'></audio>
+      <audio id="birds3" src="assets/sfx-gen/birds.wav" data-start="46.9" data-duration="15.0" data-track-index="75" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.5, "v": 0.12}, {"t": 13.8, "v": 0.12}, {"t": 15.0, "v": 0.0}]}]}'></audio>
+      <audio id="birds4" src="assets/sfx-gen/birds.wav" data-start="61.4" data-duration="15.0" data-track-index="76" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.5, "v": 0.12}, {"t": 13.8, "v": 0.12}, {"t": 15.0, "v": 0.0}]}]}'></audio>
+      <audio id="birds5" src="assets/sfx-gen/birds.wav" data-start="75.9" data-duration="9.25" data-track-index="77" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 0.5, "v": 0.12}, {"t": 8.05, "v": 0.12}, {"t": 9.25, "v": 0.0}]}]}'></audio>
+      <audio id="swell" src="assets/sfx-gen/swell.wav" data-start="78.062" data-duration="8.0" data-track-index="78" data-volume="1.0" data-automation='{"version": 1, "lanes": [{"target": "volume", "points": [{"t": 0, "v": 0.0}, {"t": 2.0, "v": 0.13}, {"t": 5.5, "v": 0.13}, {"t": 8.0, "v": 0.0}]}]}'></audio>
+    </div>
+
+    <script>
+      const T = {"r01": {"s": 0.9, "e": 3.294}, "n02": {"s": 3.794, "e": 8.528}, "n03": {"s": 9.228, "e": 15.563}, "n04": {"s": 16.163, "e": 20.125}, "n05": {"s": 20.825, "e": 28.36}, "n06": {"s": 29.06, "e": 33.457}, "n07": {"s": 34.157, "e": 41.881}, "r08": {"s": 42.581, "e": 48.75}, "n09": {"s": 49.55, "e": 53.848}, "n10": {"s": 54.548, "e": 59.641}, "n11": {"s": 60.341, "e": 65.22}, "ar_bayt": {"s": 65.57, "e": 66.548}, "n12": {"s": 67.348, "e": 70.939}, "ar_samak": {"s": 71.339, "e": 72.318}, "n13": {"s": 74.518, "e": 77.462}, "n14": {"s": 78.662, "e": 81.288}, "r15": {"s": 81.788, "e": 83.553}};
+      // the 28 letters in the app's order (alphabet-data.js), 7 shape families
+      const FAMILIES = [["ا","ب","ت","ث"],["ج","ح","خ"],["د","ذ","ر","ز"],["س","ش","ص","ض"],["ط","ظ","ع","غ"],["ف","ق","ك","ل"],["م","ن","ه","و","ي"]];
+      const jg = document.getElementById("j-grid");
+      FAMILIES.forEach((fam, fi) => fam.forEach((ch) => { const d = document.createElement("div"); d.className = "al fam" + fi; d.textContent = ch; jg.appendChild(d); }));
+      const gg = document.getElementById("g-grid");
+      for (let i = 0; i < 66; i++) { const d = document.createElement("div"); d.className = "hd"; gg.appendChild(d); }
+
+      document.fonts.load('700 800px "Plex Arabic"', "ع").then(() => {
+      const g = document.getElementById("ghost").getContext("2d");
+      g.fillStyle = "#e4dcc9"; g.font = '700 800px "Plex Arabic"'; g.textAlign = "center";
+      g.fillText("ع", 560, 900);
+
+      const S = {};
+      document.querySelectorAll("section.clip").forEach((el) => { const s = +el.dataset.start; S[el.id] = { s, e: s + +el.dataset.duration }; });
+      const DUR = +document.getElementById("root").dataset.duration;
+      const tl = gsap.timeline({ paused: true });
+      const XF = 0.55;
+      const scene = (id) => {
+        tl.fromTo("#" + id + " .inner", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, S[id].s);
+        if (S[id].e < DUR - 0.1) tl.to("#" + id + " .inner", { opacity: 0, duration: XF, ease: "sine.inOut" }, S[id].e - XF);
+      };
+      const rise = (sel, t, d = 0.6, y = 26) => tl.fromTo(sel, { opacity: 0, y }, { opacity: 1, y: 0, duration: d, ease: "power3.out" }, t);
+      const pop = (sel, t) => tl.fromTo(sel, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.6)" }, t);
+      const press = (sel, t) => { tl.to(sel, { scale: 0.95, duration: 0.1, ease: "power2.in" }, t); tl.to(sel, { scale: 1, duration: 0.25, ease: "back.out(2)" }, t + 0.1); };
+      Object.keys(S).forEach(scene);
+
+      // ambient
+      tl.fromTo("#ghost", { x: 0, y: 0, rotation: -2 }, { x: -160, y: -60, rotation: 3, duration: DUR, ease: "none" }, 0);
+      tl.fromTo(".frame-rule", { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "power3.inOut" }, 0.1);
+      tl.fromTo(".meta", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 0.6);
+      tl.fromTo("#ink", { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.42, ease: "power3.out" }, 0.0);
+      tl.to("#ink", { opacity: 0, duration: 0.35, ease: "sine.in" }, 0.55);
+
+      // A — رَفِيق, companion, then the brand
+      tl.fromTo("#a-word", { clipPath: "inset(0% 0% 0% 100%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 1.3, ease: "power2.inOut" }, 0.7);
+      rise("#a-gloss", T.r01.s + 1.3, 0.6, 16);
+      tl.to("#a-one", { opacity: 0, y: -30, duration: 0.5, ease: "power2.in" }, T.n02.s - 0.2);
+      tl.fromTo("#a-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T.n02.s + 0.2);
+      tl.fromTo("#a-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.n02.s + 0.35);
+      rise("#a-sub", T.n02.s + 1.6);
+
+      // C — in a class, at a madrasa, on your own; words that slip away
+      ["#c-ch1", "#c-ch2", "#c-ch3"].forEach((s, i) => pop(s, T.n03.s + [0.1, 0.8, 1.6][i]));
+      ["#c-w1", "#c-w2", "#c-w3"].forEach((s, i) => rise(s, T.n03.s + 2.4 + i * 0.25, 0.6, 30));
+      rise("#c-line", T.n03.s + 4.3, 0.6, 16);
+      ["#c-w3", "#c-w1", "#c-w2"].forEach((s, i) => tl.to(s, { opacity: 0.14, filter: "blur(10px)", y: -14, duration: 1.0, ease: "power2.in" }, T.n03.s + 4.4 + i * 0.25));
+
+      // D — three findings
+      ["#d-1", "#d-2", "#d-3"].forEach((s, i) => rise(s, T.n04.s + 0.9 + i * 0.45, 0.6, 30));
+
+      // E — spacing: cram, forget; space, remember
+      rise("#e .title", S.e.s + 0.3, 0.6, 16);
+      tl.fromTo("#e-cram", { opacity: 0 }, { opacity: 1, duration: 0.4 }, T.n05.s + 0.9);
+      tl.fromTo("#e-cram .cp", { scale: 0 }, { scale: 1, duration: 0.25, stagger: 0.08, ease: "back.out(2)" }, T.n05.s + 1.0);
+      tl.fromTo("#e-cram-res", { opacity: 0 }, { opacity: 1, duration: 0.4 }, T.n05.s + 1.6);
+      tl.to("#e-cram .cp", { opacity: 0.2, duration: 0.8 }, T.n05.s + 2.0);
+      tl.fromTo("#e-space", { opacity: 0 }, { opacity: 1, duration: 0.4 }, T.n05.s + 1.7);
+      [1.9, 2.6, 3.3, 4.0, 4.7].forEach((dt, k) => {
+        tl.fromTo(`#sp${k + 1}`, { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2)" }, T.n05.s + dt);
+      });
+      tl.fromTo("#e-space .sd", { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.7 }, T.n05.s + 1.9);
+      tl.fromTo("#e-space-res", { opacity: 0 }, { opacity: 1, duration: 0.4 }, T.n05.s + 5.0);
+      rise("#e .source", T.n05.s + 3.2, 0.5, 10);
+
+      // F — testing: reread vs recall
+      rise("#fz .title", S.fz.s + 0.3, 0.6, 16);
+      rise("#fz-read", T.n06.s + 0.8, 0.6, 30);
+      rise("#fz-recall", T.n06.s + 1.5, 0.6, 30);
+      tl.fromTo("#fz-a", { opacity: 0 }, { opacity: 0, duration: 0.01 }, S.fz.s);
+      tl.to("#fz-q", { opacity: 0, duration: 0.2 }, T.n06.s + 3.0);
+      tl.to("#fz-a", { opacity: 1, duration: 0.3 }, T.n06.s + 3.1);
+      tl.fromTo("#fz-recall", { boxShadow: "0 30px 60px rgba(23,38,43,0.10)" }, { boxShadow: "0 0 0 10px rgba(46,114,99,0.25)", duration: 0.3, yoyo: true, repeat: 1 }, T.n06.s + 3.1);
+      rise("#fz .source", T.n06.s + 1.8, 0.5, 10);
+
+      // G — habit: 66 days fill
+      rise("#g-side .title", S.g.s + 0.4, 0.6, 16);
+      const count = { n: 0 }, gn = document.getElementById("g-n");
+      tl.to(".hd", { backgroundColor: "#b4322a", duration: 0.12, stagger: 4.2 / 66 }, T.n07.s + 2.0);
+      tl.fromTo(count, { n: 0 }, { n: 66, duration: 4.3, ease: "none", onUpdate: () => { gn.textContent = Math.round(count.n); } }, T.n07.s + 2.0);
+      rise("#g-note", T.n07.s + 4.2, 0.5, 10);
+      rise("#g .source", T.n07.s + 3.4, 0.5, 10);
+
+      // H — Rafiq does it: recall, then the next reviews
+      tl.fromTo("#h-quiz", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.h.s);
+      press("#h-right", T.r08.s + 3.2);
+      tl.to("#h-right", { backgroundColor: "#2e7263", color: "#ffffff", borderColor: "#2e7263", duration: 0.2 }, T.r08.s + 3.3);
+      rise("#h-side .title", T.r08.s + 0.4, 0.6, 16);
+      tl.fromTo(".sched span", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.3 }, T.r08.s + 1.4);
+      rise("#h-due", T.r08.s + 4.0, 0.5, 10);
+
+      // I — two doors
+      rise("#i-rev", T.n09.s + 0.2, 0.7, 30);
+      rise("#i-zero", T.n09.s + 2.3, 0.7, 30);
+
+      // J — the alphabet turns green, family by family
+      tl.fromTo(".al", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.02 }, S.j.s + 0.2);
+      FAMILIES.forEach((_, fi) => tl.to(".fam" + fi, { backgroundColor: "#2e7263", borderColor: "#2e7263", color: "#ffffff", duration: 0.3, stagger: 0.05 }, T.n10.s + 1.4 + fi * 0.48));
+      rise("#j-cap", T.n10.s + 2.4, 0.5, 10);
+
+      // K — the ب card; the native voice says بَيْت
+      tl.fromTo("#k-card", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.k.s);
+      ["#k-ex1", "#k-ex2", "#k-ex3"].forEach((s, i) => rise(s, T.n11.s + 0.8 + i * 0.5, 0.5, 20));
+      tl.to("#k-ex1", { scale: 1.04, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.out" }, T.ar_bayt.s);
+
+      // L — the fatha; then the listening test plays سَمَك and س is chosen
+      rise("#l-vowel", T.n12.s + 0.1, 0.6, 30);
+      rise("#l-test", T.n12.s + 1.6, 0.6, 30);
+      tl.fromTo("#l-rev", { opacity: 0 }, { opacity: 0, duration: 0.01 }, S.l.s);
+      tl.to("#l-play", { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1 }, T.ar_samak.s);
+      press("#l-s", T.ar_samak.e + 0.35);
+      tl.to("#l-s", { backgroundColor: "#2e7263", color: "#ffffff", borderColor: "#2e7263", duration: 0.2 }, T.ar_samak.e + 0.45);
+      tl.to("#l-rev", { opacity: 1, duration: 0.4 }, T.ar_samak.e + 0.5);
+
+      // M — first letter to first conversation
+      pop("#m-1", T.n13.s + 0.1); rise("#m-a1", T.n13.s + 0.5, 0.3, 0);
+      pop("#m-2", T.n13.s + 0.7); rise("#m-a2", T.n13.s + 1.1, 0.3, 0);
+      tl.fromTo("#m-bub", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, T.n13.s + 1.3);
+      tl.fromTo("#m-ok", { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, T.n13.s + 2.0);
+
+      // N — the close
+      rise("#n1", T.n14.s + 0.1, 0.7);
+      rise("#n2", T.n14.s + 1.2, 0.7);
+      tl.fromTo("#n-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T.r15.s - 0.3);
+      tl.fromTo("#n-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.r15.s - 0.15);
+      rise("#n-url", T.r15.s + 0.5, 0.5, 12);
+      rise("#n-try", T.r15.s + 0.9, 0.5, 12);
+
+      // voice-reactive: the warm glow breathes with the voices
+      const A = window.AUDIO_DATA, glow = document.getElementById("glow");
+      const frames = Math.min(A.rms.length, Math.floor(DUR * A.fps));
+      for (let f = 0; f < frames; f += 2) {
+        tl.call((r) => { glow.style.transform = "scale(" + (0.95 + 0.1 * r).toFixed(4) + ")"; glow.style.opacity = (0.72 + 0.28 * r).toFixed(3); }, [A.rms[f]], f / A.fps);
+      }
+
+      window.__timelines["main"] = tl;
+      });
+    </script>
+  </body>
+</html>

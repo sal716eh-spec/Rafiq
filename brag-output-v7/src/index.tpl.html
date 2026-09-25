@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Rafiq — everything inside (v7)</title>
+    <script src="assets/lib/gsap.min.js"></script>
+    <script src="assets/audio-data.js"></script>
+    <style>
+      @font-face { font-family: "Plex Arabic"; src: url("assets/fonts/ibm-plex-sans-arabic-arabic-500-normal.woff2") format("woff2"); font-weight: 500; }
+      @font-face { font-family: "Plex Arabic"; src: url("assets/fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2") format("woff2"); font-weight: 600; }
+      @font-face { font-family: "Plex Arabic"; src: url("assets/fonts/ibm-plex-sans-arabic-arabic-700-normal.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "Karla"; src: url("assets/fonts/karla-latin-400-normal.woff2") format("woff2"); font-weight: 400; }
+      @font-face { font-family: "Karla"; src: url("assets/fonts/karla-latin-500-normal.woff2") format("woff2"); font-weight: 500; }
+      @font-face { font-family: "Karla"; src: url("assets/fonts/karla-latin-700-normal.woff2") format("woff2"); font-weight: 700; }
+      @font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2"); font-weight: 500; }
+
+      :root {
+        --paper: #f1ece0; --paper-deep: #e4dcc9; --card: #f7f3ea;
+        --ink: #17262b; --ink-soft: #4f6163;
+        --rubric: #b4322a; --verdigris: #2e7263; --gold: #a8842c;
+        --ar: "Plex Arabic", "Karla", sans-serif; --la: "Karla", sans-serif; --ut: "JetBrains Mono", monospace;
+      }
+      body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--la); }
+      #root { position: relative; width: 100%; height: 100%; overflow: hidden; background: var(--paper); }
+
+      .bg { position: absolute; inset: 0; pointer-events: none; }
+      #glow { position: absolute; width: 1600px; height: 1600px; left: 160px; top: -260px; border-radius: 50%;
+        background: radial-gradient(circle, rgba(168,132,44,0.24) 0%, rgba(168,132,44,0.07) 42%, rgba(241,236,224,0) 70%); }
+      #ghost { position: absolute; right: 0; bottom: 0; width: 1000px; height: 1000px; }
+      #ink { position: absolute; left: 510px; top: 535px; width: 900px; height: 10px; border-radius: 5px; background: var(--rubric); transform-origin: right center; }
+      .frame-rule { position: absolute; left: 110px; right: 110px; height: 3px; background: var(--ink); opacity: 0.14; }
+      #rule-top { top: 70px; } #rule-bot { bottom: 70px; }
+      .meta { position: absolute; top: 34px; font-family: var(--ut); font-size: 20px; letter-spacing: 0.14em; color: var(--ink-soft); }
+      #meta-l { left: 110px; } #meta-r { right: 110px; }
+
+      .clip { position: absolute; inset: 0; }
+      .inner { position: absolute; inset: 0; box-sizing: border-box; padding: 130px 150px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+      .kicker { font-family: var(--ut); font-size: 22px; letter-spacing: 0.14em; color: var(--ink-soft); text-transform: uppercase; }
+      .card { background: var(--card); border: 3px solid rgba(23,38,43,0.14); border-radius: 28px; box-shadow: 0 30px 60px rgba(23,38,43,0.10); }
+      .ar { font-family: var(--ar); direction: rtl; }
+      .hl { color: var(--rubric); }
+      .big-line { font-size: 76px; font-weight: 700; letter-spacing: -0.01em; text-align: center; max-width: 1500px; }
+      .title { font-size: 64px; font-weight: 700; margin-top: 14px; text-align: center; }
+      .source { position: absolute; left: 150px; bottom: 112px; font-family: var(--ut); font-size: 24px; letter-spacing: 0.06em; color: var(--ink-soft); }
+      .source b { color: var(--ink); font-weight: 500; }
+      .brand { display: flex; align-items: center; gap: 36px; }
+      .tile { position: relative; width: 170px; height: 170px; border-radius: 38px; background: var(--ink); display: flex; align-items: center; justify-content: center; }
+      .tile .r { font-family: var(--ar); font-weight: 700; font-size: 118px; color: var(--paper); line-height: 1; margin-top: -8px; }
+      .tile .dot { position: absolute; width: 24px; height: 24px; border-radius: 50%; background: var(--rubric); right: 34px; top: 32px; }
+      .brand-name { font-size: 140px; font-weight: 700; letter-spacing: -0.02em; }
+      .mk { position: relative; display: inline-block; white-space: nowrap; }
+      .mk-r { color: var(--rubric); }
+      .mk-i { position: absolute; left: 0; top: 0; right: 0; color: var(--ink); }
+
+      /* A — Continue */
+      #today { width: 1000px; padding: 48px 60px 56px; border-color: var(--verdigris); box-sizing: border-box; }
+      #today .ua { direction: rtl; text-align: right; font-family: var(--ar); font-weight: 700; font-size: 74px; color: var(--rubric); line-height: 1.7; margin-top: 8px; }
+      #today .t { font-size: 62px; font-weight: 700; }
+      #today .m { font-size: 32px; color: var(--ink-soft); margin-top: 8px; }
+      #cont { margin-top: 38px; height: 120px; border-radius: 24px; background: var(--verdigris); color: #fff; font-size: 48px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+      #a-home { margin-bottom: 30px; }
+
+      /* B — Meet Rafiq */
+      #b-ar { font-family: var(--ar); font-weight: 700; font-size: 110px; line-height: 1.6; color: var(--rubric); margin-top: 20px; direction: rtl; }
+      #b-sub { font-size: 48px; font-weight: 500; color: var(--ink-soft); margin-top: 6px; }
+
+      /* C — the path */
+      #c .inner { flex-direction: row; gap: 60px; }
+      #c-read { width: 420px; padding: 40px 40px 44px; box-sizing: border-box; border-color: var(--verdigris); }
+      #c-read .ar { font-weight: 700; font-size: 90px; line-height: 1.6; }
+      #c-read b { display: block; font-size: 44px; margin-top: 6px; }
+      #c-read span { font-size: 32px; color: var(--verdigris); font-weight: 700; }
+      #c-units { display: grid; grid-template-columns: repeat(3, 340px); gap: 18px; }
+      .u { display: flex; align-items: center; gap: 18px; padding: 18px 22px; background: var(--card); border: 3px solid rgba(23,38,43,0.12); border-radius: 18px; }
+      .u .n { width: 50px; height: 50px; flex: 0 0 auto; border-radius: 50%; background: var(--paper-deep); color: var(--ink); font-size: 26px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+      .u b { font-size: 29px; }
+      #u1 .n { background: var(--gold); color: #fff; }
+
+      /* D — a step */
+      #d-steps { display: flex; gap: 26px; margin-top: 60px; }
+      .st { width: 300px; padding: 34px 26px 36px; box-sizing: border-box; text-align: center; opacity: 0.4; }
+      .st .i { font-size: 80px; line-height: 1.3; }
+      .st b { display: block; font-size: 46px; margin-top: 10px; }
+      .st span { display: block; font-size: 28px; color: var(--ink-soft); margin-top: 6px; }
+      .st.on { opacity: 1; border-color: var(--verdigris); }
+
+      /* E — word tiles */
+      #e .inner { flex-direction: row; gap: 70px; align-items: center; }
+      #e-card { width: 1080px; padding: 0 0 44px; box-sizing: border-box; overflow: hidden; }
+      .task { display: flex; align-items: center; gap: 22px; padding: 24px 40px; background: #ece5d4; border-left: 8px solid var(--rubric); }
+      .task b { font-size: 38px; } .task .ar { font-size: 38px; color: var(--rubric); line-height: 1.6; }
+      #e-en { font-size: 44px; font-weight: 500; padding: 30px 40px 0; }
+      #e-line { position: relative; margin: 26px 40px 0; min-height: 120px; border-bottom: 5px solid rgba(23,38,43,0.18); display: flex; flex-wrap: wrap; gap: 14px; direction: rtl; align-items: center; }
+      #e-pool { position: relative; margin: 26px 40px 0; min-height: 110px; display: flex; flex-wrap: wrap; gap: 14px; direction: rtl; align-items: center; }
+      .tile2 { font-family: var(--ar); font-weight: 600; font-size: 46px; line-height: 1.7; padding: 4px 30px; border-radius: 18px; border: 3px solid rgba(23,38,43,0.16); background: #fffdf8; }
+      #e-line .tile2 { background: var(--paper-deep); }
+      #e-ok { padding: 18px 40px 0; font-size: 40px; font-weight: 700; color: var(--verdigris); }
+      #e-later { width: 520px; padding: 34px 40px 40px; box-sizing: border-box; }
+      #e-later .k { font-size: 38px; font-weight: 700; }
+      #e-later .s { font-size: 30px; color: var(--ink-soft); margin-top: 6px; }
+      #e-input { margin-top: 22px; height: 90px; border-radius: 16px; border: 3px solid rgba(23,38,43,0.22); background: #fffdf8; font-family: var(--ar); font-weight: 600; font-size: 38px; line-height: 84px; direction: rtl; text-align: right; padding: 0 22px; overflow: hidden; white-space: nowrap; }
+
+      /* F — review */
+      #fz .inner { justify-content: flex-start; padding-top: 170px; }
+      #fz-line { position: relative; width: 1500px; height: 260px; margin-top: 70px; }
+      #fz-axis { position: absolute; left: 0; right: 0; top: 150px; height: 4px; background: rgba(23,38,43,0.16); }
+      .stop { position: absolute; top: 175px; width: 200px; margin-left: -100px; text-align: center; }
+      .stop .d { font-family: var(--ut); font-size: 26px; color: var(--ink-soft); }
+      .stop .ok { font-size: 30px; font-weight: 700; color: var(--verdigris); margin-top: 6px; }
+      .dotm { position: absolute; top: 139px; width: 26px; height: 26px; margin-left: -13px; border-radius: 50%; background: var(--ink); }
+      #chip { position: absolute; top: 20px; margin-left: -120px; width: 240px; height: 90px; border-radius: 45px; background: var(--ink); color: var(--paper);
+        display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 32px; font-weight: 700; }
+      #chip .ar { font-size: 46px; color: var(--paper); line-height: 1; }
+      #due { margin-top: 20px; display: flex; align-items: center; justify-content: space-between; width: 900px; padding: 24px 34px; background: var(--card); border: 3px solid rgba(23,38,43,0.14); border-radius: 20px; font-size: 36px; }
+      #due b { color: var(--rubric); }
+
+      /* G — Practise */
+      #g-hero { text-align: center; }
+      #g-hero .ar { font-weight: 600; font-size: 84px; line-height: 1.6; }
+      #g-hero b { display: block; font-size: 52px; }
+      #g-list { display: flex; flex-direction: column; gap: 16px; margin-top: 30px; width: 1150px; }
+      .row { display: flex; align-items: center; gap: 26px; padding: 20px 30px; background: var(--card); border: 3px solid rgba(23,38,43,0.12); border-radius: 22px; }
+      .row .pi { font-size: 50px; width: 70px; text-align: center; }
+      .row .pt2 { flex: 1; } .row b { font-size: 38px; } .row .cx { font-family: var(--ut); font-size: 18px; letter-spacing: 0.1em; color: var(--verdigris); border: 2px solid var(--verdigris); border-radius: 14px; padding: 2px 10px; margin-left: 12px; vertical-align: middle; }
+      .row span.d { display: block; font-size: 27px; color: var(--ink-soft); }
+      .row .go2 { font-size: 50px; color: var(--verdigris); }
+      #g-first { border-color: var(--verdigris); }
+
+      /* H — verbs */
+      #h-title { display: flex; align-items: baseline; gap: 30px; }
+      #h-title .ar { font-weight: 700; font-size: 110px; line-height: 1.5; }
+      #h-title span { font-size: 50px; font-weight: 700; color: var(--ink-soft); }
+      #h-table { margin-top: 24px; display: grid; grid-template-columns: 220px repeat(3, 360px); gap: 14px; direction: rtl; }
+      .hc { height: 104px; border-radius: 18px; display: flex; align-items: center; justify-content: center; font-family: var(--ar); font-weight: 700; font-size: 52px; line-height: 1.6; }
+      .hc.h { font-family: var(--la); direction: ltr; font-size: 32px; color: var(--ink-soft); font-weight: 700; height: 64px; }
+      .hc.p { color: var(--rubric); }
+      .hc.f { background: var(--card); border: 3px solid rgba(23,38,43,0.12); }
+
+      /* I — joining words */
+      #i-card { width: 1300px; padding: 0 0 46px; box-sizing: border-box; overflow: hidden; }
+      #i-q { font-family: var(--ar); font-weight: 700; font-size: 84px; line-height: 1.8; direction: rtl; text-align: center; padding: 40px 40px 0; }
+      .gap { display: inline-block; min-width: 190px; border-bottom: 6px dashed var(--gold); color: transparent; }
+      #i-fill { color: var(--verdigris); }
+      #i-opts { display: flex; gap: 20px; direction: rtl; padding: 30px 40px 0; }
+      #i-opts div { flex: 1; height: 110px; border-radius: 20px; border: 3px solid rgba(23,38,43,0.16); background: #fffdf8; font-family: var(--ar); font-weight: 700; font-size: 56px; display: flex; align-items: center; justify-content: center; }
+      #i-en { padding: 26px 40px 0; font-size: 38px; color: var(--ink-soft); text-align: center; }
+
+      /* J — spelling bee */
+      #j-top { display: flex; justify-content: space-between; width: 1100px; font-family: var(--ut); font-size: 26px; color: var(--ink-soft); }
+      #j-top b { color: var(--rubric); }
+      #j-bar { display: flex; gap: 8px; width: 1100px; margin: 14px 0 22px; }
+      #j-bar span { flex: 1; height: 12px; border-radius: 6px; background: rgba(23,38,43,0.14); }
+      #j-bar span.ok { background: var(--verdigris); }
+      #j-card { width: 1100px; padding: 40px 50px 44px; box-sizing: border-box; text-align: center; }
+      #j-play { width: 150px; height: 150px; margin: 0 auto; border-radius: 50%; border: 4px solid var(--verdigris); background: var(--paper); font-size: 64px; display: flex; align-items: center; justify-content: center; }
+      #j-how { font-size: 34px; color: var(--ink-soft); margin-top: 16px; }
+      #j-row { display: flex; gap: 18px; margin-top: 26px; }
+      #j-input { flex: 1; height: 110px; border-radius: 16px; border: 4px solid rgba(23,38,43,0.22); background: #fffdf8; font-family: var(--ar); font-weight: 700; font-size: 60px; line-height: 100px; direction: rtl; text-align: right; padding: 0 26px; box-sizing: border-box; }
+      #j-check { width: 220px; height: 110px; border-radius: 16px; background: var(--verdigris); color: #fff; font-size: 38px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+      #j-ok { margin-top: 20px; font-size: 40px; font-weight: 700; color: var(--verdigris); text-align: left; }
+      #j-ok small { font-family: var(--ut); font-size: 22px; border: 2px solid var(--verdigris); border-radius: 14px; padding: 2px 12px; margin-left: 14px; vertical-align: middle; }
+
+      /* K — real-life scenes */
+      .badge { font-family: var(--ut); font-size: 24px; letter-spacing: 0.14em; color: var(--verdigris); border: 3px solid var(--verdigris); border-radius: 22px; padding: 6px 20px; }
+      #k-grid { display: grid; grid-template-columns: repeat(3, 470px); gap: 22px; margin-top: 30px; }
+      .sc { padding: 26px 30px 30px; box-sizing: border-box; }
+      .sc .i { font-size: 64px; line-height: 1.3; }
+      .sc b { display: block; font-size: 36px; margin-top: 6px; }
+      .sc .ar { font-weight: 600; font-size: 38px; line-height: 1.7; color: var(--rubric); text-align: left; }
+
+      /* L — conversation (as v6) */
+      #l .inner { padding-top: 110px; padding-bottom: 150px; }
+      #chat { width: 1220px; padding: 36px 54px 40px; display: flex; flex-direction: column; gap: 22px; box-sizing: border-box; }
+      .bubble { max-width: 900px; padding: 20px 34px 22px; border-radius: 26px; }
+      .bubble .ar { font-weight: 600; font-size: 50px; line-height: 1.75; text-align: right; }
+      .bubble .e { font-size: 28px; color: var(--ink-soft); margin-top: 2px; }
+      #b-them { align-self: flex-start; background: #ece5d4; border-bottom-left-radius: 8px; }
+      #b-me { align-self: flex-end; background: var(--ink); border-bottom-right-radius: 8px; }
+      #b-me .ar { color: var(--paper); }
+      #inbox { display: flex; align-items: center; gap: 22px; border-top: 3px solid rgba(23,38,43,0.10); padding-top: 22px; }
+      #input { flex: 1; height: 96px; box-sizing: border-box; border: 3px solid rgba(23,38,43,0.22); border-radius: 20px; background: #fffdf8;
+        font-family: var(--ar); font-weight: 600; font-size: 44px; line-height: 90px; direction: rtl; text-align: right; padding: 0 30px; overflow: hidden; white-space: nowrap; }
+      #send { width: 190px; height: 96px; border-radius: 20px; background: var(--verdigris); color: #fff; font-size: 36px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
+      #note { align-self: flex-end; font-size: 40px; font-weight: 700; color: var(--verdigris); }
+
+      /* M — weak spots (as v6) */
+      #m-card { width: 1240px; padding: 44px 60px 50px; box-sizing: border-box; border-color: var(--gold); }
+      #m-card .t { font-size: 62px; font-weight: 700; margin-top: 14px; }
+      #m-card p { font-size: 34px; color: var(--ink-soft); margin: 14px 0 22px; max-width: 1080px; }
+      .fx { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 2px solid rgba(23,38,43,0.10); font-size: 32px; }
+      .fx .ar { font-weight: 700; font-size: 48px; }
+      #m-btns { display: flex; gap: 20px; margin-top: 26px; }
+      .btn { height: 84px; padding: 0 44px; border-radius: 18px; font-size: 34px; font-weight: 700; display: flex; align-items: center; }
+      #m-go { background: var(--verdigris); color: #fff; } #m-got { border: 3px solid rgba(23,38,43,0.22); }
+
+      /* N — close */
+      #n1, #n2 { font-size: 80px; max-width: 1700px; }
+      #n2 { color: var(--rubric); margin-top: 10px; }
+      #n-brand { margin-top: 60px; }
+      #n-url { font-family: var(--ut); font-size: 34px; letter-spacing: 0.1em; color: var(--ink-soft); margin-top: 30px; }
+      #n-try { margin-top: 18px; font-size: 36px; font-weight: 700; color: var(--verdigris); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-width="1920" data-height="1080" data-duration="{{DURATION}}">
+      <div class="bg" id="bg">
+        <div id="glow"></div>
+        <canvas id="ghost" width="1000" height="1000"></canvas>
+        <div class="frame-rule" id="rule-top"></div>
+        <div id="ink"></div>
+        <div class="frame-rule" id="rule-bot"></div>
+        <div class="meta" id="meta-l">RAFIQ · EVERYTHING INSIDE</div>
+        <div class="meta" id="meta-r">RAFIQ-ARABIC.COM</div>
+      </div>
+
+      <section id="a" class="clip" {{SCENE:a}} data-track-index="1"><div class="inner">
+        <div class="kicker" id="a-home">Home · today</div>
+        <div class="card" id="today">
+          <div class="kicker">Unit 1 of 12 · step 3 of 9</div>
+          <div class="ua">التَّحِيَّةُ وَالتَّعارُفُ</div>
+          <div class="t">New words 2 of 4</div>
+          <div class="m">Greetings &amp; introductions · about 5 minutes</div>
+          <div id="cont">Continue</div>
+        </div>
+      </div></section>
+
+      <section id="b" class="clip" {{SCENE:b}} data-track-index="2"><div class="inner">
+        <div class="brand" id="b-brand"><div class="tile" id="b-tile"><span class="r">ر</span><span class="dot"></span></div><div class="brand-name">Rafiq</div></div>
+        <div id="b-ar">رَفِيق</div>
+        <div id="b-sub">your companion in learning Arabic</div>
+      </div></section>
+
+      <section id="c" class="clip" {{SCENE:c}} data-track-index="3"><div class="inner">
+        <div class="card" id="c-read"><div class="ar">الْحُرُوف</div><b>Reading Arabic</b><span>✓ Done</span></div>
+        <div id="c-units">
+          <div class="u" id="u1"><span class="n">1</span><b>Greetings</b></div><div class="u"><span class="n">2</span><b>The family</b></div><div class="u"><span class="n">3</span><b>Housing</b></div>
+          <div class="u"><span class="n">4</span><b>Daily life</b></div><div class="u"><span class="n">5</span><b>Food &amp; drink</b></div><div class="u"><span class="n">6</span><b>Prayer</b></div>
+          <div class="u"><span class="n">7</span><b>Study</b></div><div class="u"><span class="n">8</span><b>Work</b></div><div class="u"><span class="n">9</span><b>Shopping</b></div>
+          <div class="u"><span class="n">10</span><b>The weather</b></div><div class="u"><span class="n">11</span><b>People &amp; places</b></div><div class="u"><span class="n">12</span><b>Hobbies</b></div>
+        </div>
+      </div></section>
+
+      <section id="d" class="clip" {{SCENE:d}} data-track-index="4"><div class="inner">
+        <div class="kicker">One step · 5–10 minutes</div>
+        <div id="d-steps">
+          <div class="st card" id="st1"><div class="i">🏠</div><b>Meet</b><span>new words</span></div>
+          <div class="st card" id="st2"><div class="i">🎧</div><b>Listen</b><span>a conversation</span></div>
+          <div class="st card" id="st3"><div class="i">💡</div><b>Understand</b><span>one grammar idea</span></div>
+          <div class="st card" id="st4"><div class="i">✍️</div><b>Practise</b><span>build and fix</span></div>
+          <div class="st card" id="st5"><div class="i">🗣️</div><b>Speak</b><span>in your own words</span></div>
+        </div>
+      </div></section>
+
+      <section id="e" class="clip" {{SCENE:e}} data-track-index="5"><div class="inner">
+        <div class="card" id="e-card">
+          <div class="task"><b>Say this in Arabic</b><span class="ar">قُلْها بِالْعَرَبِيَّةِ</span></div>
+          <div id="e-en">I go to school by bus every day.</div>
+          <div id="e-line"><div class="tile2" id="l1">أَذْهَبُ</div><div class="tile2" id="l2">إِلى الْمَدْرَسَةِ</div><div class="tile2" id="l3">بِالْحافِلَةِ</div><div class="tile2" id="l4">كُلَّ يَوْمٍ</div></div>
+          <div id="e-pool"><div class="tile2" id="p3">بِالْحافِلَةِ</div><div class="tile2" id="p1">أَذْهَبُ</div><div class="tile2" id="p4">كُلَّ يَوْمٍ</div><div class="tile2" id="p2">إِلى الْمَدْرَسَةِ</div></div>
+          <div id="e-ok">✓ Correct</div>
+        </div>
+        <div class="card" id="e-later">
+          <div class="k">From unit 7: type it</div>
+          <div class="s">Tiles first, typing later</div>
+          <div id="e-input"><span id="e-typed"></span></div>
+        </div>
+      </div></section>
+
+      <section id="fz" class="clip" {{SCENE:fz}} data-track-index="6"><div class="inner">
+        <div class="kicker">Review</div>
+        <div class="title">Back just before you'd forget it</div>
+        <div id="fz-line">
+          <div id="fz-axis"></div>
+          <div class="dotm" style="left:60px"></div><div class="dotm" style="left:400px"></div><div class="dotm" style="left:740px"></div><div class="dotm" style="left:1080px"></div><div class="dotm" style="left:1420px"></div>
+          <div class="stop" style="left:60px" id="s0"><div class="d">DAY 1</div><div class="ok">learned</div></div>
+          <div class="stop" style="left:400px" id="s1"><div class="d">DAY 2</div><div class="ok">✓</div></div>
+          <div class="stop" style="left:740px" id="s2"><div class="d">DAY 4</div><div class="ok">✓</div></div>
+          <div class="stop" style="left:1080px" id="s3"><div class="d">DAY 8</div><div class="ok">✓</div></div>
+          <div class="stop" style="left:1420px" id="s4"><div class="d">DAY 16</div><div class="ok">✓</div></div>
+          <div id="chip"><span class="ar">بَيْت</span><span>house</span></div>
+        </div>
+        <div id="due"><span><b>12</b> to review from your lessons</span><span>Review →</span></div>
+      </div></section>
+
+      <section id="g" class="clip" {{SCENE:g}} data-track-index="7"><div class="inner">
+        <div id="g-hero"><div class="ar">تَدْرِيب</div><b>Practise</b></div>
+        <div id="g-list">
+          <div class="row" id="g-first"><span class="pi">🎯</span><span class="pt2"><b>Weak-spots review<span class="cx">COMPLETE</span></b><span class="d">Exercises picked for the mistakes you keep making</span></span><span class="go2">›</span></div>
+          <div class="row"><span class="pi">🐝</span><span class="pt2"><b>Spelling bee</b><span class="d">Hear a word or see its meaning, then type it in Arabic</span></span><span class="go2">›</span></div>
+          <div class="row" id="g-beyond"><span class="pi">📚</span><span class="pt2"><b>Beyond the lessons</b><span class="d">Verbs, joining words and flashcards of your words</span></span><span class="go2">›</span></div>
+          <div class="row"><span class="pi">🌍</span><span class="pt2"><b>Real-life scenes<span class="cx">COMPLETE</span></b><span class="d">The airport, the doctor, the masjid, a restaurant, a taxi and a family visit</span></span><span class="go2">›</span></div>
+          <div class="row"><span class="pi">🔁</span><span class="pt2"><b>Redo a unit</b><span class="d">Extra rounds on units you've finished</span></span><span class="go2">›</span></div>
+        </div>
+      </div></section>
+
+      <section id="h" class="clip" {{SCENE:h}} data-track-index="8"><div class="inner">
+        <div class="kicker">Verbs · 21 verbs · 3 tenses</div>
+        <div id="h-title"><span class="ar">ذَهَبَ</span><span>to go</span></div>
+        <div id="h-table">
+          <div class="hc h"></div><div class="hc h" id="hh1">Past</div><div class="hc h" id="hh2">Present</div><div class="hc h" id="hh3">Future</div>
+          <div class="hc p">أَنا</div><div class="hc f c1">ذَهَبْتُ</div><div class="hc f c2">أَذْهَبُ</div><div class="hc f c3">سَأَذْهَبُ</div>
+          <div class="hc p">أَنْتَ</div><div class="hc f c1">ذَهَبْتَ</div><div class="hc f c2">تَذْهَبُ</div><div class="hc f c3">سَتَذْهَبُ</div>
+          <div class="hc p">هُوَ</div><div class="hc f c1">ذَهَبَ</div><div class="hc f c2">يَذْهَبُ</div><div class="hc f c3">سَيَذْهَبُ</div>
+        </div>
+      </div></section>
+
+      <section id="i" class="clip" {{SCENE:i}} data-track-index="9"><div class="inner">
+        <div class="card" id="i-card">
+          <div class="task"><b>Choose the joining word</b><span class="ar">اخْتَرِ الرَّابِطَ الْمُناسِبَ</span></div>
+          <div id="i-q">أُصَلِّي، <span class="gap" id="i-gap">ثُمَّ</span> أَتَناوَلُ الْفَطُورَ.</div>
+          <div id="i-opts"><div id="i-then">ثُمَّ</div><div>لَكِنَّ</div><div>لِأَنَّ</div><div>مَثَلًا</div></div>
+          <div id="i-en">I pray, then I have breakfast.</div>
+        </div>
+      </div></section>
+
+      <section id="j" class="clip" {{SCENE:j}} data-track-index="10"><div class="inner">
+        <div id="j-top"><span>🐝 SPELLING BEE · WORD 4 OF 10</span><span>SCORE <b id="j-score">3</b></span></div>
+        <div id="j-bar"><span class="ok"></span><span class="ok"></span><span class="ok"></span><span id="j-seg"></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <div class="card" id="j-card">
+          <div id="j-play">🔊</div>
+          <div id="j-how">Listen, then type the word in Arabic</div>
+          <div id="j-row"><div id="j-input"><span id="j-typed"></span></div><div id="j-check">Check</div></div>
+          <div id="j-ok">✓ Correct <small>fully vowelled ✓</small></div>
+        </div>
+      </div></section>
+
+      <section id="k" class="clip" {{SCENE:k}} data-track-index="11"><div class="inner">
+        <div class="badge">COMPLETE</div>
+        <div class="title">Real-life scenes</div>
+        <div id="k-grid">
+          <div class="sc card"><div class="i">✈️</div><b>At the airport</b><div class="ar">فِي الْمَطارِ</div></div>
+          <div class="sc card"><div class="i">🩺</div><b>At the doctor</b><div class="ar">عِنْدَ الطَّبِيبِ</div></div>
+          <div class="sc card"><div class="i">🕌</div><b>At the masjid</b><div class="ar">فِي الْمَسْجِدِ</div></div>
+          <div class="sc card"><div class="i">🍽️</div><b>Ordering a meal</b><div class="ar">فِي الْمَطْعَمِ</div></div>
+          <div class="sc card"><div class="i">🚕</div><b>Taking a taxi</b><div class="ar">فِي سَيّارَةِ الْأُجْرَةِ</div></div>
+          <div class="sc card"><div class="i">🏠</div><b>A family visit</b><div class="ar">فِي زِيارَةٍ</div></div>
+        </div>
+      </div></section>
+
+      <section id="l" class="clip" {{SCENE:l}} data-track-index="12"><div class="inner">
+        <div class="card" id="chat">
+          <div class="kicker">Have the conversation · Complete</div>
+          <div class="bubble" id="b-them"><div class="ar">السَّلامُ عَلَيْكُمْ. أَنا جارُكَ الْجَدِيدُ.</div><div class="e">Peace be upon you. I'm your new neighbour.</div></div>
+          <div class="bubble" id="b-me"><div class="ar">وَعَلَيْكُمُ السَّلامُ، أَهْلًا وَسَهْلًا!</div></div>
+          <div id="note">✓ Good reply.</div>
+          <div id="inbox"><div id="input"><span id="typed"></span></div><div id="send">Send</div></div>
+        </div>
+      </div></section>
+
+      <section id="m" class="clip" {{SCENE:m}} data-track-index="13"><div class="inner">
+        <div class="card" id="m-card">
+          <div class="kicker">Weak-spots review · came up 3 times this week</div>
+          <div class="t">Masculine and feminine must match</div>
+          <p>Words that describe or point to a noun take its gender, and feminine nouns usually end in ة.</p>
+          <div class="fx" id="fx1"><span class="ar">هَذا بَيْتٌ كَبِيرٌ</span><span>This is a big house</span></div>
+          <div class="fx" id="fx2"><span class="ar">هَذِهِ غُرْفَةٌ كَبِيرَةٌ</span><span>This is a big room</span></div>
+          <div id="m-btns"><div class="btn" id="m-go">Practise it</div><div class="btn" id="m-got">Got it</div></div>
+        </div>
+      </div></section>
+
+      <section id="n" class="clip" {{SCENE:n}} data-track-index="14"><div class="inner">
+        <div class="big-line" id="n1">Your journey, or something specific.</div>
+        <div class="big-line" id="n2">A few minutes a day.</div>
+        <div class="brand" id="n-brand"><div class="tile" id="n-tile"><span class="r">ر</span><span class="dot"></span></div><div class="brand-name">Rafiq</div></div>
+        <div id="n-url">rafiq-arabic.com</div>
+        <div id="n-try">Try it free</div>
+      </div></section>
+
+      {{AUDIO}}
+    </div>
+
+    <script>
+      const T = {{TIMES}};
+      document.fonts.load('700 800px "Plex Arabic"', "ع").then(() => {
+      const g = document.getElementById("ghost").getContext("2d");
+      g.fillStyle = "#e4dcc9"; g.font = '700 800px "Plex Arabic"'; g.textAlign = "center";
+      g.fillText("ع", 560, 900);
+
+      const S = {};
+      document.querySelectorAll("section.clip").forEach((el) => { const s = +el.dataset.start; S[el.id] = { s, e: s + +el.dataset.duration }; });
+      const DUR = +document.getElementById("root").dataset.duration;
+      const tl = gsap.timeline({ paused: true });
+      const XF = 0.55;
+      const scene = (id) => {
+        tl.fromTo("#" + id + " .inner", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, S[id].s);
+        if (S[id].e < DUR - 0.1) tl.to("#" + id + " .inner", { opacity: 0, duration: XF, ease: "sine.inOut" }, S[id].e - XF);
+      };
+      const rise = (sel, t, d = 0.6, y = 26) => tl.fromTo(sel, { opacity: 0, y }, { opacity: 1, y: 0, duration: d, ease: "power3.out" }, t);
+      const press = (sel, t) => { tl.to(sel, { scale: 0.95, duration: 0.1, ease: "power2.in" }, t); tl.to(sel, { scale: 1, duration: 0.25, ease: "back.out(2)" }, t + 0.1); };
+      const green = (sel, t) => tl.to(sel, { backgroundColor: "#2e7263", color: "#ffffff", borderColor: "#2e7263", duration: 0.2 }, t);
+      const type = (id, text, t, d) => {   // Arabic typed a letter (with its marks) at a time
+        const parts = text.match(/.[ً-ْٰ]*/gu), st = { n: 0 }, el = document.getElementById(id);
+        tl.fromTo(st, { n: 0 }, { n: parts.length, duration: d, ease: "none", onUpdate: () => { el.textContent = parts.slice(0, Math.round(st.n)).join(""); } }, t);
+      };
+      Object.keys(S).forEach(scene);
+
+      // ambient + opener
+      tl.fromTo("#ghost", { x: 0, y: 0, rotation: -2 }, { x: -160, y: -60, rotation: 3, duration: DUR, ease: "none" }, 0);
+      tl.fromTo(".frame-rule", { scaleX: 0 }, { scaleX: 1, duration: 1.2, ease: "power3.inOut" }, 0.1);
+      tl.fromTo(".meta", { opacity: 0 }, { opacity: 1, duration: 0.8 }, 0.6);
+      tl.fromTo("#ink", { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.42, ease: "power3.out" }, 0.0);
+      tl.to("#ink", { opacity: 0, duration: 0.35, ease: "sine.in" }, 0.55);
+
+      // A — Home: press Continue
+      rise("#a-home", 0.5, 0.5, 10);
+      tl.fromTo("#today", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0.6);
+      press("#cont", T.n01.e - 0.5);
+      tl.to("#cont", { backgroundColor: "#245a4e", duration: 0.1, yoyo: true, repeat: 1 }, T.n01.e - 0.5);
+
+      // B — Meet Rafiq
+      tl.fromTo("#b-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T.r02.s - 0.1);
+      tl.fromTo("#b-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.r02.s + 0.05);
+      tl.fromTo("#b-ar", { clipPath: "inset(0% 0% 0% 100%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.9, ease: "power2.inOut" }, T.r02.s + 0.5);
+      rise("#b-sub", T.r02.s + 1.2);
+
+      // C — the path: reading starter, then the 12 units (quick in, then held)
+      tl.fromTo("#c-read", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.n03.s + 1.6);
+      tl.fromTo("#c-units .u", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.16, ease: "power3.out" }, T.n03.s + 2.6);
+
+      // D — the five kinds of step, each as it's named
+      tl.fromTo(".st", { y: 30 }, { y: 0, duration: 0.6, stagger: 0.08, ease: "power3.out" }, S.d.s);
+      [2.3, 3.4, 4.6, 5.9, 6.7].forEach((dt, k) => tl.to("#st" + (k + 1), { opacity: 1, borderColor: "#2e7263", duration: 0.3 }, T.n04.s + dt));
+
+      // E — word tiles into order, then typing later
+      [1, 2, 3, 4].forEach((k, i) => {
+        const t = T.n05.s + 0.9 + i * 0.45;
+        tl.fromTo("#l" + k, { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, t);
+        tl.to("#p" + k, { opacity: 0, y: -40, duration: 0.3, ease: "power2.in" }, t);
+      });
+      tl.to("#e-pool", { height: 0, minHeight: 0, marginTop: 0, duration: 0.4, ease: "power2.inOut" }, T.n05.s + 2.6);
+      tl.fromTo("#e-line", { borderBottomColor: "rgba(23,38,43,0.18)" }, { borderBottomColor: "#2e7263", duration: 0.3 }, T.n05.s + 2.9);
+      green("#e-line .tile2", T.n05.s + 2.9);
+      rise("#e-ok", T.n05.s + 2.9, 0.4, 10);
+      rise("#e-later", T.n05.s + 3.4, 0.6, 30);
+      type("e-typed", "أَذْهَبُ إِلى الْمَدْرَسَةِ", T.n05.s + 3.7, 1.4);
+
+      // F — review: بَيْت comes back on day 2, 4, 8, 16
+      rise("#fz .title", S.fz.s + 0.3, 0.6, 16);
+      const xs = [60, 400, 740, 1080, 1420];
+      tl.fromTo("#chip", { x: xs[0], opacity: 0 }, { x: xs[0], opacity: 1, duration: 0.4 }, S.fz.s + 0.5);
+      tl.fromTo("#s0", { opacity: 0 }, { opacity: 1, duration: 0.4 }, S.fz.s + 0.5);
+      [1, 2, 3, 4].forEach((k) => {
+        const t = T.r06.s + 0.6 * k;
+        tl.to("#chip", { x: xs[k], duration: 0.45, ease: "power2.inOut" }, t - 0.3);
+        tl.fromTo("#s" + k, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, t + 0.1);
+      });
+      rise("#due", T.r06.s + 3.0, 0.5);
+
+      // G — Practise menu; Beyond the lessons
+      rise("#g-hero", S.g.s + 0.2, 0.5, 16);
+      tl.fromTo("#g-list .row", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.4, stagger: 0.14, ease: "power3.out" }, T.n07.s + 0.2);
+      press("#g-beyond", T.n07.e - 0.3);
+      tl.to("#g-beyond", { borderColor: "#2e7263", duration: 0.2 }, T.n07.e - 0.3);
+
+      // H — verbs: the table fills tense by tense
+      rise("#h-title", S.h.s + 0.2, 0.6, 16);
+      tl.fromTo(".hc.p, .hc.h", { opacity: 0 }, { opacity: 1, duration: 0.4 }, S.h.s + 0.4);
+      [".c1", ".c2", ".c3"].forEach((c, k) => tl.fromTo(c, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: "back.out(1.6)" }, T.n08.s + [2.0, 2.6, 3.2][k]));
+
+      // I — joining words: ثُمَّ, then the sentence read aloud
+      tl.fromTo("#i-card", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.i.s);
+      press("#i-then", T.n09.e + 0.2);
+      green("#i-then", T.n09.e + 0.3);
+      tl.to("#i-gap", { color: "#2e7263", borderBottomColor: "rgba(0,0,0,0)", duration: 0.3 }, T.n09.e + 0.35);
+      rise("#i-en", T.ar_usalli.s + 0.2, 0.5, 10);
+
+      // J — spelling bee: hear كِتاب, spell it, correct
+      tl.fromTo("#j-card", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.j.s);
+      tl.to("#j-play", { scale: 1.1, backgroundColor: "#2e7263", duration: 0.2, yoyo: true, repeat: 1 }, T.ar_kitab.s);
+      type("j-typed", "كِتاب", T.ar_kitab.e + 0.2, 1.1);
+      press("#j-check", T.ar_kitab.e + 1.6);
+      tl.to("#j-input", { borderColor: "#2e7263", backgroundColor: "rgba(46,114,99,0.09)", duration: 0.2 }, T.ar_kitab.e + 1.7);
+      rise("#j-ok", T.ar_kitab.e + 1.7, 0.4, 10);
+      tl.to("#j-seg", { backgroundColor: "#2e7263", duration: 0.3 }, T.ar_kitab.e + 1.7);
+      tl.call(() => { document.getElementById("j-score").textContent = "4"; }, null, T.ar_kitab.e + 1.7);
+      tl.call(() => { document.getElementById("j-score").textContent = "3"; }, null, S.j.s);
+
+      // K — Complete: the six scenes
+      rise(".badge", S.k.s + 0.3, 0.5, 10);
+      rise("#k .title", S.k.s + 0.5, 0.5, 16);
+      tl.fromTo(".sc", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.22, ease: "power3.out" }, T.n11.s + 2.2);
+
+      // L — the conversation partner
+      tl.fromTo("#chat", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.l.s);
+      tl.fromTo("#b-them", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, T.ar_neighbour.s - 0.1);
+      type("typed", "وَعَلَيْكُمُ السَّلامُ، أَهْلًا وَسَهْلًا!", T.n12.s + 0.2, 1.8);
+      press("#send", T.n12.s + 2.2);
+      tl.fromTo("#b-me", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, T.n12.s + 2.3);
+      tl.to("#typed", { opacity: 0, duration: 0.15 }, T.n12.s + 2.3);
+      tl.fromTo("#note", { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, T.n12.s + 2.9);
+
+      // M — weak spots
+      tl.fromTo("#m-card", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.m.s);
+      rise("#fx1", T.n13.s + 0.9, 0.5, 14); rise("#fx2", T.n13.s + 1.3, 0.5, 14);
+      press("#m-go", T.n13.e + 0.2);
+
+      // N — close
+      rise("#n1", T.n14.s + 0.1, 0.7);
+      rise("#n2", T.n14.s + 1.6, 0.7);
+      tl.fromTo("#n-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T.r15.s - 0.3);
+      tl.fromTo("#n-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.r15.s - 0.15);
+      rise("#n-url", T.r15.s + 0.5, 0.5, 12);
+      rise("#n-try", T.r15.s + 0.9, 0.5, 12);
+
+      // voice-reactive glow
+      const A = window.AUDIO_DATA, glow = document.getElementById("glow");
+      const frames = Math.min(A.rms.length, Math.floor(DUR * A.fps));
+      for (let f = 0; f < frames; f += 2) {
+        tl.call((r) => { glow.style.transform = "scale(" + (0.95 + 0.1 * r).toFixed(4) + ")"; glow.style.opacity = (0.72 + 0.28 * r).toFixed(3); }, [A.rms[f]], f / A.fps);
+      }
+
+      window.__timelines["main"] = tl;
+      });
+    </script>
+  </body>
+</html>

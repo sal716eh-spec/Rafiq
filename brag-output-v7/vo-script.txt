@@ -1,0 +1,15 @@
+n01|narrator|Here's the easiest way to learn Arabic: open the app, and press Continue.
+r02|Rafiq|This is رَفِيق. Let me show you everything inside.
+n03|narrator|First, your journey. One path: a reading starter, then twelve units, from greetings to hobbies.
+n04|narrator|Each step takes five to ten minutes. Meet new words, hear a conversation, learn one grammar idea, practise, then speak.
+n05|narrator|In the early units, you build sentences from word tiles. Later on, you type them yourself.
+r06|Rafiq|And رَفِيق brings every word back for review, just before you'd forget it.
+n07|narrator|Want something specific? Step off the path, into Practise.
+n08|narrator|Drill twenty-one common verbs in the past, present and future.
+n09|narrator|Learn the joining words that link your ideas together.
+n10|narrator|Or play the spelling bee: hear a word, then spell it in Arabic.
+n11|narrator|Go further with Complete. Practise real-life scenes, from the airport to the masjid.
+n12|narrator|Have the conversation yourself, and get feedback on every reply.
+n13|narrator|And get a review built from the mistakes you keep making.
+n14|narrator|Your journey, or something specific. A few minutes a day.
+r15|Rafiq|Try رَفِيق free today. (v6 recording)

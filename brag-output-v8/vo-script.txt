@@ -1,0 +1,15 @@
+r01|Rafiq|رَفِيق. In Arabic, it means companion.
+n02|narrator|That's what this app was made to be: a companion for anyone studying Arabic.
+n03|narrator|In a class, at a madrasa, or on your own, lessons give you new words. Keeping them is the hard part.
+n04|narrator|So everything here is built on what memory research says works.
+n05|narrator|Spacing. Coming back to a word after a gap beats cramming. It's one of the most replicated findings in memory research.
+n06|narrator|Testing. Pulling a word from memory strengthens it more than reading it again.
+n07|narrator|Habit. A little every day. In one well-known study, a daily habit took about sixty-six days to feel automatic.
+r08|Rafiq|So رَفِيق brings each word back just before you'd forget it, and asks you to recall it, not just reread it.
+n09|narrator|Use it to revise alongside your course. Or start from nothing at all.
+n10|narrator|Can't read Arabic yet? Begin with the twenty-eight letters, in families that share a shape.
+n11|narrator|Every letter comes with three words, the letter in red, and a native voice to copy.
+n12|narrator|Then the vowel marks, and a listening test to train your ear.
+n13|narrator|From your first letter to your first conversation.
+n14|narrator|A few minutes a day, with a companion beside you.
+r15|Rafiq|Try رَفِيق free today. (v6 recording)

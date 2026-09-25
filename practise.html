@@ -99,8 +99,18 @@
 @media (max-width:640px){.tiles{grid-template-columns:minmax(0,1fr)}}
 
 /* Spelling bee (spelling.js) */
-.sb-top{display:flex;justify-content:space-between;font-family:var(--ut);font-size:11px;letter-spacing:.08em;color:var(--ink-soft);margin:4px 0 10px}
-.sb-top b{color:var(--rubric)}
+.sb-top{display:flex;justify-content:space-between;font-family:var(--ut);font-size:11px;letter-spacing:.08em;color:var(--ink-soft);margin:4px 0 8px}
+.sb-top b{color:var(--rubric);font-variant-numeric:tabular-nums}
+/* one segment per word: fills green/red as each is answered; the current one is outlined */
+.sb-bar{display:flex;gap:4px;margin:0 0 12px}
+.sb-bar span{flex:1;height:6px;border-radius:3px;background:var(--rule);transition:background var(--settle) var(--ease-out),box-shadow var(--settle) var(--ease-out)}
+.sb-bar span.ok{background:var(--verdigris)}
+.sb-bar span.no{background:var(--rubric)}
+.sb-bar span.cur{box-shadow:0 0 0 1.5px var(--ink)}
+/* a new word or verdict settles in rather than cutting (site.css turns this off for reduced motion) */
+@keyframes sb-in{from{opacity:0;transform:translateY(6px)}}
+.sb-in{animation:sb-in var(--settle) var(--ease-out)}
+@keyframes sb-shake{20%{transform:translateX(-6px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
 .sb-card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:22px 20px 20px}
 .sb-prompt{text-align:center;margin-bottom:6px}
 .sb-pic{font-size:44px;line-height:1.2}
@@ -109,6 +119,11 @@
 .sb-listen{font-size:34px;width:76px;height:76px;border-radius:50%;border:1px solid var(--verdigris);background:var(--paper);cursor:pointer;touch-action:manipulation}
 .sb-listen.speaking{background:var(--verdigris)}
 .sb-hint{display:inline-block;margin-top:8px;font-size:13px;color:var(--verdigris);text-decoration:underline;cursor:pointer}
+/* respond the instant a finger lands, like every .btn */
+.sb-listen,.sb-word,.sb-hint{transition:transform var(--press) var(--ease-out),opacity var(--press) var(--ease-out);user-select:none;-webkit-user-select:none}
+.sb-listen:active{transform:scale(.94)}
+.sb-word:active{transform:scale(.97)}
+.sb-hint:active{opacity:.55}
 .sb-links{margin-top:8px;font-size:13px;color:var(--ink-soft)}
 .sb-links .sb-hint{margin-top:0}
 .sb-card .ansrow{display:flex;gap:8px;margin-top:12px;position:relative}
@@ -117,6 +132,10 @@
   background:var(--paper);border:1px solid var(--rule);border-radius:4px;padding:10px 12px;color:var(--ink)}
 .sb-card input.ar-in:focus{border-color:var(--verdigris);outline:none}
 .sb-card input.ar-in:disabled{opacity:1;-webkit-text-fill-color:var(--ink)}
+.sb-card input.ar-in{transition:border-color var(--settle) var(--ease-out),background var(--settle) var(--ease-out)}
+.sb-card input.ar-in.is-ok{border-color:var(--verdigris);background:rgba(46,114,99,.09)}
+.sb-card input.ar-in.is-no{border-color:var(--rubric);background:rgba(180,50,42,.07);animation:sb-shake 320ms var(--ease-out)}
+.sb-card input.ar-in.is-near{border-color:var(--gold)}
 .sb-out{min-height:8px}
 .sb-msg{font-size:14px;color:var(--ink-soft);margin:12px 0 0}
 .sb-near{color:var(--gold,#9a7b1c)}
@@ -134,7 +153,7 @@
 .sb-actions .btn{flex:1;min-height:44px;text-align:center}
 .sb-empty{font-size:14.5px;line-height:1.55;margin:0 0 14px}
 .sb-end{text-align:center}
-.sb-big{font-size:40px;font-weight:700;color:var(--verdigris)}
+.sb-big{font-size:40px;font-weight:700;color:var(--verdigris);line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .sb-best{font-size:14.5px;margin:10px 0 0}
 .sb-miss{text-align:left;margin-top:16px;padding-top:12px;border-top:1px solid var(--rule)}
 /* Arabic keyboard (arkb.js) */
@@ -253,7 +272,7 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
       d:'Hear a word or see its meaning, then type it in Arabic',
       get m(){ const n=RafiqSpelling.pool().length, b=RafiqSpelling.best();   // a getter, so a new best shows on return
         return n<4 ? 'Unlocks after a few lessons' : `${n} words ready`+(b?` · best <b>${b.score}/${b.total}</b>`:''); },
-      intro:'Spell words you’ve met in your lessons. Get the letters right to pass; add the vowel marks for a bonus. Words you miss come back later in the round.',
+      intro:'Spell words from your lessons. Right letters pass; vowel marks earn a bonus.',
       body:()=>`<div id="spelling"></div>`,
       mount:()=>RafiqSpelling.mount(document.getElementById('spelling'))}
   };
@@ -278,7 +297,7 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
     el.innerHTML=`<div class="plist">`+
       row('session.html?focus=weak',{icon:'🎯', t:'Weak-spots review', cx:'Complete',
         d:'Exercises picked for the mistakes you keep making', m:'About 5 minutes'})+
-      row('#beyond',SECTIONS.beyond)+row('#scenes',SECTIONS.scenes)+row('#redo',SECTIONS.redo)+row('#spelling',SECTIONS.spelling)+`</div>`;
+      row('#spelling',SECTIONS.spelling)+row('#beyond',SECTIONS.beyond)+row('#scenes',SECTIONS.scenes)+row('#redo',SECTIONS.redo)+`</div>`;
     el.querySelectorAll('.prow[href^="#"]').forEach(a=>a.addEventListener('click',()=>{ fromMenu=true; }));
   }
   addEventListener('hashchange',paint);
@@ -311,8 +330,8 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
 <script src="path.js?v=20260925"></script>
 <script src="audio.js?v=900"></script>
 <script src="sounds.js?v=1"></script>
-<script src="spelling.js?v=1"></script>
-<script src="arkb.js?v=2" defer></script>
+<script src="spelling.js?v=2"></script>
+<script src="arkb.js?v=3" defer></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="nav.js?v=20260924"></script>
 <script>

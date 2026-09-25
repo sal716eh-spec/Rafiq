@@ -86,8 +86,20 @@
     if(!panel) panel=build();
     panel.classList.add('on');
     positionAbove(input);
+    makeRoom(input);
   }
-  function hide(){ panel && panel.classList.remove('on'); }
+  function hide(){ if(panel){ panel.classList.remove('on'); document.body.style.paddingBottom=''; } }
+  /* Phones: the keyboard is pinned over the bottom of the screen, so the page gets
+     room to scroll and the input is lifted just above it — otherwise the answer
+     box and its Check button sit hidden underneath while you type. */
+  function makeRoom(input){
+    if(!window.matchMedia('(max-width:860px)').matches) return;
+    const h=panel.offsetHeight;
+    document.body.style.paddingBottom=h+'px';
+    const row=input.closest('.ansrow')||input;
+    const gap=row.getBoundingClientRect().bottom+12-(window.innerHeight-h);
+    if(gap>0) window.scrollBy({top:gap, behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});
+  }
   function positionAbove(input){
     // fixed to the bottom of the viewport on phones (thumb reach); tucked
     // under the input on wider screens

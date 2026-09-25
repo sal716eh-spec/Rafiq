@@ -50,6 +50,17 @@ DATA.forEach(u=>{
 
 VOCAB.forEach(v=>add('vocab',v.unit,v.ar));
 
+/* Reading starter: each letter's name, its example words, the vowel-mark
+   examples and the listening-test words (said without being shown). */
+eval(fs.readFileSync(path.join(root,'alphabet-data.js'),'utf8')
+      .replace(/const (ALPHABET_GROUPS|VOWEL_MARKS|LISTEN_TEST)/g,'globalThis.$1'));
+ALPHABET_GROUPS.forEach(g=>g.letters.forEach(l=>{
+  add('alphabet','00',l[1]); add('alphabet','00',l[3]);
+  (l[5]||[]).forEach(e=>add('alphabet','00',e[0]));
+}));
+VOWEL_MARKS.forEach(v=>{ if(v[3]) add('alphabet','00',v[3][0]); });
+LISTEN_TEST.forEach(t=>add('alphabet','00',t[0]));
+
 SCENES.forEach(sc=>sc.lines.forEach(l=>add('scene',sc.id,l[1])));
 
 CONNECTORS.forEach(cat=>cat.items.forEach(it=>{

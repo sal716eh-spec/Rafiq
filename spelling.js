@@ -67,7 +67,11 @@
     // words due for review first, then the rest, each group shuffled
     const due = shuffle(words.filter(w => Progress.isDue('v:'+w.id)));
     const rest = shuffle(words.filter(w => !Progress.isDue('v:'+w.id)));
-    const queue = due.concat(rest).slice(0, ROUND).map((w, i) => ({w, i, retry:false}));
+    // only words that were due count as a review: extra rounds are free practice,
+    // so replaying can't push words weeks ahead, and a slip on a word that isn't
+    // due doesn't send it back to the start of the schedule
+    const dueIds = new Set(due.map(w => w.id));
+    const queue = due.concat(rest).slice(0, ROUND).map((w, i) => ({w, i, retry:false, review: dueIds.has(w.id)}));
     const total = queue.length, missed = [], marks = new Array(total).fill('');
     let pos = 0, score = 0, bonus = 0, turn = Math.random() < .5 ? 0 : 1;
     // on a phone, focusing the input pops the OS keyboard over the word just shown; let them tap when ready
@@ -132,7 +136,7 @@
         if(!item.retry){
           marks[item.i] = ok ? 'ok' : 'no';
           const seg = el.querySelectorAll('.sb-bar span')[item.i]; if(seg) seg.className = marks[item.i] + ' cur';
-          Progress.grade('v:'+w.id, ok ? 'good' : 'again');
+          if(item.review) Progress.grade('v:'+w.id, ok ? 'good' : 'again');
           if(ok){ score++; if(full) bonus++; }
           else { missed.push(w); queue.splice(Math.min(queue.length, pos+3), 0, {w, i:item.i, retry:true}); }
         }

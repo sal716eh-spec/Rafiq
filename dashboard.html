@@ -156,9 +156,9 @@
   </section>
   <div id="home"></div>
 </main>
-<script src="vocab-data.js?v=20260922"></script>
+<script src="vocab-data.js?v=20260928"></script>
 <script src="drills-data.js?v=20260922"></script>
-<script src="path-data.js?v=20260922"></script>
+<script src="path-data.js?v=20260928"></script>
 <script src="alphabet-data.js?v=20260926"></script>
 <script>
 /* Both apps keep their own schedule; the dashboard just reports on each. */
@@ -237,7 +237,7 @@ function paintHome(){
   const units=U.map((p,i)=>{
     const done=RafiqPath.unitDone(p), now=i===cur&&!done, later=i>cur;
     const st=RafiqPath.steps(p), k=st.filter(x=>RafiqPath.stepDone(p.n,x.key)).length;
-    const sub = done ? (RafiqPath.placed(p.n)?'Skipped — you already know this':'Done') : now ? `${k} of ${st.length} steps` : 'Locked';
+    const sub = done ? (RafiqPath.placed(p.n)?'Skipped — you already know this':RafiqPath.lateLeft(p)?'Done · new words added':'Done') : now ? `${k} of ${st.length} steps` : 'Locked';
     const inner=`<span class="st">${done?'✓':now?'▶':'🔒'}</span><span class="nm"><b>${p.alpha?'':i+'. '}${esc(p.en)}</b><span>${sub}</span></span>
       <span class="ua">${esc(p.ar)}</span>`;
     return later
@@ -278,7 +278,7 @@ function paintHome(){
 <script src="plan.js?v=20260922"></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="progress.js?v=20260924"></script>
-<script src="path.js?v=20260927"></script>
+<script src="path.js?v=20260928"></script>
 <script src="mistakes.js?v=20260922"></script>
 <script src="nav.js?v=20260924"></script>
 <script>

@@ -274,7 +274,14 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
         return n<4 ? 'Unlocks after a few lessons' : `${n} words ready`+(b?` · best <b>${b.score}/${b.total}</b>`:''); },
       intro:'Spell words from your lessons. Right letters pass; vowel marks earn a bonus.',
       body:()=>`<div id="spelling"></div>`,
-      mount:()=>RafiqSpelling.mount(document.getElementById('spelling'))}
+      mount:()=>RafiqSpelling.mount(document.getElementById('spelling'))},
+    essentials:{icon:'📅', t:'Everyday essentials', cx:'',
+      d:'Numbers, days, months, colours and telling the time',
+      get m(){ const n=ESSENTIALS.reduce((a,s)=>a+RafiqEssentials.known(s),0);
+        return `${ESSENTIALS.length} sets · tap to hear`+(n?` · <b>${n}</b> known`:''); },
+      intro:'The everyday basics in one place: a table to look things up in, and a short drill for each.',
+      body:()=>`<div id="essentials"></div>`,
+      mount:()=>RafiqEssentials.mount(document.getElementById('essentials'))}
   };
   const row=(href,x)=>`<a class="prow" href="${href}"><span class="pi">${x.icon}</span>
       <span class="pt"><b>${x.t}${x.cx?` <span class="cx">${x.cx}</span>`:''}</b><span class="pd">${x.d}</span><span class="pm">${x.m}</span></span>
@@ -297,7 +304,7 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
     el.innerHTML=`<div class="plist">`+
       row('session.html?focus=weak',{icon:'🎯', t:'Weak-spots review', cx:'Complete',
         d:'Exercises picked for the mistakes you keep making', m:'About 5 minutes'})+
-      row('#spelling',SECTIONS.spelling)+row('#beyond',SECTIONS.beyond)+row('#scenes',SECTIONS.scenes)+row('#redo',SECTIONS.redo)+`</div>`;
+      row('#spelling',SECTIONS.spelling)+row('#essentials',SECTIONS.essentials)+row('#beyond',SECTIONS.beyond)+row('#scenes',SECTIONS.scenes)+row('#redo',SECTIONS.redo)+`</div>`;
     el.querySelectorAll('.prow[href^="#"]').forEach(a=>a.addEventListener('click',()=>{ fromMenu=true; }));
   }
   addEventListener('hashchange',paint);
@@ -331,6 +338,8 @@ const seen=id=>typeof Progress!=='undefined'&&Progress.hasSeen(id);
 <script src="audio.js?v=900"></script>
 <script src="sounds.js?v=1"></script>
 <script src="spelling.js?v=3"></script>
+<script src="essentials-data.js?v=1"></script>
+<script src="essentials.js?v=1"></script>
 <script src="arkb.js?v=3" defer></script>
 <script>RafiqPlan.requirePlan();</script>
 <script src="nav.js?v=20260924"></script>

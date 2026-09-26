@@ -13265,6 +13265,370 @@
   "chars": 6
  },
  {
+  "id": "1kicq0q",
+  "text": "سِتَّة",
+  "bucket": "essentials",
+  "unit": "numbers",
+  "chars": 6
+ },
+ {
+  "id": "qk3rwy",
+  "text": "سِتُّونَ",
+  "bucket": "essentials",
+  "unit": "numbers",
+  "chars": 8
+ },
+ {
+  "id": "jhh8yw",
+  "text": "تِسْعُونَ",
+  "bucket": "essentials",
+  "unit": "numbers",
+  "chars": 9
+ },
+ {
+  "id": "1q9nhnj",
+  "text": "أَلْف",
+  "bucket": "essentials",
+  "unit": "numbers",
+  "chars": 5
+ },
+ {
+  "id": "gnvkfb",
+  "text": "الأَحَد",
+  "bucket": "essentials",
+  "unit": "days",
+  "chars": 7
+ },
+ {
+  "id": "1hmfme6",
+  "text": "الاِثْنَيْن",
+  "bucket": "essentials",
+  "unit": "days",
+  "chars": 11
+ },
+ {
+  "id": "1h37zqn",
+  "text": "الأَرْبِعاء",
+  "bucket": "essentials",
+  "unit": "days",
+  "chars": 11
+ },
+ {
+  "id": "1qiegbk",
+  "text": "صَفَر",
+  "bucket": "essentials",
+  "unit": "hijri",
+  "chars": 5
+ },
+ {
+  "id": "h0otnh",
+  "text": "شَعْبان",
+  "bucket": "essentials",
+  "unit": "hijri",
+  "chars": 7
+ },
+ {
+  "id": "1i7d1t2",
+  "text": "رَمَضان",
+  "bucket": "essentials",
+  "unit": "hijri",
+  "chars": 7
+ },
+ {
+  "id": "coldcb",
+  "text": "يَنايِر",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 7
+ },
+ {
+  "id": "n0no5v",
+  "text": "فِبْرايِر",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 9
+ },
+ {
+  "id": "1rg0xyt",
+  "text": "مارِس",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 5
+ },
+ {
+  "id": "68n8l9",
+  "text": "أَبْرِيل",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 8
+ },
+ {
+  "id": "1rg4h1m",
+  "text": "مايُو",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 5
+ },
+ {
+  "id": "a9lrjl",
+  "text": "يُونْيُو",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 8
+ },
+ {
+  "id": "aab0z7",
+  "text": "يُولْيُو",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 8
+ },
+ {
+  "id": "1j94bx3",
+  "text": "أَغُسْطُس",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 9
+ },
+ {
+  "id": "un21ja",
+  "text": "سِبْتَمْبِر",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 11
+ },
+ {
+  "id": "16ai5j6",
+  "text": "أُكْتُوبَر",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 10
+ },
+ {
+  "id": "10dsaqd",
+  "text": "نُوفَمْبِر",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 10
+ },
+ {
+  "id": "3t2jjn",
+  "text": "دِيسَمْبِر",
+  "bucket": "essentials",
+  "unit": "months",
+  "chars": 10
+ },
+ {
+  "id": "h4kyke",
+  "text": "بُنِّيّ",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 7
+ },
+ {
+  "id": "15ijr7d",
+  "text": "بُنِّيَّة",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 9
+ },
+ {
+  "id": "1i5toxa",
+  "text": "بُرْتُقالِيّ",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 12
+ },
+ {
+  "id": "qjogyx",
+  "text": "بُرْتُقالِيَّة",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 14
+ },
+ {
+  "id": "kuaxeq",
+  "text": "بَنَفْسَجِيّ",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 12
+ },
+ {
+  "id": "11tnbfp",
+  "text": "بَنَفْسَجِيَّة",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 14
+ },
+ {
+  "id": "1h5cmro",
+  "text": "وَرْدِيّ",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 8
+ },
+ {
+  "id": "1nph0xv",
+  "text": "وَرْدِيَّة",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 10
+ },
+ {
+  "id": "cgzv8c",
+  "text": "رَمادِيّ",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 8
+ },
+ {
+  "id": "f8hti3",
+  "text": "رَمادِيَّة",
+  "bucket": "essentials",
+  "unit": "colours",
+  "chars": 10
+ },
+ {
+  "id": "78h3ed",
+  "text": "كَمِ السّاعَةُ؟",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 15
+ },
+ {
+  "id": "1k440kk",
+  "text": "السّاعَةُ الواحِدَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 20
+ },
+ {
+  "id": "1gqe2qg",
+  "text": "السّاعَةُ الثّانِيَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 21
+ },
+ {
+  "id": "1i1lxp7",
+  "text": "السّاعَةُ الثّالِثَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 21
+ },
+ {
+  "id": "1rvi35r",
+  "text": "السّاعَةُ الرّابِعَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 21
+ },
+ {
+  "id": "12mjpti",
+  "text": "السّاعَةُ الخامِسَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 20
+ },
+ {
+  "id": "woyccw",
+  "text": "السّاعَةُ السّادِسَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 21
+ },
+ {
+  "id": "xy6p6l",
+  "text": "السّاعَةُ السّابِعَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 21
+ },
+ {
+  "id": "1hhewdz",
+  "text": "السّاعَةُ الثّامِنَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 21
+ },
+ {
+  "id": "kz7c4f",
+  "text": "السّاعَةُ التّاسِعَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 21
+ },
+ {
+  "id": "n0cqz6",
+  "text": "السّاعَةُ العاشِرَةُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 20
+ },
+ {
+  "id": "1rozxhq",
+  "text": "السّاعَةُ الحادِيَةَ عَشْرَةَ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 29
+ },
+ {
+  "id": "151uoj4",
+  "text": "السّاعَةُ الثّانِيَةَ عَشْرَةَ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 30
+ },
+ {
+  "id": "1f7qlv4",
+  "text": "السّاعَةُ الثّالِثَةُ وَالنِّصْفُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 33
+ },
+ {
+  "id": "ndom3d",
+  "text": "السّاعَةُ الرّابِعَةُ وَالرُّبْعُ",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 33
+ },
+ {
+  "id": "1emfrls",
+  "text": "السّاعَةُ الخامِسَةُ إِلّا رُبْعًا",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 34
+ },
+ {
+  "id": "1t69gzd",
+  "text": "دَقِيقَة",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 8
+ },
+ {
+  "id": "1pzlzm7",
+  "text": "ساعَة",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 5
+ },
+ {
+  "id": "rezkgg",
+  "text": "صَباحًا",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 7
+ },
+ {
+  "id": "w3rc9c",
+  "text": "مَساءً",
+  "bucket": "essentials",
+  "unit": "time",
+  "chars": 6
+ },
+ {
   "id": "1lnnvrj",
   "text": "السَّلامُ عَلَيْكُمْ. أَعْطِنِي جَوازَ السَّفَرِ، مِنْ فَضْلِكَ.",
   "bucket": "scene",

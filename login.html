@@ -61,6 +61,40 @@
 .card.signup .forgot,.card.reset .forgot{display:none}
 .msg a{color:var(--verdigris);cursor:pointer;text-decoration:underline}
 .btn[disabled]{opacity:.6;cursor:default}
+/* "Check your email": its own screen, in the form's place, and back the same way */
+.card[hidden]{display:none}
+.sent{text-align:center;padding:30px 24px 22px}
+.env{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--verdigris) 14%,var(--card));color:var(--verdigris)}
+.env svg{width:30px;height:30px}
+.sent h1{font-size:26px;line-height:1.15;letter-spacing:-.02em;font-weight:700;margin:0 0 10px}
+.sent .lead{font-size:15px;line-height:1.5;color:var(--ink-soft);margin:0}
+.sent .lead strong{display:block;margin-top:2px;color:var(--ink);font-weight:700;overflow-wrap:anywhere}
+.steps{list-style:none;margin:22px 0 22px;padding:0;text-align:left;display:grid;gap:12px;counter-reset:s}
+.steps li{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.4;color:var(--ink);counter-increment:s}
+.steps li::before{content:counter(s);flex:0 0 24px;height:24px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--ut);font-size:12px;color:var(--verdigris);border:1px solid color-mix(in srgb,var(--verdigris) 45%,var(--rule))}
+.sent .btn{width:100%;min-height:48px}
+.sent .msg{min-height:20px;display:block}
+.sent-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:2px 6px;margin-top:10px;font-size:14px;color:var(--ink-soft)}
+.linkbtn{white-space:nowrap;font-variant-numeric:tabular-nums;background:none;border:0;padding:10px 6px;min-height:44px;font-family:var(--la);font-size:14px;color:var(--verdigris);cursor:pointer;
+  touch-action:manipulation;transition:opacity var(--press,120ms) var(--ease-out,ease-out)}
+.linkbtn:active{opacity:.55}
+.linkbtn[disabled]{color:var(--ink-soft);cursor:default;opacity:1}
+.fine{margin-top:12px;font-size:12.5px;line-height:1.5;color:var(--ink-soft)}
+.fine b{font-weight:500;color:var(--ink);overflow-wrap:anywhere}
+.card.enter{animation:cardIn 360ms var(--ease-out,ease-out) both}
+@keyframes cardIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.card.enter{animation:fadeIn 200ms ease both}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+/* while waiting on the email, the page is about that: a smaller header so it all fits a phone screen */
+.screen.compact{padding-top:28px;justify-content:flex-start}
+.screen.compact .sub{display:none}
+.screen.compact .mark{width:40px;height:40px;border-radius:11px}
+.screen.compact .mark::before{font-size:25px;padding-bottom:3px}
+.screen.compact .mark::after{top:7px;right:7px;width:6px;height:6px}
+.screen.compact .word{font-size:34px;padding:0}
+.screen.compact .card{margin-top:18px}
 </style>
 </head>
 <body>
@@ -79,6 +113,25 @@
     <div class="msg" id="msg"></div>
     <div class="toggle" id="toggle">New here? <a data-mode="signup">Create an account</a></div>
   </form>
+
+  <section class="card sent" id="sent" hidden aria-labelledby="sentTitle">
+    <div class="env" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m4 7 8 6 8-6"/></svg></div>
+    <h1 id="sentTitle" tabindex="-1">Check your email</h1>
+    <p class="lead">We’ve sent a confirmation link to <strong id="sentTo"></strong></p>
+    <ol class="steps">
+      <li>Open the email from Rafiq</li>
+      <li><span>Tap <b>Confirm my email</b></span></li>
+      <li>Come back to this page. You’ll carry on from here with a few quick questions.</li>
+    </ol>
+    <button class="btn" type="button" id="sentGo">I’ve confirmed, continue</button>
+    <div class="msg" id="sentMsg" role="status" aria-live="polite"></div>
+    <div class="sent-row">
+      <button class="linkbtn" type="button" id="resend">Send it again</button>
+      <span aria-hidden="true">·</span>
+      <button class="linkbtn" type="button" id="changeEmail">Use a different email</button>
+    </div>
+    <p class="fine">Can’t see it? Check spam or promotions. It comes from <b>hello@contact.rafiq-arabic.com</b>.</p>
+  </section>
 </main>
 
 <!-- Supabase client library -->
@@ -112,12 +165,27 @@ function linkError(){
   return 'That link didn’t work. Please try signing in, or ask for a new link.';
 }
 
-// If already logged in (including arriving from a confirmation link), skip to the dashboard
+/* Where a signed-in learner goes: the questions if this account hasn't answered
+   them yet (a new account arriving from its confirmation link), otherwise Home. */
+async function goIn(){
+  let dest = 'dashboard.html';
+  try {
+    const { data } = await sb.auth.getUser();
+    const user = data && data.user;
+    if (user && localStorage.getItem('bay_onboarded') !== user.id) {
+      const r = await sb.from('profiles').select('onboarded').eq('user_id', user.id).maybeSingle();
+      if (!r.error && !(r.data && r.data.onboarded)) dest = 'onboarding.html';
+    }
+  } catch(_) {}
+  window.location.href = dest;
+}
+
+// If already logged in (including arriving from a confirmation link), go in
 (async () => {
   const err = linkError();
   if (err) { showMsg(err); return; }
   const { data } = await sb.auth.getSession();
-  if (data && data.session) window.location.href = 'dashboard.html';
+  if (data && data.session) goIn();
 })();
 
 function setMode(m, keepMsg){
@@ -155,19 +223,64 @@ function showMsg(text, kind){
   msgEl.className = 'msg' + (text ? ' show '+(kind||'err') : '');
 }
 
-// unconfirmed email: explain, and offer to send the confirmation email again
-function showUnconfirmed(email){
-  showMsg('Your email isn’t confirmed yet. Check your inbox (and spam) for the link. ');
-  const a = document.createElement('a');
-  a.textContent = 'Send it again';
-  a.addEventListener('click', async ()=>{
-    a.remove();
-    const { error } = await sb.auth.resend({ type: 'signup', email, options: { emailRedirectTo: pageUrl('login.html') } });
-    if(error) showMsg(friendly(error));
-    else showMsg('Sent — check your inbox for a new confirmation link.', 'ok');
-  });
-  msgEl.appendChild(a);
+/* "Check your email" screen, after creating an account or signing in before
+   confirming. The confirm link often opens in another browser, so when the
+   learner comes back to this tab we quietly try signing in and carry on. */
+const sent = document.getElementById('sent'), sentMsg = document.getElementById('sentMsg');
+const resendBtn = document.getElementById('resend'), sentGo = document.getElementById('sentGo');
+let pending = null, cooldown = 0, tick = null, lastTry = 0;
+function swap(from, to){
+  from.hidden = true; to.hidden = false;
+  document.querySelector('.screen').classList.toggle('compact', to === sent);
+  to.classList.remove('enter'); void to.offsetWidth; to.classList.add('enter');
 }
+function sentStatus(text, kind){ sentMsg.textContent = text || ''; sentMsg.className = 'msg' + (text ? ' show ' + (kind || 'ok') : ''); }
+function startCooldown(sec){
+  cooldown = sec; clearInterval(tick);
+  const draw = () => { resendBtn.disabled = cooldown > 0;
+    resendBtn.textContent = cooldown > 0 ? `Resend in ${cooldown}s` : 'Send it again'; };
+  draw(); tick = setInterval(() => { cooldown--; draw(); if (cooldown <= 0) clearInterval(tick); }, 1000);
+}
+function showSent(email, password, justSent){
+  pending = { email, password };
+  document.getElementById('sentTo').textContent = email;
+  sentStatus('');
+  swap(form, sent);
+  document.getElementById('sentTitle').focus({ preventScroll: true });
+  startCooldown(justSent ? 60 : 0);
+}
+async function tryContinue(quiet){
+  if (!pending || !pending.password) { if (!quiet) { swap(sent, form); setMode('signin'); showMsg('Sign in to carry on.', 'ok'); } return; }
+  if (quiet && Date.now() - lastTry < 5000) return;
+  lastTry = Date.now();
+  if (!quiet) { sentGo.disabled = true; sentGo.textContent = 'Checking…'; }
+  const { error } = await sb.auth.signInWithPassword({ email: pending.email, password: pending.password });
+  sentGo.disabled = false; sentGo.textContent = 'I’ve confirmed, continue';
+  if (!error) {
+    try{ localStorage.setItem('bay_last_active', String(Date.now())); }catch(_){}
+    sentStatus('Confirmed. Taking you in…'); return goIn();
+  }
+  if (quiet) return;
+  if ((error.message || '').toLowerCase().includes('email not confirmed'))
+    sentStatus('Not confirmed yet. Tap the link in the email first; it can take a minute to arrive.', 'err');
+  else sentStatus(friendly(error), 'err');
+}
+sentGo.addEventListener('click', () => tryContinue(false));
+document.addEventListener('visibilitychange', () => { if (!sent.hidden && document.visibilityState === 'visible') tryContinue(true); });
+window.addEventListener('focus', () => { if (!sent.hidden) tryContinue(true); });
+resendBtn.addEventListener('click', async () => {
+  if (!pending || cooldown > 0) return;
+  resendBtn.disabled = true;
+  const { error } = await sb.auth.resend({ type: 'signup', email: pending.email, options: { emailRedirectTo: pageUrl('login.html') } });
+  if (error) { sentStatus(friendly(error), 'err'); resendBtn.disabled = false; return; }
+  sentStatus('Sent again. Use the newest email.'); startCooldown(60);
+});
+document.getElementById('changeEmail').addEventListener('click', () => {
+  const email = pending && pending.email; pending = null; clearInterval(tick);
+  swap(sent, form); setMode('signup');
+  const el = document.getElementById('email'); el.value = email || ''; el.focus(); el.select();
+});
+function showUnconfirmed(email, password){ showSent(email, password, false); }
 
 // friendlier wording for the common Supabase errors
 function friendly(err){
@@ -209,19 +322,19 @@ form.addEventListener('submit', async (e)=>{
       });
       if(error){ showMsg(friendly(error)); done(); return; }
       // If email confirmation is OFF, a session exists now → go straight in.
+      try{ if(name) localStorage.setItem('bay_name', name); }catch(_){}
       if(data.session){
-        try{ if(name) localStorage.setItem('bay_name', name); }catch(_){}
-        window.location.href = 'dashboard.html';
+        window.location.href = 'onboarding.html';
       } else {
         setMode('signin', true);
-        showMsg('Account created — we’ve emailed you a link to confirm your address. Click it, then you’re in.', 'ok');
         done();
+        showSent(email, pw, true);
       }
     } else {
       btn.textContent = 'Signing in…';
       const { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
       if(error){
-        if((error.message||'').toLowerCase().includes('email not confirmed')) showUnconfirmed(email);
+        if((error.message||'').toLowerCase().includes('email not confirmed')) showUnconfirmed(email, pw);
         else showMsg(friendly(error));
         done(); return;
       }
@@ -230,7 +343,7 @@ form.addEventListener('submit', async (e)=>{
       try{ if(nm) localStorage.setItem('bay_name', nm); }catch(_){}
       // reset auth.js's idle clock so a stale timestamp can't log a fresh sign-in straight out
       try{ localStorage.setItem('bay_last_active', String(Date.now())); }catch(_){}
-      window.location.href = 'dashboard.html';
+      goIn();
     }
   } catch(err){
     showMsg(friendly(err)); done();

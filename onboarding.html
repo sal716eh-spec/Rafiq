@@ -50,6 +50,21 @@
 .pl-in{width:100%;min-height:80px;font-family:var(--ar);font-size:21px;line-height:1.7;direction:rtl;text-align:right;border:1px solid var(--rule);border-radius:6px;background:var(--paper);padding:10px 12px;color:var(--ink)}
 .pl-bar{height:6px;background:var(--paper-deep);border-radius:3px;overflow:hidden;margin-bottom:16px}.pl-bar i{display:block;height:100%;background:var(--verdigris);width:0}
 .hide{display:none}
+.pl-en{position:relative;background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:14px 16px 14px 18px;letter-spacing:-.005em;line-height:1.45}
+.pl-en::before{content:"";position:absolute;left:0;top:12px;bottom:12px;width:3px;border-radius:0 3px 3px 0;background:var(--verdigris)}
+.pl-k{font-family:var(--ut);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 6px}
+.pl-in:focus{outline:none;border-color:var(--verdigris)}
+.pl-in::placeholder{color:var(--ink-soft);opacity:.7}
+/* Arabic keyboard (arkb.js), as on the lesson pages */
+.arkb{position:absolute;z-index:200;background:rgba(var(--paper-rgb,241,236,224),.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--rule);border-radius:10px;box-shadow:0 10px 28px -10px rgba(var(--ink-rgb),.4);padding:10px;display:none;max-width:360px}
+.arkb.on{display:block}
+.arkb-row{display:flex;gap:4px;margin-bottom:4px;justify-content:center}
+.arkb-key{font-family:var(--ar);font-size:17px;line-height:1;min-width:30px;min-height:38px;border:1px solid var(--rule);border-radius:5px;background:var(--paper);color:var(--ink);cursor:pointer;padding:0 2px}
+.arkb-harakat{display:flex;gap:4px;margin:6px 0;flex-wrap:wrap;justify-content:center;border-top:1px dashed var(--rule);padding-top:8px}
+.arkb-hk{font-size:15px;color:var(--rubric);min-width:34px}
+.arkb-bottom{display:flex;gap:6px;margin-top:4px}
+.arkb-wide{flex:1;font-family:var(--la);font-size:12.5px;min-height:38px}
+@media (max-width:860px){.arkb{position:fixed;left:0;right:0;bottom:0;top:auto;max-width:none;border-radius:14px 14px 0 0;padding-bottom:calc(10px + env(safe-area-inset-bottom))}.arkb-key{min-width:8.6vw;min-height:42px;font-size:18px}}
 .how-frame{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--paper-deep,var(--paper));border:1px solid var(--rule);margin:18px 0 6px}
 .how-frame video{display:block;width:100%;height:100%;object-fit:cover}
 .how-play{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:10px;padding:5px 16px 5px 5px;border-radius:999px;border:1px solid var(--rule);
@@ -67,7 +82,7 @@
   <div class="card" id="qs">
     <div class="label">Welcome to Rafiq</div>
     <h1>Let's find your starting point</h1>
-    <p class="intro">Three quick questions. You can change your mind later.</p>
+    <p class="intro">A few quick questions. You can change your answers later in Settings.</p>
 
     <div class="q" data-key="reads">
       <h2>Can you read Arabic script?</h2>
@@ -113,11 +128,12 @@
   <!-- Placement: a few sentences from across the course, checked by the judge.
        The first one that goes wrong is where the path starts. -->
   <div class="card hide" id="pl">
-    <div class="label">Quick check · about 3 minutes</div>
+    <div class="label" id="plLabel">Quick check · about 3 minutes</div>
     <div class="pl-bar"><i id="plBar"></i></div>
-    <p class="intro" id="plIntro">Say this in Arabic. Vowel marks aren't needed. Not sure? Tap "I don't know yet" — that's useful too.</p>
-    <div class="pl-en" id="plEn"></div>
-    <textarea class="pl-in" id="plIn" dir="rtl"></textarea>
+    <h1>Write this in Arabic</h1>
+    <p class="intro" id="plIntro">This finds where you should start. No vowel marks needed. Not sure? Tap “I don't know yet”.</p>
+    <div class="pl-en"><p class="pl-k">Write in Arabic</p><div id="plEn"></div></div>
+    <textarea class="pl-in ar-in" id="plIn" dir="rtl" lang="ar" placeholder="اكْتُبْ هُنا" aria-label="Your Arabic"></textarea>
     <div class="actions">
       <button class="skip" id="plSkip">I don't know yet</button>
       <button class="btn" id="plGo">Check</button>
@@ -152,6 +168,7 @@
 <script src="path.js?v=20260928"></script>
 <script src="plan.js?v=20260922"></script>
 <script src="judge.js?v=20260922"></script>
+<script src="arkb.js?v=3" defer></script>
 <script>
 requireLogin();
 const answers = { reads:null, level:null, duration:null, reason:null };
@@ -163,11 +180,18 @@ document.querySelectorAll('.q').forEach(q=>{
   }));
 });
 
+/* 'finished the questions' and 'offered the tour' are kept per account, not per
+   browser: a confirm link often opens in a different browser from sign-up, and
+   one browser can hold more than one account. */
+let UID=null;
+const uidReady=(typeof currentUserId==='function' ? currentUserId() : Promise.resolve(null)).then(u=>UID=u).catch(()=>null);
+const markOnboarded=()=>{ try{ localStorage.setItem('bay_onboarded', UID||'1'); }catch(_){} };
+
 const GOAL_FOR={ '5':1, '10':2, '20':4 };       // lesson steps a day
 const LEVEL_PACE={ beginner:2, basics:4, intermediate:5 };   // extra new words a day in Words
 
 async function save(){
-  try{ localStorage.setItem('bay_onboarded','1'); }catch(_){}
+  await uidReady; markOnboarded();
   try{ if(answers.duration) localStorage.setItem('rafiq_goal', String(GOAL_FOR[answers.duration])); }catch(_){}
   try{
     if(typeof cloudSaveProfile==='function')
@@ -178,11 +202,15 @@ async function save(){
   }catch(_){}
 }
 function goHome(){ setTimeout(()=>{ window.location.href='dashboard.html'; }, 400); }
-/* Before Home, once per device: offer the 79-second tour. Starting the first
-   lesson stays the main button; the tour never plays by itself. */
-function home(){
+/* Before Home, once per account: offer the 79-second tour. Starting the first
+   lesson stays the main button; the tour never plays by itself.
+   rafiq_seen_howto holds the ids of accounts that have been offered it here. */
+async function home(){
   Progress.flush && Progress.flush();
-  let seen=false; try{ seen=localStorage.getItem('rafiq_seen_howto')==='1'; localStorage.setItem('rafiq_seen_howto','1'); }catch(_){ seen=true; }
+  await uidReady;
+  let seen=false;
+  try{ const ids=(localStorage.getItem('rafiq_seen_howto')||'').split(','), me=UID||'1';
+       seen=ids.includes(me); if(!seen) localStorage.setItem('rafiq_seen_howto', ids.filter(x=>x&&x!=='1').concat(me).slice(-5).join(',')); }catch(_){ seen=true; }
   if(seen) return goHome();
   ['qs','pl'].forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.add('hide'); });
   document.getElementById('howto').classList.remove('hide');
@@ -194,7 +222,7 @@ function home(){
 }
 
 document.getElementById('skipBtn').onclick=async()=>{
-  try{ localStorage.setItem('bay_onboarded','1'); }catch(_){}
+  await uidReady; markOnboarded();
   if(typeof cloudSaveProfile==='function') await cloudSaveProfile({});
   home();
 };
@@ -227,10 +255,13 @@ function placement(){
   const show=()=>{
     if(i>=PROBE.length) return start(null);            // all right: start after the last probe
     document.getElementById('plBar').style.width=Math.round(100*i/PROBE.length)+'%';
+    document.getElementById('plLabel').textContent=`Quick check · ${i+1} of ${PROBE.length}`;
     en.textContent=PROBE[i].en; inp.value=''; msg.textContent=''; go.disabled=false; inp.focus();
   };
   const miss=()=>start(PROBE[i].n);
   skip.onclick=miss;
+  // Enter (or the keyboard's ↵) checks; Shift+Enter still makes a new line
+  inp.onkeydown=e=>{ if(e.key==='Enter' && !e.shiftKey){ e.preventDefault(); if(!go.disabled) go.click(); } };
   go.onclick=async()=>{
     if(!inp.value.trim()) return miss();
     go.disabled=true; msg.textContent='Checking…';

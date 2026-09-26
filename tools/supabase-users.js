@@ -3,7 +3,14 @@
    The repo is public, so Action logs are public: emails are always masked.
 
      node tools/supabase-users.js list [days]      accounts created in the last N days (default 3)
-     node tools/supabase-users.js delete id1,id2   delete these accounts (max 5) and their rows */
+     node tools/supabase-users.js delete id1,id2   delete these accounts (max 5) and their rows
+     node tools/supabase-users.js reset-preview    who a beta reset would wipe (changes nothing)
+     node tools/supabase-users.js reset RESET-BETA wipe progress + onboarding answers for them
+
+   The beta reset keeps accounts that were created or onboarded today (UK time):
+   they've already seen the current app. For everyone else it deletes their rows
+   in every table with a user_id (progress, profile = onboarding answers, …)
+   except 'settings', whose migrated_v2 flag stops old browser data re-importing. */
 const REF = 'gaajfahtrbdybjuunfhe';
 const TOKEN = process.env.SUPABASE_ACCESS_TOKEN;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
@@ -59,5 +66,34 @@ async function userTables() {
     found.forEach(u => console.log(`deleted ${u.id}  ${mask(u.email)}`));
     return;
   }
-  console.error('use: list [days] | delete id1,id2'); process.exit(1);
+  if (cmd === 'reset-preview' || cmd === 'reset') {
+    if (cmd === 'reset' && arg !== 'RESET-BETA') { console.error('to wipe, the second input must be RESET-BETA'); process.exit(1); }
+    const tables = (await userTables()).filter(t => t !== 'settings');
+    const today = `(date_trunc('day', now() at time zone 'Europe/London') at time zone 'Europe/London')`;
+    const pcols = (await sql(`select column_name from information_schema.columns
+                              where table_schema='public' and table_name='profiles'`)).map(r => r.column_name);
+    const pAt = pcols.includes('created_at') ? 'coalesce(p.created_at, p.updated_at)' : 'p.updated_at';
+    const rows = await sql(`select u.id, u.email, u.created_at, ${pAt} as onboarded_at, p.onboarded,
+                              (u.created_at >= ${today} or coalesce(${pAt} >= ${today}, false)) as keep
+                            from auth.users u left join public.profiles p on p.user_id = u.id order by u.created_at`);
+    console.log(`Today (UK) starts ${(await sql(`select ${today} as t`))[0].t}. Tables wiped: ${tables.join(', ')}`);
+    const wipe = [];
+    for (const u of rows) {
+      let n = 0;
+      for (const t of tables) n += (await sql(`select count(*)::int as n from public."${t}" where user_id='${u.id}'`))[0].n;
+      console.log(`${u.keep ? 'KEEP ' : 'RESET'}  ${u.id}  ${mask(u.email)}  created ${String(u.created_at).slice(0, 16)}  ` +
+                  `onboarded ${u.onboarded_at ? String(u.onboarded_at).slice(0, 16) : 'no'}  rows ${n}`);
+      if (!u.keep) wipe.push(u);
+    }
+    console.log(`${wipe.length} to reset, ${rows.length - wipe.length} kept`);
+    if (cmd === 'reset-preview' || !wipe.length) return;
+    const list = wipe.map(u => `'${u.id}'`).join(',');
+    for (const t of tables) {
+      const r = await sql(`with d as (delete from public."${t}" where user_id in (${list}) returning 1) select count(*)::int as n from d`);
+      console.log(`${t}: ${r[0].n} rows deleted`);
+    }
+    console.log('reset done');
+    return;
+  }
+  console.error('use: list [days] | delete id1,id2 | reset-preview | reset RESET-BETA'); process.exit(1);
 })();

@@ -132,6 +132,17 @@
     </div>
     <p class="fine">Can’t see it? Check spam or promotions. It comes from <b>hello@contact.rafiq-arabic.com</b>.</p>
   </section>
+
+  <!-- signed in with a password shorter than the current minimum: choose a new one, once -->
+  <form class="card sent" id="newpw" hidden aria-labelledby="newpwTitle">
+    <div class="env" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10.5" width="16" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></svg></div>
+    <h1 id="newpwTitle" tabindex="-1">Choose a new password</h1>
+    <p class="lead">Passwords now need at least 8 characters. Pick a new one to carry on. It only takes a moment.</p>
+    <div class="field" style="text-align:left;margin-top:22px"><label for="np1">New password</label><input id="np1" type="password" autocomplete="new-password" minlength="8" required></div>
+    <div class="field" style="text-align:left"><label for="np2">Type it again</label><input id="np2" type="password" autocomplete="new-password" minlength="8" required></div>
+    <button class="btn" type="submit" id="npGo">Save and continue</button>
+    <div class="msg" id="npMsg" role="status" aria-live="polite"></div>
+  </form>
 </main>
 
 <!-- Supabase client library -->
@@ -172,7 +183,7 @@ async function goIn(){
   try {
     const { data } = await sb.auth.getUser();
     const user = data && data.user;
-    if (user && localStorage.getItem('bay_onboarded') !== user.id) {
+    if (user && localStorage.getItem('rafiq_onboarded') !== user.id) {
       const r = await sb.from('profiles').select('onboarded').eq('user_id', user.id).maybeSingle();
       if (!r.error && !(r.data && r.data.onboarded)) dest = 'onboarding.html';
     }
@@ -198,6 +209,7 @@ function setMode(m, keepMsg){
     title.textContent = 'Create your account';
     toggle.innerHTML = 'Already have an account? <a data-mode="signin">Sign in</a>';
     pwEl.setAttribute('autocomplete','new-password');
+    pwEl.placeholder = 'At least 8 characters';
   } else if(m==='reset'){
     title.textContent = 'Reset your password';
     toggle.innerHTML = 'Remembered it? <a data-mode="signin">Sign in</a>';
@@ -205,6 +217,7 @@ function setMode(m, keepMsg){
     title.textContent = 'Sign in to continue';
     toggle.innerHTML = 'New here? <a data-mode="signup">Create an account</a>';
     pwEl.setAttribute('autocomplete','current-password');
+    pwEl.placeholder = '••••••••';
   }
   if(!keepMsg) showMsg('');
 }
@@ -231,7 +244,7 @@ const resendBtn = document.getElementById('resend'), sentGo = document.getElemen
 let pending = null, cooldown = 0, tick = null, lastTry = 0;
 function swap(from, to){
   from.hidden = true; to.hidden = false;
-  document.querySelector('.screen').classList.toggle('compact', to === sent);
+  document.querySelector('.screen').classList.toggle('compact', to !== form);
   to.classList.remove('enter'); void to.offsetWidth; to.classList.add('enter');
 }
 function sentStatus(text, kind){ sentMsg.textContent = text || ''; sentMsg.className = 'msg' + (text ? ' show ' + (kind || 'ok') : ''); }
@@ -254,10 +267,11 @@ async function tryContinue(quiet){
   if (quiet && Date.now() - lastTry < 5000) return;
   lastTry = Date.now();
   if (!quiet) { sentGo.disabled = true; sentGo.textContent = 'Checking…'; }
-  const { error } = await sb.auth.signInWithPassword({ email: pending.email, password: pending.password });
+  const { data, error } = await sb.auth.signInWithPassword({ email: pending.email, password: pending.password });
   sentGo.disabled = false; sentGo.textContent = 'I’ve confirmed, continue';
   if (!error) {
     try{ localStorage.setItem('bay_last_active', String(Date.now())); }catch(_){}
+    if (needsNewPassword(pending.password, data)) return askNewPassword(sent);
     sentStatus('Confirmed. Taking you in…'); return goIn();
   }
   if (quiet) return;
@@ -287,13 +301,36 @@ function friendly(err){
   const m = (err && err.message || '').toLowerCase();
   if(m.includes('invalid login')) return 'That email and password don’t match. Try again, or use “Forgot password?”.';
   if(m.includes('already registered')||m.includes('already been registered')) return 'That email already has an account. Try signing in instead.';
-  if(m.includes('password should be at least')) return 'Password is too short — use at least 6 characters.';
+  if(m.includes('password should be at least')) return 'Password is too short. Use at least 8 characters.';
+  if(m.includes('should be different')) return 'Choose a password that’s different from your old one.';
   if(m.includes('unable to validate email')||m.includes('invalid email')) return 'That email doesn’t look right — please check it.';
   if(m.includes('rate limit')||m.includes('security purposes')) return 'Too many emails sent just now. Please wait a minute and try again.';
   return err && err.message ? err.message : 'Something went wrong. Please try again.';
 }
 
 function done(){ btn.disabled = false; btn.textContent = BTN_TEXT[mode]; }
+
+/* Passwords now need at least 8 characters. Someone whose old password is shorter
+   is signed in as normal, then asked once for a new one before going in. */
+const MIN_PW = 8;
+const newpw = document.getElementById('newpw'), npMsg = document.getElementById('npMsg');
+function needsNewPassword(pw, data){ return (pw || '').length < MIN_PW || !!(data && data.weakPassword); }
+function askNewPassword(fromEl){
+  swap(fromEl, newpw);
+  document.getElementById('newpwTitle').focus({ preventScroll: true });
+}
+newpw.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const a = document.getElementById('np1').value, b = document.getElementById('np2').value;
+  const say = (t, k) => { npMsg.textContent = t; npMsg.className = 'msg show ' + (k || 'err'); };
+  if (a.length < MIN_PW) return say(`Use at least ${MIN_PW} characters.`);
+  if (a !== b) return say('Those two don’t match. Type the same password twice.');
+  const go = document.getElementById('npGo'); go.disabled = true; go.textContent = 'Saving…';
+  const { error } = await sb.auth.updateUser({ password: a });
+  go.disabled = false; go.textContent = 'Save and continue';
+  if (error) return say(friendly(error));
+  say('Saved. Taking you in…', 'ok'); goIn();
+});
 
 form.addEventListener('submit', async (e)=>{
   e.preventDefault();
@@ -302,6 +339,7 @@ form.addEventListener('submit', async (e)=>{
   const name  = (document.getElementById('nm').value||'').trim();
   if(!email){ showMsg('Please enter your email.'); return; }
   if(mode!=='reset' && !pw){ showMsg('Please enter your email and password.'); return; }
+  if(mode==='signup' && pw.length < MIN_PW){ showMsg(`Use a password of at least ${MIN_PW} characters.`); return; }
 
   btn.disabled = true;
   showMsg('');
@@ -343,6 +381,7 @@ form.addEventListener('submit', async (e)=>{
       try{ if(nm) localStorage.setItem('bay_name', nm); }catch(_){}
       // reset auth.js's idle clock so a stale timestamp can't log a fresh sign-in straight out
       try{ localStorage.setItem('bay_last_active', String(Date.now())); }catch(_){}
+      if (needsNewPassword(pw, data)) { done(); return askNewPassword(form); }
       goIn();
     }
   } catch(err){

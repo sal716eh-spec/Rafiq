@@ -8,7 +8,7 @@
    apply sets: site address + redirect addresses (added to what's there),
    Resend as the email sender, the branded templates in TEMPLATES (the
    subject is read from the comment on each file's first line), a higher
-   email rate limit, and — only if CONFIRM=yes — "Confirm email". Secrets are
+   email rate limit, passwords of at least 8 characters, and — only if CONFIRM=yes — "Confirm email". Secrets are
    never printed. */
 const fs = require('fs'), path = require('path');
 const REF = 'gaajfahtrbdybjuunfhe';                 // the Rafiq project (see auth.js)
@@ -32,7 +32,7 @@ function summary(c) {
     site_url: c.site_url, redirect_urls: c.uri_allow_list,
     confirm_email: c.mailer_autoconfirm === false ? 'ON (people must click the link)' : 'OFF (accounts work straight away)',
     email_sender: c.smtp_host ? `${c.smtp_sender_name || ''} <${c.smtp_admin_email}> via ${c.smtp_host}:${c.smtp_port}` : 'Supabase built-in (a few emails an hour)',
-    emails_per_hour: c.rate_limit_email_sent,
+    emails_per_hour: c.rate_limit_email_sent, password_min_length: c.password_min_length,
     confirm_subject: c.mailer_subjects_confirmation, confirm_template: len(c.mailer_templates_confirmation_content),
     reset_subject: c.mailer_subjects_recovery, reset_template: len(c.mailer_templates_recovery_content),
   };
@@ -73,6 +73,7 @@ function template(dir, file) {
     smtp_host: 'smtp.resend.com', smtp_port: '465', smtp_user: 'resend', smtp_pass: key,
     smtp_admin_email: sender, smtp_sender_name: 'Rafiq',
     rate_limit_email_sent: Math.max(now.rate_limit_email_sent || 0, 100),
+    password_min_length: Math.max(now.password_min_length || 0, 8),
   };
   const dir = process.env.TEMPLATES || 'supabase/email-templates';
   for (const [kind, file] of Object.entries(TEMPLATES)) {

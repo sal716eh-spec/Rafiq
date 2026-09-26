@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: "test (one account) | all (everyone)"
+        description: "test (one account) | all-preview (list only) | all (everyone reset)"
         required: true
         default: "test"
       arg:
-        description: "test: the account id (from Supabase users → list) · all: type SEND-TO-ALL"
+        description: "test: the account id · all-preview: leave as -  · all: type SEND-TO-ALL"
         required: true
 
 permissions:

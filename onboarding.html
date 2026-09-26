@@ -50,6 +50,15 @@
 .pl-in{width:100%;min-height:80px;font-family:var(--ar);font-size:21px;line-height:1.7;direction:rtl;text-align:right;border:1px solid var(--rule);border-radius:6px;background:var(--paper);padding:10px 12px;color:var(--ink)}
 .pl-bar{height:6px;background:var(--paper-deep);border-radius:3px;overflow:hidden;margin-bottom:16px}.pl-bar i{display:block;height:100%;background:var(--verdigris);width:0}
 .hide{display:none}
+.how-frame{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:var(--paper-deep,var(--paper));border:1px solid var(--rule);margin:18px 0 6px}
+.how-frame video{display:block;width:100%;height:100%;object-fit:cover}
+.how-play{position:absolute;left:12px;bottom:12px;display:flex;align-items:center;gap:10px;padding:5px 16px 5px 5px;border-radius:999px;border:1px solid var(--rule);
+  background:color-mix(in srgb,var(--card) 80%,transparent);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);
+  font-family:var(--la);font-size:14px;font-weight:700;color:var(--ink);cursor:pointer;touch-action:manipulation;transition:transform .12s,opacity .2s}
+.how-play:active{transform:scale(.97)}
+.how-play .hp-icon{width:34px;height:34px;border-radius:50%;background:var(--verdigris);display:grid;place-items:center}
+.how-play .hp-icon::before{content:"";margin-left:3px;border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent #fff}
+.how-frame.playing .how-play{opacity:0;pointer-events:none}
 .skip:active{opacity:.6}
 </style>
 </head>
@@ -115,6 +124,24 @@
     </div>
     <div class="msg" id="plMsg"></div>
   </div>
+  <!-- after the questions, once: the 79-second tour, never in the way of starting -->
+  <div class="card hide" id="howto">
+    <div class="label">You're all set</div>
+    <h1>How Rafiq works</h1>
+    <p class="intro">A 79-second tour: your path, reviews, practice and feedback. Watch it now, or jump straight in.</p>
+    <div class="how-frame">
+      <video id="howVid" preload="none" playsinline poster="media/rafiq-how-it-works.jpg?v=1">
+        <source src="media/rafiq-how-it-works.mp4?v=1" type="video/mp4">
+        <track kind="captions" src="media/rafiq-how-it-works.en.vtt?v=1" srclang="en" label="English">
+      </video>
+      <button class="how-play" id="howPlay" type="button" aria-label="Play how Rafiq works, with sound">
+        <span class="hp-icon" aria-hidden="true"></span><span>Watch · 79 sec</span>
+      </button>
+    </div>
+    <div class="actions" style="justify-content:flex-end">
+      <button class="btn" id="howStart">Start my first lesson</button>
+    </div>
+  </div>
 </main>
 
 <script src="vocab-data.js?v=20260922"></script>
@@ -150,7 +177,21 @@ async function save(){
               if(typeof cloudSaveNewPerDay==='function') await cloudSaveNewPerDay(pace); }
   }catch(_){}
 }
-function home(){ Progress.flush && Progress.flush(); setTimeout(()=>{ window.location.href='dashboard.html'; }, 400); }
+function goHome(){ setTimeout(()=>{ window.location.href='dashboard.html'; }, 400); }
+/* Before Home, once per device: offer the 79-second tour. Starting the first
+   lesson stays the main button; the tour never plays by itself. */
+function home(){
+  Progress.flush && Progress.flush();
+  let seen=false; try{ seen=localStorage.getItem('rafiq_seen_howto')==='1'; localStorage.setItem('rafiq_seen_howto','1'); }catch(_){ seen=true; }
+  if(seen) return goHome();
+  ['qs','pl'].forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.add('hide'); });
+  document.getElementById('howto').classList.remove('hide');
+  const v=document.getElementById('howVid'), f=v.parentElement;
+  document.getElementById('howPlay').onclick=()=>{ v.controls=true; f.classList.add('playing'); const p=v.play(); if(p&&p.catch) p.catch(()=>{}); };
+  v.addEventListener('play',()=>f.classList.add('playing'));
+  document.getElementById('howStart').onclick=()=>{ v.pause(); goHome(); };
+  window.scrollTo(0,0);
+}
 
 document.getElementById('skipBtn').onclick=async()=>{
   try{ localStorage.setItem('bay_onboarded','1'); }catch(_){}

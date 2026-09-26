@@ -82,6 +82,7 @@
 .steps b{color:var(--ink)}
 /* the one-minute film: a poster with a floating glass play control; press shows feedback instantly */
 .film{max-width:960px;margin:6px auto 0;padding:0 20px}
+.film.film-how{margin:22px auto 0;padding:0}
 .film-frame{position:relative;aspect-ratio:16/9;border-radius:22px;overflow:hidden;background:var(--paper-deep);
   box-shadow:0 2px 8px rgba(23,38,43,.08),0 28px 60px -24px rgba(23,38,43,.38)}
 .film-frame video{display:block;width:100%;height:100%;object-fit:cover;background:var(--paper-deep)}
@@ -136,15 +137,20 @@ footer.land{border-top:1px solid var(--rule);padding:26px;text-align:center;colo
   </div>
 </section>
 <script>
-(function(){
-  const sec=document.getElementById('film-section'), v=document.getElementById('film'), b=document.getElementById('film-play');
-  if(!v||!b) return;
-  // controls appear once it's playing; the play pill returns when it ends
-  b.addEventListener('click',()=>{ v.controls=true; sec.classList.add('playing'); const p=v.play(); if(p&&p.catch) p.catch(()=>{}); });
-  v.addEventListener('play',()=>sec.classList.add('playing'));
-  v.addEventListener('ended',()=>{ sec.classList.remove('playing'); v.controls=false; v.load();
-    b.querySelector('.fp-text').firstChild.textContent='Watch again'; });
-})();
+document.addEventListener('DOMContentLoaded',function(){
+  // every film on the page: a poster with a play pill; controls appear once it's playing,
+  // the pill returns when it ends, and starting one pauses the other
+  const films=[...document.querySelectorAll('.film')];
+  films.forEach(sec=>{
+    const v=sec.querySelector('video'), b=sec.querySelector('.film-play');
+    if(!v||!b) return;
+    b.addEventListener('click',()=>{ v.controls=true; sec.classList.add('playing'); const p=v.play(); if(p&&p.catch) p.catch(()=>{}); });
+    v.addEventListener('play',()=>{ sec.classList.add('playing');
+      films.forEach(o=>{ const ov=o.querySelector('video'); if(ov && ov!==v && !ov.paused) ov.pause(); }); });
+    v.addEventListener('ended',()=>{ sec.classList.remove('playing'); v.controls=false; v.load();
+      b.querySelector('.fp-text').firstChild.textContent='Watch again'; });
+  });
+});
 </script>
 <div class="stats">
   <div class="stat"><b>12</b><span>units, plus a reading starter</span></div>
@@ -176,6 +182,18 @@ footer.land{border-top:1px solid var(--rule);padding:26px;text-align:center;colo
       <p>Reply to the other speaker in your own words. Rafiq checks your reply fits and points out grammar slips.</p></div>
     <div class="lcard"><div class="ci">تَدْرِيب</div><h3>Extra practice</h3>
       <p>Words, sentences, 21 verbs across three tenses, and the joining words that link ideas together.</p></div>
+  </div>
+  <div class="film film-how" id="how-section" aria-label="How Rafiq works">
+    <div class="film-frame">
+      <video id="how-film" preload="none" playsinline poster="media/rafiq-how-it-works.jpg?v=1">
+        <source src="media/rafiq-how-it-works.mp4?v=1" type="video/mp4">
+        <track kind="captions" src="media/rafiq-how-it-works.en.vtt?v=1" srclang="en" label="English">
+      </video>
+      <button class="film-play" type="button" aria-label="Play how Rafiq works, with sound">
+        <span class="fp-icon" aria-hidden="true"></span>
+        <span class="fp-text">See how it works<small>79 sec · sound on</small></span>
+      </button>
+    </div>
   </div>
 </section>
 <section class="section" id="pricing">

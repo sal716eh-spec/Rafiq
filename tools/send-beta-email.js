@@ -4,7 +4,8 @@
    and a single recipient is chosen by account id, never by email.
 
      node tools/send-beta-email.js test <account-id>     one account (the test copy)
-     node tools/send-beta-email.js all SEND-TO-ALL        every confirmed account
+     node tools/send-beta-email.js all-preview            who 'all' would send to (sends nothing)
+     node tools/send-beta-email.js all SEND-TO-ALL        every confirmed account reset on 26 Sep 2026
 
    The email is supabase/email-templates/beta-relaunch.html; its subject is in the
    comment on the first line, and {{GREETING}} becomes "Assalamu alaykum <name>,". */
@@ -12,6 +13,9 @@ const fs = require('fs'), path = require('path');
 const REF = 'gaajfahtrbdybjuunfhe';
 const TOKEN = process.env.SUPABASE_ACCESS_TOKEN, KEY = process.env.RESEND_API_KEY;
 const FROM = 'Rafiq <hello@contact.rafiq-arabic.com>', REPLY_TO = 'feedback@rafiq-arabic.com';
+// The beta reset (26 Sep 2026) kept accounts created that day, which have already
+// seen the current app: 'all' goes only to accounts created before it.
+const RESET_CUTOFF = '2026-09-25T23:00:00Z';     // midnight, 26 Sep, UK time
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
 
 async function sql(query) {
@@ -54,11 +58,16 @@ async function send(u) {
   if (cmd === 'test') {
     if (!UUID.test(arg || '')) { console.error('give one account id (uuid)'); process.exit(1); }
     users = await sql(`select ${cols} from auth.users where id = '${arg}'`);
-  } else if (cmd === 'all') {
-    if (arg !== 'SEND-TO-ALL') { console.error('to email everyone, the second input must be SEND-TO-ALL'); process.exit(1); }
-    users = await sql(`select ${cols} from auth.users where email_confirmed_at is not null and email is not null order by created_at`);
+  } else if (cmd === 'all' || cmd === 'all-preview') {
+    if (cmd === 'all' && arg !== 'SEND-TO-ALL') { console.error('to email everyone, the second input must be SEND-TO-ALL'); process.exit(1); }
+    users = await sql(`select ${cols} from auth.users where email_confirmed_at is not null and email is not null
+                        and created_at < '${RESET_CUTOFF}' order by created_at`);
   } else { console.error('use: test <account-id> | all SEND-TO-ALL'); process.exit(1); }
   if (!users.length) { console.error('no matching accounts'); process.exit(1); }
+  if (cmd === 'all-preview') {
+    users.forEach(u => console.log(`would send  ${u.id}  ${mask(u.email)}`));
+    return console.log(`${users.length} account(s); nothing sent`);
+  }
   console.log(`Subject: ${SUBJECT}\nSending to ${users.length} account(s):`);
   let ok = 0;
   for (const u of users) { if (await send(u)) ok++; await new Promise(r => setTimeout(r, 600)); }  // Resend: 2 a second

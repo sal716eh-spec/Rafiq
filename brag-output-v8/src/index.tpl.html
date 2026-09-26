@@ -101,15 +101,20 @@
       #fz-a { color: var(--verdigris); }
       #fz-recall { border-color: var(--verdigris); }
 
-      /* G — habit */
-      #g .inner { flex-direction: row; gap: 110px; }
-      #g-grid { display: grid; grid-template-columns: repeat(11, 56px); gap: 16px; }
-      .hd { width: 56px; height: 56px; border-radius: 50%; background: rgba(23,38,43,0.10); }
-      #g-side { width: 640px; }
+      /* G — habit: Home's streak and daily goal (dashboard.html) */
+      #g .inner { flex-direction: row; gap: 100px; }
+      #g-home { width: 780px; }
+      #g-stats { display: flex; gap: 24px; margin-top: 18px; }
+      .gs { flex: 1; background: var(--card); border: 3px solid rgba(23,38,43,0.12); border-radius: 26px; padding: 26px 32px; font-size: 32px; color: var(--ink-soft); box-shadow: 0 30px 60px rgba(23,38,43,0.08); }
+      .gs b { display: block; font-size: 60px; color: var(--ink); }
+      .gs b small { font-size: 34px; font-weight: 500; color: var(--ink-soft); }
+      .gbar { height: 14px; background: var(--paper-deep); border-radius: 7px; margin-top: 14px; overflow: hidden; }
+      .gbar i { display: block; height: 100%; width: 100%; background: var(--gold); transform-origin: left center; }
+      #g-next { margin-top: 24px; }
+      .sgt { display: flex; justify-content: space-between; font-size: 32px; } .sgt b { display: inline; font-size: 32px; }
+      #g-side { width: 760px; }
       #g-side .title { text-align: left; margin-top: 10px; }
-      #g-count { margin-top: 40px; font-size: 120px; font-weight: 700; color: var(--rubric); }
-      #g-count small { font-size: 50px; color: var(--ink); font-weight: 500; }
-      #g-note { font-size: 44px; font-weight: 500; color: var(--ink-soft); margin-top: 8px; }
+      #g-note { font-size: 50px; font-weight: 500; color: var(--rubric); margin-top: 8px; }
 
       /* H — Rafiq does it */
       #h .inner { flex-direction: row; gap: 90px; }
@@ -221,7 +226,7 @@
       </div></section>
 
       <section id="d" class="clip" {{SCENE:d}} data-track-index="3"><div class="inner">
-        <div class="kicker">What memory research says works</div>
+        <div class="kicker">Three findings from memory research</div>
         <div id="d-cards">
           <div class="rc card" id="d-1"><div class="n">1</div><div class="i">📅</div><div class="t">Spacing</div></div>
           <div class="rc card" id="d-2"><div class="n">2</div><div class="i">🧠</div><div class="t">Testing</div></div>
@@ -242,7 +247,7 @@
           <div class="pt ok sp" id="sp1" style="left:40px"></div><div class="pt ok sp" id="sp2" style="left:230px"></div><div class="pt ok sp" id="sp3" style="left:500px"></div><div class="pt ok sp" id="sp4" style="left:880px"></div><div class="pt ok sp" id="sp5" style="left:1460px"></div>
           <div class="day sd" style="left:40px">DAY 1</div><div class="day sd" style="left:230px">DAY 2</div><div class="day sd" style="left:500px">DAY 4</div><div class="day sd" style="left:880px">DAY 8</div><div class="day sd" style="left:1460px">DAY 16</div>
         </div>
-        <div class="source">Cepeda et al., 2006 · <b>a review of 254 studies</b></div>
+        <div class="source">Cepeda et al., 2006 · <b>a review of 317 experiments</b></div>
       </div></section>
 
       <section id="fz" class="clip" {{SCENE:fz}} data-track-index="5"><div class="inner">
@@ -256,14 +261,20 @@
       </div></section>
 
       <section id="g" class="clip" {{SCENE:g}} data-track-index="6"><div class="inner">
-        <div id="g-grid"></div>
+        <div id="g-home">
+          <div class="kicker">Home</div>
+          <div id="g-stats">
+            <div class="gs"><b>🔥 <span id="g-streak">11</span></b>day streak</div>
+            <div class="gs"><b><span id="g-done">1</span> <small>/ 2 steps</small></b><span id="g-lbl">today's goal</span><div class="gbar"><i id="g-fill"></i></div></div>
+          </div>
+          <div class="gs" id="g-next"><div class="sgt"><span>Next goal: <b>14 days</b></span><span><span id="g-left">3</span> to go</span></div><div class="gbar"><i id="g-fill2"></i></div></div>
+        </div>
         <div id="g-side">
           <div class="kicker">3 · Habit</div>
-          <div class="title">A little, every day</div>
-          <div id="g-count">🔥 <span id="g-n">0</span> <small>days</small></div>
-          <div id="g-note">about how long a daily habit took to feel automatic</div>
+          <div class="title">A few minutes every day</div>
+          <div id="g-note">beats an hour once a week</div>
         </div>
-        <div class="source">Lally et al., 2010 · <b>how habits form</b></div>
+        <div class="source">Lally et al., 2010 · <b>a daily habit took about two months to feel automatic</b></div>
       </div></section>
 
       <section id="h" class="clip" {{SCENE:h}} data-track-index="7"><div class="inner">
@@ -273,8 +284,8 @@
           <div class="opts"><div class="opt" id="h-right">house</div><div class="opt">book</div><div class="opt">school</div><div class="opt">friend</div></div>
         </div>
         <div id="h-side">
-          <div class="title">Back just before you'd forget it</div>
-          <div class="sched"><span>in 2 days</span><span>4</span><span>8</span><span>16</span></div>
+          <div class="title">Back after a day, then 2, 4, 8 days</div>
+          <div class="sched"><span>+1 day</span><span>+2</span><span>+4</span><span>+8</span></div>
           <div id="h-due"><b>12</b> to review from your lessons</div>
         </div>
       </div></section>
@@ -337,7 +348,7 @@
         <div class="big-line" id="n2">with a companion beside you.</div>
         <div class="brand" id="n-brand"><div class="tile" id="n-tile"><span class="r">ر</span><span class="dot"></span></div><div class="brand-name">Rafiq</div></div>
         <div id="n-url">rafiq-arabic.com</div>
-        <div id="n-try">Try it free</div>
+        <div id="n-try">Start your first lesson free</div>
       </div></section>
 
       {{AUDIO}}
@@ -349,8 +360,6 @@
       const FAMILIES = [["ا","ب","ت","ث"],["ج","ح","خ"],["د","ذ","ر","ز"],["س","ش","ص","ض"],["ط","ظ","ع","غ"],["ف","ق","ك","ل"],["م","ن","ه","و","ي"]];
       const jg = document.getElementById("j-grid");
       FAMILIES.forEach((fam, fi) => fam.forEach((ch) => { const d = document.createElement("div"); d.className = "al fam" + fi; d.textContent = ch; jg.appendChild(d); }));
-      const gg = document.getElementById("g-grid");
-      for (let i = 0; i < 66; i++) { const d = document.createElement("div"); d.className = "hd"; gg.appendChild(d); }
 
       document.fonts.load('700 800px "Plex Arabic"', "ع").then(() => {
       const g = document.getElementById("ghost").getContext("2d");
@@ -361,10 +370,10 @@
       document.querySelectorAll("section.clip").forEach((el) => { const s = +el.dataset.start; S[el.id] = { s, e: s + +el.dataset.duration }; });
       const DUR = +document.getElementById("root").dataset.duration;
       const tl = gsap.timeline({ paused: true });
-      const XF = 0.55;
+      const XI = 0.45, XO = 0.4;   // in over 0.45s; the scene before is gone 0.1s after the next one starts
       const scene = (id) => {
-        tl.fromTo("#" + id + " .inner", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, S[id].s);
-        if (S[id].e < DUR - 0.1) tl.to("#" + id + " .inner", { opacity: 0, duration: XF, ease: "sine.inOut" }, S[id].e - XF);
+        tl.fromTo("#" + id + " .inner", { opacity: 0 }, { opacity: 1, duration: XI, ease: "sine.out" }, S[id].s);
+        if (S[id].e < DUR - 0.1) tl.to("#" + id + " .inner", { opacity: 0, duration: XO, ease: "sine.in" }, S[id].e - XO);
       };
       const rise = (sel, t, d = 0.6, y = 26) => tl.fromTo(sel, { opacity: 0, y }, { opacity: 1, y: 0, duration: d, ease: "power3.out" }, t);
       const pop = (sel, t) => tl.fromTo(sel, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(1.6)" }, t);
@@ -387,21 +396,23 @@
       rise("#a-sub", T.n02.s + 1.6);
 
       // C — in a class, at a madrasa, on your own; words that slip away
-      ["#c-ch1", "#c-ch2", "#c-ch3"].forEach((s, i) => pop(s, T.n03.s + [0.1, 0.8, 1.6][i]));
+      pop("#c-ch1", S.c.s + 0.05);
+      ["#c-ch2", "#c-ch3"].forEach((s, i) => pop(s, T.n03.s + [0.8, 1.6][i]));
       ["#c-w1", "#c-w2", "#c-w3"].forEach((s, i) => rise(s, T.n03.s + 2.4 + i * 0.25, 0.6, 30));
       rise("#c-line", T.n03.s + 4.3, 0.6, 16);
       ["#c-w3", "#c-w1", "#c-w2"].forEach((s, i) => tl.to(s, { opacity: 0.14, filter: "blur(10px)", y: -14, duration: 1.0, ease: "power2.in" }, T.n03.s + 4.4 + i * 0.25));
 
       // D — three findings
-      ["#d-1", "#d-2", "#d-3"].forEach((s, i) => rise(s, T.n04.s + 0.9 + i * 0.45, 0.6, 30));
+      ["#d-1", "#d-2", "#d-3"].forEach((s, i) => rise(s, S.d.s + 0.1 + i * 0.15, 0.6, 30));
+      tl.to(".rc", { borderColor: "#a8842c", duration: 0.3, stagger: 0.25 }, T.n04b.s + 1.4);
 
       // E — spacing: cram, forget; space, remember
-      rise("#e .title", S.e.s + 0.3, 0.6, 16);
-      tl.fromTo("#e-cram", { opacity: 0 }, { opacity: 1, duration: 0.4 }, T.n05.s + 0.9);
+      rise("#e .title", S.e.s + 0.05, 0.6, 16);
+      tl.fromTo("#e-cram", { opacity: 0 }, { opacity: 1, duration: 0.4 }, S.e.s + 0.15);
       tl.fromTo("#e-cram .cp", { scale: 0 }, { scale: 1, duration: 0.25, stagger: 0.08, ease: "back.out(2)" }, T.n05.s + 1.0);
       tl.fromTo("#e-cram-res", { opacity: 0 }, { opacity: 1, duration: 0.4 }, T.n05.s + 1.6);
       tl.to("#e-cram .cp", { opacity: 0.2, duration: 0.8 }, T.n05.s + 2.0);
-      tl.fromTo("#e-space", { opacity: 0 }, { opacity: 1, duration: 0.4 }, T.n05.s + 1.7);
+      tl.fromTo("#e-space", { opacity: 0 }, { opacity: 1, duration: 0.4 }, S.e.s + 0.25);
       [1.9, 2.6, 3.3, 4.0, 4.7].forEach((dt, k) => {
         tl.fromTo(`#sp${k + 1}`, { scale: 0 }, { scale: 1, duration: 0.3, ease: "back.out(2)" }, T.n05.s + dt);
       });
@@ -410,34 +421,41 @@
       rise("#e .source", T.n05.s + 3.2, 0.5, 10);
 
       // F — testing: reread vs recall
-      rise("#fz .title", S.fz.s + 0.3, 0.6, 16);
-      rise("#fz-read", T.n06.s + 0.8, 0.6, 30);
-      rise("#fz-recall", T.n06.s + 1.5, 0.6, 30);
+      rise("#fz .title", S.fz.s + 0.05, 0.6, 16);
+      rise("#fz-read", S.fz.s + 0.15, 0.6, 30);
+      rise("#fz-recall", S.fz.s + 0.3, 0.6, 30);
       tl.fromTo("#fz-a", { opacity: 0 }, { opacity: 0, duration: 0.01 }, S.fz.s);
       tl.to("#fz-q", { opacity: 0, duration: 0.2 }, T.n06.s + 3.0);
       tl.to("#fz-a", { opacity: 1, duration: 0.3 }, T.n06.s + 3.1);
       tl.fromTo("#fz-recall", { boxShadow: "0 30px 60px rgba(23,38,43,0.10)" }, { boxShadow: "0 0 0 10px rgba(46,114,99,0.25)", duration: 0.3, yoyo: true, repeat: 1 }, T.n06.s + 3.1);
       rise("#fz .source", T.n06.s + 1.8, 0.5, 10);
 
-      // G — habit: 66 days fill
-      rise("#g-side .title", S.g.s + 0.4, 0.6, 16);
-      const count = { n: 0 }, gn = document.getElementById("g-n");
-      tl.to(".hd", { backgroundColor: "#b4322a", duration: 0.12, stagger: 4.2 / 66 }, T.n07.s + 2.0);
-      tl.fromTo(count, { n: 0 }, { n: 66, duration: 4.3, ease: "none", onUpdate: () => { gn.textContent = Math.round(count.n); } }, T.n07.s + 2.0);
-      rise("#g-note", T.n07.s + 4.2, 0.5, 10);
-      rise("#g .source", T.n07.s + 3.4, 0.5, 10);
+      // G — habit: Home's daily goal fills, the streak ticks up
+      rise("#g-home", S.g.s + 0.1, 0.6, 30);
+      rise("#g-side .title", S.g.s + 0.2, 0.6, 16);
+      rise("#g-note", T.n07b.s + 0.6, 0.5, 10);
+      rise("#g .source", T.n07b.s + 1.2, 0.5, 10);
+      tl.fromTo("#g-fill", { scaleX: 0.5 }, { scaleX: 1, duration: 0.6, ease: "power2.out" }, T.r07.s + 1.2);      // "a small daily goal"
+      tl.fromTo("#g-fill2", { scaleX: 3 / 14 }, { scaleX: 3 / 14, duration: 0.01 }, S.g.s);
+      tl.call(() => { document.getElementById("g-done").textContent = "1"; document.getElementById("g-lbl").textContent = "today's goal"; }, null, S.g.s);
+      tl.call(() => { document.getElementById("g-done").textContent = "2"; document.getElementById("g-lbl").textContent = "today's goal ✓"; }, null, T.r07.s + 1.5);
+      tl.call(() => { document.getElementById("g-streak").textContent = "11"; document.getElementById("g-left").textContent = "3"; }, null, S.g.s);
+      tl.call(() => { document.getElementById("g-streak").textContent = "12"; document.getElementById("g-left").textContent = "2"; }, null, T.r07.s + 2.5);   // "a streak to keep"
+      tl.fromTo("#g-stats .gs:first-child", { scale: 1 }, { scale: 1.06, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out" }, T.r07.s + 2.5);
+      tl.to("#g-fill2", { scaleX: 4 / 14, duration: 0.5, ease: "power2.out" }, T.r07.s + 2.5);
 
       // H — Rafiq does it: recall, then the next reviews
       tl.fromTo("#h-quiz", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.h.s);
-      press("#h-right", T.r08.s + 3.2);
-      tl.to("#h-right", { backgroundColor: "#2e7263", color: "#ffffff", borderColor: "#2e7263", duration: 0.2 }, T.r08.s + 3.3);
-      rise("#h-side .title", T.r08.s + 0.4, 0.6, 16);
-      tl.fromTo(".sched span", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.35, stagger: 0.3 }, T.r08.s + 1.4);
-      rise("#h-due", T.r08.s + 4.0, 0.5, 10);
+      press("#h-right", T.r08b.s + 5.0);                                        // "asks you to recall it"
+      tl.to("#h-right", { backgroundColor: "#2e7263", color: "#ffffff", borderColor: "#2e7263", duration: 0.2 }, T.r08b.s + 5.1);
+      rise("#h-side .title", S.h.s + 0.1, 0.6, 16);
+      [2.3, 3.2, 3.6, 4.0].forEach((dt, k) => tl.fromTo(".sched span:nth-child(" + (k + 1) + ")", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3 }, T.r08b.s + dt));   // "after a day, then two, four, eight"
+      rise("#h-due", T.r08b.s + 5.6, 0.5, 10);
 
       // I — two doors
-      rise("#i-rev", T.n09.s + 0.2, 0.7, 30);
-      rise("#i-zero", T.n09.s + 2.3, 0.7, 30);
+      rise("#i-rev", S.i.s + 0.1, 0.7, 30);
+      tl.fromTo("#i-zero", { opacity: 0, y: 30 }, { opacity: 0.3, y: 0, duration: 0.7, ease: "power3.out" }, S.i.s + 0.2);
+      tl.to("#i-zero", { opacity: 1, duration: 0.4 }, T.n09.s + 2.3);
 
       // J — the alphabet turns green, family by family
       tl.fromTo(".al", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.02 }, S.j.s + 0.2);
@@ -450,7 +468,7 @@
       tl.to("#k-ex1", { scale: 1.04, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.out" }, T.ar_bayt.s);
 
       // L — the fatha; then the listening test plays سَمَك and س is chosen
-      rise("#l-vowel", T.n12.s + 0.1, 0.6, 30);
+      rise("#l-vowel", S.l.s + 0.1, 0.6, 30);
       rise("#l-test", T.n12.s + 1.6, 0.6, 30);
       tl.fromTo("#l-rev", { opacity: 0 }, { opacity: 0, duration: 0.01 }, S.l.s);
       tl.to("#l-play", { scale: 1.1, duration: 0.2, yoyo: true, repeat: 1 }, T.ar_samak.s);
@@ -459,18 +477,18 @@
       tl.to("#l-rev", { opacity: 1, duration: 0.4 }, T.ar_samak.e + 0.5);
 
       // M — first letter to first conversation
-      pop("#m-1", T.n13.s + 0.1); rise("#m-a1", T.n13.s + 0.5, 0.3, 0);
+      pop("#m-1", S.m.s + 0.2); rise("#m-a1", T.n13.s + 0.5, 0.3, 0);
       pop("#m-2", T.n13.s + 0.7); rise("#m-a2", T.n13.s + 1.1, 0.3, 0);
       tl.fromTo("#m-bub", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, T.n13.s + 1.3);
       tl.fromTo("#m-ok", { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, T.n13.s + 2.0);
 
       // N — the close
-      rise("#n1", T.n14.s + 0.1, 0.7);
+      rise("#n1", S.n.s + 0.05, 0.7);
       rise("#n2", T.n14.s + 1.2, 0.7);
-      tl.fromTo("#n-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T.r15.s - 0.3);
-      tl.fromTo("#n-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.r15.s - 0.15);
-      rise("#n-url", T.r15.s + 0.5, 0.5, 12);
-      rise("#n-try", T.r15.s + 0.9, 0.5, 12);
+      tl.fromTo("#n-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T.r16.s - 0.3);
+      tl.fromTo("#n-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.r16.s - 0.15);
+      rise("#n-url", T.r16.s + 0.5, 0.5, 12);
+      rise("#n-try", T.r16.s + 0.9, 0.5, 12);
 
       // voice-reactive: the warm glow breathes with the voices
       const A = window.AUDIO_DATA, glow = document.getElementById("glow");

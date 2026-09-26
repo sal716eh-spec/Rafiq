@@ -15,11 +15,12 @@ f.cursor = 0.9
 f.say('r01', V + 'r01.wav', '[Rafiq] رَفِيق. In Arabic, it means companion.', gap=0)
 f.say('n02', V + 'n02.wav', "That's what this app was made to be: a companion for anyone studying Arabic.", 0.5)
 f.say('n03', V + 'n03.wav', 'In a class, at a madrasa, or on your own, lessons give you new words. Keeping them is the hard part.', 0.7)
-f.say('n04', V + 'n04.wav', 'So everything here is built on what memory research says works.', 0.6)
+f.say('n04b', V + 'n04b.wav', 'So we built رَفِيق around three findings from memory research.', 0.6)
 f.say('n05', V + 'n05.wav', "Spacing. Coming back to a word after a gap beats cramming. It's one of the most replicated findings in memory research.", 0.7)
 f.say('n06', V + 'n06.wav', 'Testing. Pulling a word from memory strengthens it more than reading it again.', 0.7)
-f.say('n07', V + 'n07.wav', 'Habit. A little every day. In one well-known study, a daily habit took about sixty-six days to feel automatic.', 0.7)
-f.say('r08', V + 'r08.wav', "[Rafiq] So رَفِيق brings each word back just before you'd forget it, and asks you to recall it, not just reread it.", 0.7)
+f.say('n07b', V + 'n07b.wav', 'Habit. A few minutes every day beats an hour once a week.', 0.7)
+f.say('r07', V + 'r07.wav', '[Rafiq] رَفِيق gives you a small daily goal, and a streak to keep.', 0.35)
+f.say('r08b', V + 'r08b.wav', '[Rafiq] So رَفِيق brings each word back after a day, then two, four, eight, and asks you to recall it, not just reread it.', 0.7)
 f.say('n09', V + 'n09.wav', 'Use it to revise alongside your course. Or start from nothing at all.', 0.8)
 f.say('n10', V + 'n10.wav', "Can't read Arabic yet? Begin with the twenty-eight letters, in families that share a shape.", 0.7)
 f.say('n11', V + 'n11.wav', 'Every letter comes with three words, the letter in red, and a native voice to copy.', 0.7)
@@ -28,16 +29,17 @@ f.say('n12', V + 'n12.wav', 'Then the vowel marks, and a listening test to train
 f.say('ar_samak', 'assets/ar/samak.wav', 'سَمَك — fish', 0.4)
 f.say('n13', V + 'n13.wav', 'From your first letter to your first conversation.', 2.2)
 f.say('n14', V + 'n14.wav', 'A few minutes a day, with a companion beside you.', 1.2)
-f.say('r15', V + 'r15.wav', '[Rafiq] Try رَفِيق free today.', 0.5)
+f.say('r16', V + 'r16.wav', '[Rafiq] Start your first lesson free at rafiq-arabic.com.', 0.5)
 TOTAL = round(f.cursor + 2.4, 2)
 E = f.events
 
-# scenes: in 0.45s before their first line, out 0.55s after the next one comes in (a crossfade)
-order = [('a', 'r01'), ('c', 'n03'), ('d', 'n04'), ('e', 'n05'), ('fz', 'n06'), ('g', 'n07'), ('h', 'r08'),
+# scenes: in 0.45s before their first line; the one before fades out over 0.4s, ending
+# 0.1s after the new one starts (a short handoff, never content drawn over content)
+order = [('a', 'r01'), ('c', 'n03'), ('d', 'n04b'), ('e', 'n05'), ('fz', 'n06'), ('g', 'n07b'), ('h', 'r08b'),
          ('i', 'n09'), ('j', 'n10'), ('k', 'n11'), ('l', 'n12'), ('m', 'n13'), ('n', 'n14')]
 starts = [0.0] + [E[ev]['s'] - 0.45 for _, ev in order[1:]]
 for i, (sid, _) in enumerate(order):
-    end = starts[i + 1] + 0.55 if i + 1 < len(order) else TOTAL
+    end = starts[i + 1] + 0.1 if i + 1 < len(order) else TOTAL
     f.scene(sid, starts[i], end)
 
 # sound: the opener stroke, page turns between scenes, pen for writing, soft ✓, natural bed
@@ -50,14 +52,18 @@ f.sfx('logo1', 'assets/sfx/impactSoft_medium_002.ogg', E['n02']['s'] + 0.2, 0.55
 for k, dt in enumerate([1.9, 2.6, 3.3, 4.0, 4.7]):
     f.sfx(f'tick{k}', 'assets/sfx-gen/pen-stroke.wav', E['n05']['s'] + dt, 0.35)
 f.sfx('ok-test', 'assets/sfx/bong_001.ogg', E['n06']['s'] + 3.1, 0.5)
-f.sfx('tap-quiz', 'assets/sfx-gen/tap.wav', E['r08']['s'] + 3.2, 0.5)
-f.sfx('ok-quiz', 'assets/sfx/bong_001.ogg', E['r08']['s'] + 3.3, 0.5)
+f.sfx('ok-goal', 'assets/sfx/bong_001.ogg', E['r07']['s'] + 1.5, 0.45)
+f.sfx('streak', 'assets/sfx-gen/pen-stroke.wav', E['r07']['s'] + 2.5, 0.4)
+for k, dt in enumerate([2.3, 3.2, 3.6, 4.0]):          # r08b: "after a day, then two, four, eight"
+    f.sfx(f'sched{k}', 'assets/sfx-gen/pen-stroke.wav', E['r08b']['s'] + dt, 0.3)
+f.sfx('tap-quiz', 'assets/sfx-gen/tap.wav', E['r08b']['s'] + 5.0, 0.5)
+f.sfx('ok-quiz', 'assets/sfx/bong_001.ogg', E['r08b']['s'] + 5.1, 0.5)
 f.sfx('pen-abc', 'assets/sfx-gen/pen-write.wav', E['n10']['s'] + 1.4, 1.0, 3.4,
       {'version': 1, 'lanes': [{'target': 'volume', 'points': [{'t': 0, 'v': 0.0}, {'t': 0.2, 'v': 0.45}, {'t': 3.0, 'v': 0.45}, {'t': 3.4, 'v': 0.0}]}]})
 f.sfx('tap-s', 'assets/sfx-gen/tap.wav', E['ar_samak']['e'] + 0.35, 0.5)
 f.sfx('ok-s', 'assets/sfx/bong_001.ogg', E['ar_samak']['e'] + 0.45, 0.5)
 f.sfx('ok-conv', 'assets/sfx/bong_001.ogg', E['n13']['s'] + 2.0, 0.45)
-f.sfx('logo2', 'assets/sfx/impactSoft_medium_002.ogg', E['r15']['s'] - 0.3, 0.55)
+f.sfx('logo2', 'assets/sfx/impactSoft_medium_002.ogg', E['r16']['s'] - 0.3, 0.55)
 f.bed('room', 'assets/amb/room.mp3', 0.5, TOTAL, 0.6)
 f.bed('fountain', 'assets/sfx-gen/fountain.wav', 2.8, TOTAL - 0.3, 0.17)
 f.bed('birds', 'assets/sfx-gen/birds.wav', 3.4, TOTAL - 0.8, 0.12)

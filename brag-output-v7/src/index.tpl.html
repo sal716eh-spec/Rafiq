@@ -87,7 +87,7 @@
 
       /* E — word tiles */
       #e .inner { flex-direction: row; gap: 70px; align-items: center; }
-      #e-card { width: 1080px; padding: 0 0 44px; box-sizing: border-box; overflow: hidden; }
+      #e-card { position: relative; width: 1080px; padding: 0 0 44px; box-sizing: border-box; overflow: hidden; }
       .task { display: flex; align-items: center; gap: 22px; padding: 24px 40px; background: #ece5d4; border-left: 8px solid var(--rubric); }
       .task b { font-size: 38px; } .task .ar { font-size: 38px; color: var(--rubric); line-height: 1.6; }
       #e-en { font-size: 44px; font-weight: 500; padding: 30px 40px 0; }
@@ -95,7 +95,7 @@
       #e-pool { position: relative; margin: 26px 40px 0; min-height: 110px; display: flex; flex-wrap: wrap; gap: 14px; direction: rtl; align-items: center; }
       .tile2 { font-family: var(--ar); font-weight: 600; font-size: 46px; line-height: 1.7; padding: 4px 30px; border-radius: 18px; border: 3px solid rgba(23,38,43,0.16); background: #fffdf8; }
       #e-line .tile2 { background: var(--paper-deep); }
-      #e-ok { padding: 18px 40px 0; font-size: 40px; font-weight: 700; color: var(--verdigris); }
+      #e-ok { position: absolute; left: 40px; bottom: 80px; padding: 0; font-size: 40px; font-weight: 700; color: var(--verdigris); }
       #e-later { width: 520px; padding: 34px 40px 40px; box-sizing: border-box; }
       #e-later .k { font-size: 38px; font-weight: 700; }
       #e-later .s { font-size: 30px; color: var(--ink-soft); margin-top: 6px; }
@@ -112,6 +112,7 @@
       #chip { position: absolute; top: 20px; margin-left: -120px; width: 240px; height: 90px; border-radius: 45px; background: var(--ink); color: var(--paper);
         display: flex; align-items: center; justify-content: center; gap: 16px; font-size: 32px; font-weight: 700; }
       #chip .ar { font-size: 46px; color: var(--paper); line-height: 1; }
+      .gl { position: absolute; top: 108px; width: 200px; margin-left: -100px; text-align: center; font-family: var(--ut); font-size: 24px; color: var(--gold); }
       #due { margin-top: 20px; display: flex; align-items: center; justify-content: space-between; width: 900px; padding: 24px 34px; background: var(--card); border: 3px solid rgba(23,38,43,0.14); border-radius: 20px; font-size: 36px; }
       #due b { color: var(--rubric); }
 
@@ -140,8 +141,8 @@
       /* I — joining words */
       #i-card { width: 1300px; padding: 0 0 46px; box-sizing: border-box; overflow: hidden; }
       #i-q { font-family: var(--ar); font-weight: 700; font-size: 84px; line-height: 1.8; direction: rtl; text-align: center; padding: 40px 40px 0; }
-      .gap { display: inline-block; min-width: 190px; border-bottom: 6px dashed var(--gold); color: transparent; }
-      #i-fill { color: var(--verdigris); }
+      .gap { display: inline-block; min-width: 190px; border-bottom: 6px dashed var(--gold); }
+      #i-fill { color: var(--verdigris); opacity: 0; }
       #i-opts { display: flex; gap: 20px; direction: rtl; padding: 30px 40px 0; }
       #i-opts div { flex: 1; height: 110px; border-radius: 20px; border: 3px solid rgba(23,38,43,0.16); background: #fffdf8; font-family: var(--ar); font-weight: 700; font-size: 56px; display: flex; align-items: center; justify-content: center; }
       #i-en { padding: 26px 40px 0; font-size: 38px; color: var(--ink-soft); text-align: center; }
@@ -182,7 +183,14 @@
       #input { flex: 1; height: 96px; box-sizing: border-box; border: 3px solid rgba(23,38,43,0.22); border-radius: 20px; background: #fffdf8;
         font-family: var(--ar); font-weight: 600; font-size: 44px; line-height: 90px; direction: rtl; text-align: right; padding: 0 30px; overflow: hidden; white-space: nowrap; }
       #send { width: 190px; height: 96px; border-radius: 20px; background: var(--verdigris); color: #fff; font-size: 36px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
-      #note { align-self: flex-end; font-size: 40px; font-weight: 700; color: var(--verdigris); }
+      #note { align-self: stretch; padding: 16px 26px 18px; border-left: 8px solid var(--gold); background: rgba(168,132,44,0.10); border-radius: 12px; font-size: 32px; }
+      #note b { display: block; color: var(--verdigris); font-size: 34px; }
+      #why { display: block; margin-top: 4px; color: var(--ink); } #why .ar { font-weight: 700; font-size: 38px; line-height: 1.4; }
+      #why-fix { color: var(--verdigris); }
+      .mt { display: inline-block; margin-top: 10px; font-family: var(--ut); font-size: 20px; letter-spacing: 0.1em; color: var(--rubric); border: 2px solid var(--rubric); border-radius: 14px; padding: 2px 12px; }
+      .sw { position: relative; display: inline-block; white-space: nowrap; }
+      #w-bad, #w-good { border-radius: 10px; padding: 0 6px; }
+      #w-good { position: absolute; right: 0; top: 0; opacity: 0; color: #fff; }
 
       /* M — weak spots (as v6) */
       #m-card { width: 1240px; padding: 44px 60px 50px; box-sizing: border-box; border-color: var(--gold); }
@@ -269,7 +277,7 @@
 
       <section id="fz" class="clip" {{SCENE:fz}} data-track-index="6"><div class="inner">
         <div class="kicker">Review</div>
-        <div class="title">Back just before you'd forget it</div>
+        <div class="title">Back after a day, then 2, 4, 8 days</div>
         <div id="fz-line">
           <div id="fz-axis"></div>
           <div class="dotm" style="left:60px"></div><div class="dotm" style="left:400px"></div><div class="dotm" style="left:740px"></div><div class="dotm" style="left:1080px"></div><div class="dotm" style="left:1420px"></div>
@@ -278,6 +286,7 @@
           <div class="stop" style="left:740px" id="s2"><div class="d">DAY 4</div><div class="ok">✓</div></div>
           <div class="stop" style="left:1080px" id="s3"><div class="d">DAY 8</div><div class="ok">✓</div></div>
           <div class="stop" style="left:1420px" id="s4"><div class="d">DAY 16</div><div class="ok">✓</div></div>
+          <div class="gl" style="left:230px" id="g0">+1 day</div><div class="gl" style="left:570px" id="g1">+2 days</div><div class="gl" style="left:910px" id="g2">+4 days</div><div class="gl" style="left:1250px" id="g3">+8 days</div>
           <div id="chip"><span class="ar">بَيْت</span><span>house</span></div>
         </div>
         <div id="due"><span><b>12</b> to review from your lessons</span><span>Review →</span></div>
@@ -308,7 +317,7 @@
       <section id="i" class="clip" {{SCENE:i}} data-track-index="9"><div class="inner">
         <div class="card" id="i-card">
           <div class="task"><b>Choose the joining word</b><span class="ar">اخْتَرِ الرَّابِطَ الْمُناسِبَ</span></div>
-          <div id="i-q">أُصَلِّي، <span class="gap" id="i-gap">ثُمَّ</span> أَتَناوَلُ الْفَطُورَ.</div>
+          <div id="i-q">أُصَلِّي، <span class="gap" id="i-gap"><span id="i-fill">ثُمَّ</span></span> أَتَناوَلُ الْفَطُورَ.</div>
           <div id="i-opts"><div id="i-then">ثُمَّ</div><div>لَكِنَّ</div><div>لِأَنَّ</div><div>مَثَلًا</div></div>
           <div id="i-en">I pray, then I have breakfast.</div>
         </div>
@@ -329,9 +338,9 @@
         <div class="badge">COMPLETE</div>
         <div class="title">Real-life scenes</div>
         <div id="k-grid">
-          <div class="sc card"><div class="i">✈️</div><b>At the airport</b><div class="ar">فِي الْمَطارِ</div></div>
+          <div class="sc card" id="sc-air"><div class="i">✈️</div><b>At the airport</b><div class="ar">فِي الْمَطارِ</div></div>
           <div class="sc card"><div class="i">🩺</div><b>At the doctor</b><div class="ar">عِنْدَ الطَّبِيبِ</div></div>
-          <div class="sc card"><div class="i">🕌</div><b>At the masjid</b><div class="ar">فِي الْمَسْجِدِ</div></div>
+          <div class="sc card" id="sc-masjid"><div class="i">🕌</div><b>At the masjid</b><div class="ar">فِي الْمَسْجِدِ</div></div>
           <div class="sc card"><div class="i">🍽️</div><b>Ordering a meal</b><div class="ar">فِي الْمَطْعَمِ</div></div>
           <div class="sc card"><div class="i">🚕</div><b>Taking a taxi</b><div class="ar">فِي سَيّارَةِ الْأُجْرَةِ</div></div>
           <div class="sc card"><div class="i">🏠</div><b>A family visit</b><div class="ar">فِي زِيارَةٍ</div></div>
@@ -342,8 +351,8 @@
         <div class="card" id="chat">
           <div class="kicker">Have the conversation · Complete</div>
           <div class="bubble" id="b-them"><div class="ar">السَّلامُ عَلَيْكُمْ. أَنا جارُكَ الْجَدِيدُ.</div><div class="e">Peace be upon you. I'm your new neighbour.</div></div>
-          <div class="bubble" id="b-me"><div class="ar">وَعَلَيْكُمُ السَّلامُ، أَهْلًا وَسَهْلًا!</div></div>
-          <div id="note">✓ Good reply.</div>
+          <div class="bubble" id="b-me"><div class="ar">وَعَلَيْكُمُ السَّلامُ! بَيْتُكَ <span class="sw"><span id="w-bad">جَمِيلَةٌ</span><span id="w-good">جَمِيلٌ</span></span></div></div>
+          <div id="note"><b>✓ Good reply — but check this:</b><span id="why"><span class="ar">بَيْت</span> is masculine, so the adjective is too: <span class="ar" id="why-fix">جَمِيلٌ</span></span><span class="mt">MASCULINE / FEMININE</span></div>
           <div id="inbox"><div id="input"><span id="typed"></span></div><div id="send">Send</div></div>
         </div>
       </div></section>
@@ -360,11 +369,11 @@
       </div></section>
 
       <section id="n" class="clip" {{SCENE:n}} data-track-index="14"><div class="inner">
-        <div class="big-line" id="n1">Your journey, or something specific.</div>
+        <div class="big-line" id="n1">One path to follow, and practice whenever you want more.</div>
         <div class="big-line" id="n2">A few minutes a day.</div>
         <div class="brand" id="n-brand"><div class="tile" id="n-tile"><span class="r">ر</span><span class="dot"></span></div><div class="brand-name">Rafiq</div></div>
         <div id="n-url">rafiq-arabic.com</div>
-        <div id="n-try">Try it free</div>
+        <div id="n-try">Start your first lesson free</div>
       </div></section>
 
       {{AUDIO}}
@@ -381,10 +390,10 @@
       document.querySelectorAll("section.clip").forEach((el) => { const s = +el.dataset.start; S[el.id] = { s, e: s + +el.dataset.duration }; });
       const DUR = +document.getElementById("root").dataset.duration;
       const tl = gsap.timeline({ paused: true });
-      const XF = 0.55;
+      const XI = 0.45, XO = 0.4;   // in over 0.45s; the scene before is gone 0.1s after the next one starts
       const scene = (id) => {
-        tl.fromTo("#" + id + " .inner", { opacity: 0 }, { opacity: 1, duration: XF, ease: "sine.inOut" }, S[id].s);
-        if (S[id].e < DUR - 0.1) tl.to("#" + id + " .inner", { opacity: 0, duration: XF, ease: "sine.inOut" }, S[id].e - XF);
+        tl.fromTo("#" + id + " .inner", { opacity: 0 }, { opacity: 1, duration: XI, ease: "sine.out" }, S[id].s);
+        if (S[id].e < DUR - 0.1) tl.to("#" + id + " .inner", { opacity: 0, duration: XO, ease: "sine.in" }, S[id].e - XO);
       };
       const rise = (sel, t, d = 0.6, y = 26) => tl.fromTo(sel, { opacity: 0, y }, { opacity: 1, y: 0, duration: d, ease: "power3.out" }, t);
       const press = (sel, t) => { tl.to(sel, { scale: 0.95, duration: 0.1, ease: "power2.in" }, t); tl.to(sel, { scale: 1, duration: 0.25, ease: "back.out(2)" }, t + 0.1); };
@@ -405,22 +414,24 @@
       // A — Home: press Continue
       rise("#a-home", 0.5, 0.5, 10);
       tl.fromTo("#today", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.9, ease: "power3.out" }, 0.6);
-      press("#cont", T.n01.e - 0.5);
-      tl.to("#cont", { backgroundColor: "#245a4e", duration: 0.1, yoyo: true, repeat: 1 }, T.n01.e - 0.5);
+      press("#cont", T.n01b.e - 0.3);
+      tl.to("#cont", { backgroundColor: "#245a4e", duration: 0.1, yoyo: true, repeat: 1 }, T.n01b.e - 0.3);
 
       // B — Meet Rafiq
-      tl.fromTo("#b-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T.r02.s - 0.1);
-      tl.fromTo("#b-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.r02.s + 0.05);
-      tl.fromTo("#b-ar", { clipPath: "inset(0% 0% 0% 100%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.9, ease: "power2.inOut" }, T.r02.s + 0.5);
-      rise("#b-sub", T.r02.s + 1.2);
+      tl.fromTo("#b-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, S.b.s + 0.1);
+      tl.fromTo("#b-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, S.b.s + 0.2);
+      tl.fromTo("#b-ar", { clipPath: "inset(0% 0% 0% 100%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: 0.7, ease: "power2.inOut" }, T.r02b.s + 0.2);
+      rise("#b-sub", T.r02b.s + 0.6);
 
       // C — the path: reading starter, then the 12 units (quick in, then held)
-      tl.fromTo("#c-read", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.n03.s + 1.6);
-      tl.fromTo("#c-units .u", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, stagger: 0.16, ease: "power3.out" }, T.n03.s + 2.6);
+      tl.fromTo("#c-read", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, S.c.s + 0.1);
+      tl.fromTo("#c-units .u", { opacity: 0, y: 20 }, { opacity: 0.35, y: 0, duration: 0.5, stagger: 0.03, ease: "power3.out" }, S.c.s + 0.2);
+      tl.to("#c-read", { scale: 1.04, duration: 0.25, yoyo: true, repeat: 1, ease: "sine.inOut" }, T.n03s.s + 0.85);
+      tl.to("#c-units .u", { opacity: 1, duration: 0.3, stagger: 0.12, ease: "sine.out" }, T.n03s.s + 2.05);
 
       // D — the five kinds of step, each as it's named
       tl.fromTo(".st", { y: 30 }, { y: 0, duration: 0.6, stagger: 0.08, ease: "power3.out" }, S.d.s);
-      [2.3, 3.4, 4.6, 5.9, 6.7].forEach((dt, k) => tl.to("#st" + (k + 1), { opacity: 1, borderColor: "#2e7263", duration: 0.3 }, T.n04.s + dt));
+      [0.0, 1.0, 2.2, 3.5, 4.3].forEach((dt, k) => tl.to("#st" + (k + 1), { opacity: 1, borderColor: "#2e7263", duration: 0.3 }, T.n04t.s + dt));
 
       // E — word tiles into order, then typing later
       [1, 2, 3, 4].forEach((k, i) => {
@@ -428,7 +439,6 @@
         tl.fromTo("#l" + k, { opacity: 0, y: 70 }, { opacity: 1, y: 0, duration: 0.35, ease: "power3.out" }, t);
         tl.to("#p" + k, { opacity: 0, y: -40, duration: 0.3, ease: "power2.in" }, t);
       });
-      tl.to("#e-pool", { height: 0, minHeight: 0, marginTop: 0, duration: 0.4, ease: "power2.inOut" }, T.n05.s + 2.6);
       tl.fromTo("#e-line", { borderBottomColor: "rgba(23,38,43,0.18)" }, { borderBottomColor: "#2e7263", duration: 0.3 }, T.n05.s + 2.9);
       green("#e-line .tile2", T.n05.s + 2.9);
       rise("#e-ok", T.n05.s + 2.9, 0.4, 10);
@@ -436,59 +446,67 @@
       type("e-typed", "أَذْهَبُ إِلى الْمَدْرَسَةِ", T.n05.s + 3.7, 1.4);
 
       // F — review: بَيْت comes back on day 2, 4, 8, 16
-      rise("#fz .title", S.fz.s + 0.3, 0.6, 16);
+      rise("#fz .title", S.fz.s + 0.05, 0.6, 16);
       const xs = [60, 400, 740, 1080, 1420];
-      tl.fromTo("#chip", { x: xs[0], opacity: 0 }, { x: xs[0], opacity: 1, duration: 0.4 }, S.fz.s + 0.5);
-      tl.fromTo("#s0", { opacity: 0 }, { opacity: 1, duration: 0.4 }, S.fz.s + 0.5);
-      [1, 2, 3, 4].forEach((k) => {
-        const t = T.r06.s + 0.6 * k;
-        tl.to("#chip", { x: xs[k], duration: 0.45, ease: "power2.inOut" }, t - 0.3);
+      tl.fromTo("#chip", { x: xs[0], opacity: 0 }, { x: xs[0], opacity: 1, duration: 0.4 }, S.fz.s + 0.15);
+      tl.fromTo("#s0", { opacity: 0 }, { opacity: 1, duration: 0.4 }, S.fz.s + 0.15);
+      [3.0, 4.1, 4.6, 5.1].forEach((dt, i) => {      // "after a day, then two, four, eight"
+        const t = T.r06b.s + dt, k = i + 1;
+        tl.to("#chip", { x: xs[k], duration: 0.4, ease: "power2.inOut" }, t - 0.25);
+        tl.fromTo("#g" + i, { opacity: 0 }, { opacity: 1, duration: 0.25 }, t - 0.2);
         tl.fromTo("#s" + k, { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, t + 0.1);
       });
-      rise("#due", T.r06.s + 3.0, 0.5);
+      rise("#due", T.r06b.s + 5.6, 0.5);
 
       // G — Practise menu; Beyond the lessons
-      rise("#g-hero", S.g.s + 0.2, 0.5, 16);
-      tl.fromTo("#g-list .row", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.4, stagger: 0.14, ease: "power3.out" }, T.n07.s + 0.2);
+      rise("#g-hero", S.g.s + 0.05, 0.5, 16);
+      tl.fromTo("#g-list .row", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.4, stagger: 0.1, ease: "power3.out" }, S.g.s + 0.15);
       press("#g-beyond", T.n07.e - 0.3);
       tl.to("#g-beyond", { borderColor: "#2e7263", duration: 0.2 }, T.n07.e - 0.3);
 
       // H — verbs: the table fills tense by tense
-      rise("#h-title", S.h.s + 0.2, 0.6, 16);
-      tl.fromTo(".hc.p, .hc.h", { opacity: 0 }, { opacity: 1, duration: 0.4 }, S.h.s + 0.4);
-      [".c1", ".c2", ".c3"].forEach((c, k) => tl.fromTo(c, { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: "back.out(1.6)" }, T.n08.s + [2.0, 2.6, 3.2][k]));
+      rise("#h-title", S.h.s + 0.05, 0.6, 16);
+      tl.fromTo(".hc.p, .hc.h", { opacity: 0 }, { opacity: 1, duration: 0.4 }, S.h.s + 0.1);
+      tl.fromTo(".hc.f", { opacity: 0 }, { opacity: 0.3, duration: 0.4 }, S.h.s + 0.15);
+      [".c1", ".c2", ".c3"].forEach((c, k) => tl.fromTo(c, { opacity: 0.3, scale: 0.94 }, { opacity: 1, scale: 1, duration: 0.35, stagger: 0.1, ease: "back.out(1.6)" }, T.n08b.s + [1.0, 1.5, 2.0][k]));
 
       // I — joining words: ثُمَّ, then the sentence read aloud
       tl.fromTo("#i-card", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.i.s);
-      press("#i-then", T.n09.e + 0.2);
-      green("#i-then", T.n09.e + 0.3);
-      tl.to("#i-gap", { color: "#2e7263", borderBottomColor: "rgba(0,0,0,0)", duration: 0.3 }, T.n09.e + 0.35);
-      rise("#i-en", T.ar_usalli.s + 0.2, 0.5, 10);
+      press("#i-then", T.n08b.e - 0.9);
+      green("#i-then", T.n08b.e - 0.8);
+      tl.to("#i-gap", { borderBottomColor: "rgba(0,0,0,0)", duration: 0.3 }, T.n08b.e - 0.75);
+      tl.to("#i-fill", { opacity: 1, duration: 0.3 }, T.n08b.e - 0.75);
+      rise("#i-en", T.n08b.e - 0.6, 0.5, 10);
 
       // J — spelling bee: hear كِتاب, spell it, correct
       tl.fromTo("#j-card", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.j.s);
       tl.to("#j-play", { scale: 1.1, backgroundColor: "#2e7263", duration: 0.2, yoyo: true, repeat: 1 }, T.ar_kitab.s);
-      type("j-typed", "كِتاب", T.ar_kitab.e + 0.2, 1.1);
-      press("#j-check", T.ar_kitab.e + 1.6);
-      tl.to("#j-input", { borderColor: "#2e7263", backgroundColor: "rgba(46,114,99,0.09)", duration: 0.2 }, T.ar_kitab.e + 1.7);
-      rise("#j-ok", T.ar_kitab.e + 1.7, 0.4, 10);
-      tl.to("#j-seg", { backgroundColor: "#2e7263", duration: 0.3 }, T.ar_kitab.e + 1.7);
-      tl.call(() => { document.getElementById("j-score").textContent = "4"; }, null, T.ar_kitab.e + 1.7);
+      type("j-typed", "كِتاب", T.ar_kitab.e + 0.15, 0.9);
+      press("#j-check", T.ar_kitab.e + 1.1);
+      tl.to("#j-input", { borderColor: "#2e7263", backgroundColor: "rgba(46,114,99,0.09)", duration: 0.2 }, T.ar_kitab.e + 1.2);
+      rise("#j-ok", T.ar_kitab.e + 1.2, 0.4, 10);
+      tl.to("#j-seg", { backgroundColor: "#2e7263", duration: 0.3 }, T.ar_kitab.e + 1.2);
+      tl.call(() => { document.getElementById("j-score").textContent = "4"; }, null, T.ar_kitab.e + 1.2);
       tl.call(() => { document.getElementById("j-score").textContent = "3"; }, null, S.j.s);
 
       // K — Complete: the six scenes
-      rise(".badge", S.k.s + 0.3, 0.5, 10);
-      rise("#k .title", S.k.s + 0.5, 0.5, 16);
-      tl.fromTo(".sc", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.22, ease: "power3.out" }, T.n11.s + 2.2);
+      rise(".badge", S.k.s + 0.1, 0.5, 10);
+      rise("#k .title", S.k.s + 0.15, 0.5, 16);
+      tl.fromTo(".sc", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, stagger: 0.07, ease: "power3.out" }, S.k.s + 0.2);
+      tl.to("#sc-air", { borderColor: "#2e7263", duration: 0.25 }, T.n11s.s + 2.95);
+      tl.to("#sc-masjid", { borderColor: "#2e7263", duration: 0.25 }, T.n11s.s + 3.3);
 
       // L — the conversation partner
       tl.fromTo("#chat", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.l.s);
       tl.fromTo("#b-them", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.5, ease: "power3.out" }, T.ar_neighbour.s - 0.1);
-      type("typed", "وَعَلَيْكُمُ السَّلامُ، أَهْلًا وَسَهْلًا!", T.n12.s + 0.2, 1.8);
-      press("#send", T.n12.s + 2.2);
-      tl.fromTo("#b-me", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, T.n12.s + 2.3);
-      tl.to("#typed", { opacity: 0, duration: 0.15 }, T.n12.s + 2.3);
-      tl.fromTo("#note", { opacity: 0, x: 20 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out" }, T.n12.s + 2.9);
+      type("typed", "وَعَلَيْكُمُ السَّلامُ! بَيْتُكَ جَمِيلَةٌ", T.r13.s + 0.1, 1.6);
+      press("#send", T.r13.s + 1.8);
+      tl.fromTo("#b-me", { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, T.r13.s + 1.9);
+      tl.to("#typed", { opacity: 0, duration: 0.15 }, T.r13.s + 1.9);
+      tl.fromTo("#note", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.4, ease: "power3.out" }, T.r13.s + 2.5);   // "names the mistake"
+      tl.to("#w-bad", { backgroundColor: "rgba(180,50,42,0.55)", duration: 0.25 }, T.r13.s + 3.4);                        // "masculine and feminine"
+      tl.to("#w-bad", { opacity: 0, duration: 0.3, ease: "sine.in" }, T.r13.s + 5.75);                                     // "helps you fix it"
+      tl.fromTo("#w-good", { opacity: 0, backgroundColor: "rgba(46,114,99,0.55)" }, { opacity: 1, duration: 0.35, ease: "sine.out" }, T.r13.s + 5.9);
 
       // M — weak spots
       tl.fromTo("#m-card", { y: 40 }, { y: 0, duration: 0.8, ease: "power3.out" }, S.m.s);
@@ -496,12 +514,12 @@
       press("#m-go", T.n13.e + 0.2);
 
       // N — close
-      rise("#n1", T.n14.s + 0.1, 0.7);
-      rise("#n2", T.n14.s + 1.6, 0.7);
-      tl.fromTo("#n-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T.r15.s - 0.3);
-      tl.fromTo("#n-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.r15.s - 0.15);
-      rise("#n-url", T.r15.s + 0.5, 0.5, 12);
-      rise("#n-try", T.r15.s + 0.9, 0.5, 12);
+      rise("#n1", S.n.s + 0.05, 0.7);
+      rise("#n2", T.n14b.s + 3.2, 0.7);
+      tl.fromTo("#n-tile", { opacity: 0, scale: 0.8, rotation: -6 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.6, ease: "back.out(1.6)" }, T.r16.s - 0.3);
+      tl.fromTo("#n-brand .brand-name", { opacity: 0, x: -24 }, { opacity: 1, x: 0, duration: 0.6, ease: "power3.out" }, T.r16.s - 0.15);
+      rise("#n-url", T.r16.s + 0.5, 0.5, 12);
+      rise("#n-try", T.r16.s + 0.9, 0.5, 12);
 
       // voice-reactive glow
       const A = window.AUDIO_DATA, glow = document.getElementById("glow");

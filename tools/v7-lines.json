@@ -14,13 +14,6 @@
   "style": 0.2
  },
  {
-  "file": "n03",
-  "text": "First, your journey. One path: a reading starter, then twelve units, from greetings to hobbies.",
-  "voice": "EXAVITQu4vr4xnSDxMaL",
-  "stability": 0.5,
-  "style": 0.15
- },
- {
   "file": "n03s",
   "text": "One path: a reading starter, then twelve units, from greetings to hobbies.",
   "voice": "EXAVITQu4vr4xnSDxMaL",
@@ -30,13 +23,6 @@
  {
   "file": "n04",
   "text": "Each step takes five to ten minutes. Meet new words, hear a conversation, learn one grammar idea, practise, then speak.",
-  "voice": "EXAVITQu4vr4xnSDxMaL",
-  "stability": 0.5,
-  "style": 0.15
- },
- {
-  "file": "n04s",
-  "text": "Each step is five to ten minutes: new words, a conversation, one grammar idea, practice, then speaking.",
   "voice": "EXAVITQu4vr4xnSDxMaL",
   "stability": 0.5,
   "style": 0.15
@@ -77,22 +63,8 @@
   "style": 0.15
  },
  {
-  "file": "n11",
-  "text": "Go further with Complete. Practise real-life scenes, from the airport to the masjid.",
-  "voice": "EXAVITQu4vr4xnSDxMaL",
-  "stability": 0.5,
-  "style": 0.15
- },
- {
   "file": "n11s",
   "text": "Go further with Complete: real-life scenes, from the airport to the masjid.",
-  "voice": "EXAVITQu4vr4xnSDxMaL",
-  "stability": 0.5,
-  "style": 0.15
- },
- {
-  "file": "n12",
-  "text": "Have the conversation yourself, and get feedback on every reply.",
   "voice": "EXAVITQu4vr4xnSDxMaL",
   "stability": 0.5,
   "style": 0.15

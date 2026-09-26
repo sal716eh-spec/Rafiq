@@ -12901,6 +12901,34 @@
   "chars": 3
  },
  {
+  "id": "gnvkfb",
+  "text": "الأَحَد",
+  "bucket": "vocab",
+  "unit": "06 · Numbers & time",
+  "chars": 7
+ },
+ {
+  "id": "1hmfme6",
+  "text": "الاِثْنَيْن",
+  "bucket": "vocab",
+  "unit": "06 · Numbers & time",
+  "chars": 11
+ },
+ {
+  "id": "1h37zqn",
+  "text": "الأَرْبِعاء",
+  "bucket": "vocab",
+  "unit": "06 · Numbers & time",
+  "chars": 11
+ },
+ {
+  "id": "1kicq0q",
+  "text": "سِتَّة",
+  "bucket": "vocab",
+  "unit": "02 · Core sentence-building",
+  "chars": 6
+ },
+ {
   "id": "1q9nhp9",
   "text": "أَلِف",
   "bucket": "alphabet",
@@ -13265,13 +13293,6 @@
   "chars": 6
  },
  {
-  "id": "1kicq0q",
-  "text": "سِتَّة",
-  "bucket": "essentials",
-  "unit": "numbers",
-  "chars": 6
- },
- {
   "id": "qk3rwy",
   "text": "سِتُّونَ",
   "bucket": "essentials",
@@ -13291,27 +13312,6 @@
   "bucket": "essentials",
   "unit": "numbers",
   "chars": 5
- },
- {
-  "id": "gnvkfb",
-  "text": "الأَحَد",
-  "bucket": "essentials",
-  "unit": "days",
-  "chars": 7
- },
- {
-  "id": "1hmfme6",
-  "text": "الاِثْنَيْن",
-  "bucket": "essentials",
-  "unit": "days",
-  "chars": 11
- },
- {
-  "id": "1h37zqn",
-  "text": "الأَرْبِعاء",
-  "bucket": "essentials",
-  "unit": "days",
-  "chars": 11
  },
  {
   "id": "1qiegbk",

@@ -782,4 +782,8 @@ const VOCAB = [
   { id: 755, ar: "يوسُف", en: "Yusuf", tr: "yūsuf", unit: "16 · General vocabulary (needs review)" },
   { id: 756, ar: "مَقاييس", en: "standards", tr: "maqāyīs", unit: "16 · General vocabulary (needs review)" },
   { id: 759, ar: "كوخ", en: "hut", tr: "kūkh", unit: "16 · General vocabulary (needs review)" },
+  { id: 780, ar: "الأَحَد", en: "Sunday", tr: "al-aḥad", unit: "06 · Numbers & time" },
+  { id: 781, ar: "الاِثْنَيْن", en: "Monday", tr: "al-ithnayn", unit: "06 · Numbers & time" },
+  { id: 782, ar: "الأَرْبِعاء", en: "Wednesday", tr: "al-arbiʿāʾ", unit: "06 · Numbers & time" },
+  { id: 783, ar: "سِتَّة", en: "six", tr: "sitta", unit: "02 · Core sentence-building" },
 ];

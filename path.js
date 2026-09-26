@@ -58,9 +58,18 @@
   /* The listening test was added after some learners had finished the reading
      starter and moved on to unit 1; it stays open to them but doesn't pull them back. */
   const movedOn = () => UNITS.some(u => !u.alpha && (placed(u.n) || steps(u).some(s => stepDone(u.n, s.key))));
+  /* The same goes for words added to a unit after it was written (lateFrom in
+     path-data.js, e.g. the missing days of the week): their step stays open to
+     learners who are already past the unit, but doesn't pull them back. */
+  const late = (p, s) => p.lateFrom != null && s.kind === 'words' && s.batch * BATCH >= p.lateFrom;
+  const movedPast = p => { const i = UNITS.indexOf(p);
+    return UNITS.slice(i + 1).some(u => placed(u.n) || steps(u).some(s => stepDone(u.n, s.key))); };
   function unitDone(p){
-    return placed(p.n) || steps(p).every(s => stepDone(p.n, s.key) || (p.alpha && s.key === 'hear' && movedOn()));
+    return placed(p.n) || steps(p).every(s => stepDone(p.n, s.key)
+      || (p.alpha && s.key === 'hear' && movedOn()) || (late(p, s) && movedPast(p)));
   }
+  // a finished unit with a late step still to do (Home can point it out)
+  const lateLeft = p => !placed(p.n) && steps(p).some(s => late(p, s) && !stepDone(p.n, s.key));
 
   /* The unit you're on: the first one not finished. Everything before it is
      done; everything after is "coming up" but still openable. */
@@ -251,7 +260,7 @@
     return ids.map(wordById).filter(Boolean);
   }
 
-  window.RafiqPath = { reviewScope, metWords, sentenceDone, period, wordsByDay, wordsReport, bestStreak, reviewDue, hasLearned, COMING, STREAK_GOALS, streakGoal, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
+  window.RafiqPath = { lateLeft, reviewScope, metWords, sentenceDone, period, wordsByDay, wordsReport, bestStreak, reviewDue, hasLearned, COMING, STREAK_GOALS, streakGoal, BATCH, GOAL, units, skipReading, unitOpen, stepOpen, steps, stepDone, unitDone, placed, currentIndex, next, reached,
                        complete, place, markDay, wordMet, week, doneToday, streak, wordsOf, unitData, wordById,
                        answerStyle, answered, answerPref };
 })();

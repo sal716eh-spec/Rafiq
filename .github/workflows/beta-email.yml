@@ -1,0 +1,31 @@
+name: Beta email
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: "test (one account) | all (everyone)"
+        required: true
+        default: "test"
+      arg:
+        description: "test: the account id (from Supabase users → list) · all: type SEND-TO-ALL"
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Send
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          CMD: ${{ inputs.command }}
+          ARG: ${{ inputs.arg }}
+        run: node tools/send-beta-email.js "$CMD" "$ARG"

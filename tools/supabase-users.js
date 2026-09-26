@@ -6,6 +6,8 @@
      node tools/supabase-users.js delete id1,id2   delete these accounts (max 5) and their rows
      node tools/supabase-users.js reset-preview    who a beta reset would wipe (changes nothing)
      node tools/supabase-users.js reset RESET-BETA wipe progress + onboarding answers for them
+     node tools/supabase-users.js signout SIGN-OUT-ALL  end every session on every device
+                                                   (with SIGN_IN_AGAIN_BEFORE in auth.js)
 
    The beta reset keeps accounts that were created or onboarded today (UK time):
    they've already seen the current app. For everyone else it deletes their rows
@@ -95,5 +97,12 @@ async function userTables() {
     console.log('reset done');
     return;
   }
-  console.error('use: list [days] | delete id1,id2 | reset-preview | reset RESET-BETA'); process.exit(1);
+  if (cmd === 'signout') {
+    if (arg !== 'SIGN-OUT-ALL') { console.error('to sign everyone out, the second input must be SIGN-OUT-ALL'); process.exit(1); }
+    const r = await sql(`with d as (delete from auth.sessions returning 1) select count(*)::int as n from d`);
+    const t = await sql(`with d as (delete from auth.refresh_tokens returning 1) select count(*)::int as n from d`);
+    console.log(`${r[0].n} sessions and ${t[0].n} refresh tokens ended; everyone signs in again`);
+    return;
+  }
+  console.error('use: list [days] | delete id1,id2 | reset-preview | reset RESET-BETA | signout SIGN-OUT-ALL'); process.exit(1);
 })();

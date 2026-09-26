@@ -61,6 +61,10 @@ ALPHABET_GROUPS.forEach(g=>g.letters.forEach(l=>{
 VOWEL_MARKS.forEach(v=>{ if(v[3]) add('alphabet','00',v[3][0]); });
 LISTEN_TEST.forEach(t=>add('alphabet','00',t[0]));
 
+/* Everyday essentials (Practise): numbers, days, months, colours (both forms), time. */
+eval(fs.readFileSync(path.join(root,'essentials-data.js'),'utf8').replace(/const ESSENTIALS/,'globalThis.ESSENTIALS'));
+ESSENTIALS.forEach(s=>s.items.forEach(it=>{ add('essentials',s.id,it[0]); if(s.id==='colours') add('essentials',s.id,it[2]); }));
+
 SCENES.forEach(sc=>sc.lines.forEach(l=>add('scene',sc.id,l[1])));
 
 CONNECTORS.forEach(cat=>cat.items.forEach(it=>{

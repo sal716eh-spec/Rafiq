@@ -296,17 +296,19 @@ requireLogin();
 // send brand-new users to onboarding once (skips silently if already done or offline)
 (async ()=>{
   try{
-    // local flag: if they've onboarded on this device, never redirect (avoids loops)
-    if(localStorage.getItem('bay_onboarded')==='1') return;
+    /* local marker: this account has onboarded in this browser, so never redirect
+       (avoids loops). It holds the account id: a confirm link can open in a browser
+       where a different account onboarded before. */
+    const uid = typeof currentUserId==='function' ? await currentUserId() : null;
+    const mark = localStorage.getItem('bay_onboarded');
+    if(mark && (mark===uid || (!uid && mark==='1'))) return;
     if(typeof cloudLoadProfile==='function'){
       const prof = await cloudLoadProfile();
       if(prof && prof.onboarded){
-        try{ localStorage.setItem('bay_onboarded','1'); }catch(_){}
+        try{ localStorage.setItem('bay_onboarded', uid||'1'); }catch(_){}
         return;
       }
-      if(prof === null){
-        window.location.href = 'onboarding.html';
-      }
+      if(uid) window.location.href = 'onboarding.html';   // no profile yet, or one saved without finishing
     }
   }catch(_){}
 })();

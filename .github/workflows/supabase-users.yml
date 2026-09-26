@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       command:
-        description: "list (read only) | delete | reset-preview (read only) | reset"
+        description: "list (read only) | delete | reset-preview (read only) | reset | signout"
         required: true
         default: "list"
       arg:
-        description: "list: days to look back (default 3) · delete: account ids, comma-separated (max 5) · reset: type RESET-BETA"
+        description: "list: days to look back (default 3) · delete: account ids, comma-separated (max 5) · reset: type RESET-BETA · signout: type SIGN-OUT-ALL"
         required: false
         default: ""
 

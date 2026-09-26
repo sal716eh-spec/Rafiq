@@ -196,7 +196,15 @@ async function goIn(){
   const err = linkError();
   if (err) { showMsg(err); return; }
   const { data } = await sb.auth.getSession();
+  // a session from before the beta reset (see SIGN_IN_AGAIN_BEFORE in auth.js) doesn't count
+  const at = data && data.session && data.session.user && data.session.user.last_sign_in_at;
+  if (at && new Date(at) < new Date('2026-09-26T18:13:00Z')) {
+    try { await sb.auth.signOut({ scope: 'local' }); } catch(_) {}
+    showMsg('Rafiq has had a big update. Please sign in again to start fresh.', 'ok');
+    return;
+  }
   if (data && data.session) goIn();
+  else if (new URLSearchParams(location.search).get('again')) showMsg('Rafiq has had a big update. Please sign in again to start fresh.', 'ok');
 })();
 
 function setMode(m, keepMsg){

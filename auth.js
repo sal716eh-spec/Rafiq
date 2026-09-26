@@ -50,6 +50,15 @@ async function logoutEverywhere(){
   window.location.href = 'index.html';
 }
 
+/* Sessions from sign-ins before this moment are ended on the next page load, so
+   everyone signs in again (and meets the new password rule and questions).
+   Set on 26 Sep 2026 for the beta reset; move it forward to sign everyone out again. */
+const SIGN_IN_AGAIN_BEFORE = '2026-09-26T18:13:00Z';
+function staleSession(session){
+  const at = session && session.user && session.user.last_sign_in_at;
+  return !!(at && new Date(at) < new Date(SIGN_IN_AGAIN_BEFORE));
+}
+
 /* Guard a page: if nobody is logged in, bounce to the login page.
    Also enforces the idle timeout. Call near the top of a protected page. */
 async function requireLogin(){
@@ -58,6 +67,11 @@ async function requireLogin(){
     const { data } = await sb.auth.getSession();
     if (!data || !data.session) {
       window.location.href = 'login.html';
+      return null;
+    }
+    if (staleSession(data.session)) {
+      try { await sb.auth.signOut({ scope: 'local' }); } catch(_) {}
+      window.location.href = 'login.html?again=1';
       return null;
     }
     // logged in — but has it been idle too long? (shared-computer safety)

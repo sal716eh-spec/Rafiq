@@ -185,7 +185,7 @@ document.querySelectorAll('.q').forEach(q=>{
    one browser can hold more than one account. */
 let UID=null;
 const uidReady=(typeof currentUserId==='function' ? currentUserId() : Promise.resolve(null)).then(u=>UID=u).catch(()=>null);
-const markOnboarded=()=>{ try{ localStorage.setItem('bay_onboarded', UID||'1'); }catch(_){} };
+const markOnboarded=()=>{ try{ localStorage.setItem('rafiq_onboarded', UID||'1'); }catch(_){} };
 
 const GOAL_FOR={ '5':1, '10':2, '20':4 };       // lesson steps a day
 const LEVEL_PACE={ beginner:2, basics:4, intermediate:5 };   // extra new words a day in Words
@@ -204,13 +204,13 @@ async function save(){
 function goHome(){ setTimeout(()=>{ window.location.href='dashboard.html'; }, 400); }
 /* Before Home, once per account: offer the 79-second tour. Starting the first
    lesson stays the main button; the tour never plays by itself.
-   rafiq_seen_howto holds the ids of accounts that have been offered it here. */
+   rafiq_seen_tour holds the ids of accounts that have been offered it here. */
 async function home(){
   Progress.flush && Progress.flush();
   await uidReady;
   let seen=false;
-  try{ const ids=(localStorage.getItem('rafiq_seen_howto')||'').split(','), me=UID||'1';
-       seen=ids.includes(me); if(!seen) localStorage.setItem('rafiq_seen_howto', ids.filter(x=>x&&x!=='1').concat(me).slice(-5).join(',')); }catch(_){ seen=true; }
+  try{ const ids=(localStorage.getItem('rafiq_seen_tour')||'').split(','), me=UID||'1';
+       seen=ids.includes(me); if(!seen) localStorage.setItem('rafiq_seen_tour', ids.filter(x=>x&&x!=='1').concat(me).slice(-5).join(',')); }catch(_){ seen=true; }
   if(seen) return goHome();
   ['qs','pl'].forEach(id=>{ const e=document.getElementById(id); if(e) e.classList.add('hide'); });
   document.getElementById('howto').classList.remove('hide');

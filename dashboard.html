@@ -300,12 +300,12 @@ requireLogin();
        (avoids loops). It holds the account id: a confirm link can open in a browser
        where a different account onboarded before. */
     const uid = typeof currentUserId==='function' ? await currentUserId() : null;
-    const mark = localStorage.getItem('bay_onboarded');
+    const mark = localStorage.getItem('rafiq_onboarded');
     if(mark && (mark===uid || (!uid && mark==='1'))) return;
     if(typeof cloudLoadProfile==='function'){
       const prof = await cloudLoadProfile();
       if(prof && prof.onboarded){
-        try{ localStorage.setItem('bay_onboarded', uid||'1'); }catch(_){}
+        try{ localStorage.setItem('rafiq_onboarded', uid||'1'); }catch(_){}
         return;
       }
       if(uid) window.location.href = 'onboarding.html';   // no profile yet, or one saved without finishing

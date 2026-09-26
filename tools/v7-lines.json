@@ -1,14 +1,14 @@
 [
  {
-  "file": "n01",
-  "text": "Here's the easiest way to learn Arabic: open the app, and press Continue.",
+  "file": "n01b",
+  "text": "Want to understand the Arabic you hear every day, and speak it back?",
   "voice": "EXAVITQu4vr4xnSDxMaL",
   "stability": 0.5,
   "style": 0.15
  },
  {
-  "file": "r02",
-  "text": "This is رَفِيق. Let me show you everything inside.",
+  "file": "r02b",
+  "text": "Here's how رَفِيق works.",
   "voice": "Ywuz3KyW2N5pqKNpwcCL",
   "stability": 0.55,
   "style": 0.2
@@ -21,8 +21,22 @@
   "style": 0.15
  },
  {
+  "file": "n03s",
+  "text": "One path: a reading starter, then twelve units, from greetings to hobbies.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
   "file": "n04",
   "text": "Each step takes five to ten minutes. Meet new words, hear a conversation, learn one grammar idea, practise, then speak.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
+  "file": "n04s",
+  "text": "Each step is five to ten minutes: new words, a conversation, one grammar idea, practice, then speaking.",
   "voice": "EXAVITQu4vr4xnSDxMaL",
   "stability": 0.5,
   "style": 0.15
@@ -35,8 +49,8 @@
   "style": 0.15
  },
  {
-  "file": "r06",
-  "text": "And رَفِيق brings every word back for review, just before you'd forget it.",
+  "file": "r06b",
+  "text": "And رَفِيق brings every word back for review: after a day, then two, four, eight, so it sticks.",
   "voice": "Ywuz3KyW2N5pqKNpwcCL",
   "stability": 0.55,
   "style": 0.2
@@ -49,15 +63,8 @@
   "style": 0.15
  },
  {
-  "file": "n08",
-  "text": "Drill twenty-one common verbs in the past, present and future.",
-  "voice": "EXAVITQu4vr4xnSDxMaL",
-  "stability": 0.5,
-  "style": 0.15
- },
- {
-  "file": "n09",
-  "text": "Learn the joining words that link your ideas together.",
+  "file": "n08b",
+  "text": "Drill twenty-one common verbs in three tenses, and the joining words that link your ideas.",
   "voice": "EXAVITQu4vr4xnSDxMaL",
   "stability": 0.5,
   "style": 0.15
@@ -77,11 +84,25 @@
   "style": 0.15
  },
  {
+  "file": "n11s",
+  "text": "Go further with Complete: real-life scenes, from the airport to the masjid.",
+  "voice": "EXAVITQu4vr4xnSDxMaL",
+  "stability": 0.5,
+  "style": 0.15
+ },
+ {
   "file": "n12",
   "text": "Have the conversation yourself, and get feedback on every reply.",
   "voice": "EXAVITQu4vr4xnSDxMaL",
   "stability": 0.5,
   "style": 0.15
+ },
+ {
+  "file": "r13",
+  "text": "Type your own replies, and رَفِيق names the mistake, like mixing up masculine and feminine, then helps you fix it.",
+  "voice": "Ywuz3KyW2N5pqKNpwcCL",
+  "stability": 0.55,
+  "style": 0.2
  },
  {
   "file": "n13",
@@ -91,10 +112,17 @@
   "style": 0.15
  },
  {
-  "file": "n14",
-  "text": "Your journey, or something specific. A few minutes a day.",
+  "file": "n14b",
+  "text": "One path to follow, and practice whenever you want more. A few minutes a day.",
   "voice": "EXAVITQu4vr4xnSDxMaL",
   "stability": 0.5,
   "style": 0.15
+ },
+ {
+  "file": "r16",
+  "text": "Start your first lesson free at رَفِيق arabic dot com.",
+  "voice": "Ywuz3KyW2N5pqKNpwcCL",
+  "stability": 0.55,
+  "style": 0.2
  }
 ]

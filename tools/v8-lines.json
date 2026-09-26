@@ -21,8 +21,8 @@
   "style": 0.15
  },
  {
-  "file": "n04",
-  "text": "So everything here is built on what memory research says works.",
+  "file": "n04b",
+  "text": "So we built رَفِيق around three findings from memory research.",
   "voice": "EXAVITQu4vr4xnSDxMaL",
   "stability": 0.5,
   "style": 0.15
@@ -42,15 +42,22 @@
   "style": 0.15
  },
  {
-  "file": "n07",
-  "text": "Habit. A little every day. In one well-known study, a daily habit took about sixty-six days to feel automatic.",
+  "file": "n07b",
+  "text": "Habit. A few minutes every day beats an hour once a week.",
   "voice": "EXAVITQu4vr4xnSDxMaL",
   "stability": 0.5,
   "style": 0.15
  },
  {
-  "file": "r08",
-  "text": "So رَفِيق brings each word back just before you'd forget it, and asks you to recall it, not just reread it.",
+  "file": "r07",
+  "text": "رَفِيق gives you a small daily goal, and a streak to keep.",
+  "voice": "Ywuz3KyW2N5pqKNpwcCL",
+  "stability": 0.55,
+  "style": 0.2
+ },
+ {
+  "file": "r08b",
+  "text": "So رَفِيق brings each word back after a day, then two, four, eight, and asks you to recall it, not just reread it.",
   "voice": "Ywuz3KyW2N5pqKNpwcCL",
   "stability": 0.55,
   "style": 0.2
